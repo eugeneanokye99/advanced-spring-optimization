@@ -34,6 +34,10 @@ public class CreateOrderRequest {
     @Schema(description = "Additional order notes or special instructions", example = "Please call before delivery")
     @Size(max = 1000, message = "Notes cannot exceed 1000 characters")
     private String notes;
+    
+    @Schema(description = "Payment method for the order", example = "CASH", allowableValues = {"CASH", "CREDIT_CARD", "DEBIT_CARD", "PAYPAL", "BANK_TRANSFER", "CASH_ON_DELIVERY", "MOBILE_MONEY"})
+    @Size(max = 100, message = "Payment method cannot exceed 100 characters")
+    private String paymentMethod;
 
     @Schema(description = "List of items in the order", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "Order items are required")

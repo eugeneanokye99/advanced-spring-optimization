@@ -116,6 +116,12 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(OrderStatus.PENDING);
         order.setPaymentStatus(PaymentStatus.UNPAID);
+        
+        // Set default payment method if not provided
+        if (order.getPaymentMethod() == null || order.getPaymentMethod().trim().isEmpty()) {
+            order.setPaymentMethod("CASH");
+        }
+        
         order.setCreatedAt(LocalDateTime.now());
         order.setUpdatedAt(LocalDateTime.now());
 

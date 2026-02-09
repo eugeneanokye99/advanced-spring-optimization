@@ -2,12 +2,20 @@ import { useState, useEffect } from 'react';
 import { getCartItems, updateCartItemQuantity, removeFromCart, getCartTotal, clearCart } from '../../services/cartService';
 import { createOrder } from '../../services/orderService';
 import { useAuth } from '../../context/AuthContext';
-import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
+import { Trash2, Plus, Minus, ShoppingBag, X, CreditCard, MapPin } from 'lucide-react';
+import { showErrorAlert, isInsufficientStockError } from '../../utils/errorHandler';
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
     const [total, setTotal] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+    const [checkoutForm, setCheckoutForm] = useState({
+        shippingAddress: '',
+        paymentMethod: 'CASH', // Default to CASH
+        notes: ''
+    });
+    const [isProcessing, setIsProcessing] = useState(false);
     const { user } = useAuth();
 
     useEffect(() => {

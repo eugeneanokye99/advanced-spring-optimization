@@ -54,7 +54,7 @@ const OrderHistory = () => {
         setEditingOrder(order.orderId);
         setEditForm({
             shippingAddress: order.shippingAddress || '',
-            paymentMethod: order.paymentMethod || '',
+            paymentMethod: order.paymentMethod || 'CASH',
             notes: order.notes || '',
             orderItems: (order.orderItems || []).map(item => {
                 const unitPrice = item.price || (item.subtotal / item.quantity) || 0;
@@ -198,7 +198,7 @@ const handleUpdateOrder = async (orderId) => {
                                                 onChange={(e) => setEditForm({...editForm, paymentMethod: e.target.value})}
                                                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                                             >
-                                                <option value="">Select payment method</option>
+                                                <option value="CASH">Cash</option>
                                                 <option value="CREDIT_CARD">Credit Card</option>
                                                 <option value="DEBIT_CARD">Debit Card</option>
                                                 <option value="PAYPAL">PayPal</option>
@@ -349,7 +349,7 @@ const handleUpdateOrder = async (orderId) => {
                                         <div>
                                             <span className="text-gray-600">Payment Method:</span>
                                             <p className="font-medium text-gray-900">
-                                                {order.paymentMethod ? order.paymentMethod.replace(/_/g, ' ') : 'Not specified'}
+                                                {order.paymentMethod ? order.paymentMethod.replace(/_/g, ' ') : 'Cash'}
                                             </p>
                                         </div>
                                     </div>

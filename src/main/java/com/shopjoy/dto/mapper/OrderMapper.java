@@ -27,6 +27,7 @@ public class OrderMapper {
         order.setShippingAddress(request.getShippingAddress());
         order.setNotes(request.getNotes());
         order.setTotalAmount(request.getTotalAmount());
+        order.setPaymentMethod(request.getPaymentMethod());
 
         return order;
     }
