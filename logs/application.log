@@ -22761,3 +22761,8 @@ Caused by: org.postgresql.util.PSQLException: ERROR: update or delete on table "
 2026-02-09 16:27:03.771 [ShopJoyHikariCP:housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - ShopJoyHikariCP - Before cleanup stats (total=2/5, idle=2/2, active=0, waiting=0)
 2026-02-09 16:27:03.772 [ShopJoyHikariCP:housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - ShopJoyHikariCP - After  cleanup stats (total=2/5, idle=2/2, active=0, waiting=0)
 2026-02-09 16:27:03.773 [ShopJoyHikariCP:housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - ShopJoyHikariCP - Fill pool skipped, pool has sufficient level or currently being filled.
+2026-02-09 16:27:17.017 [ShopJoyHikariCP:housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - ShopJoyHikariCP - keepalive: connection org.postgresql.jdbc.PgConnection@4cd51e4e is alive
+2026-02-09 16:27:21.620 [ShopJoyHikariCP:housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - ShopJoyHikariCP - keepalive: connection org.postgresql.jdbc.PgConnection@148ec4e2 is alive
+2026-02-09 16:27:33.779 [ShopJoyHikariCP:housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - ShopJoyHikariCP - Before cleanup stats (total=2/5, idle=2/2, active=0, waiting=0)
+2026-02-09 16:27:33.779 [ShopJoyHikariCP:housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - ShopJoyHikariCP - After  cleanup stats (total=2/5, idle=2/2, active=0, waiting=0)
+2026-02-09 16:27:33.779 [ShopJoyHikariCP:housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - ShopJoyHikariCP - Fill pool skipped, pool has sufficient level or currently being filled.
