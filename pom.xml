@@ -11,7 +11,7 @@
 	<groupId>com</groupId>
 	<artifactId>shopjoy</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>shopjoy-ecommerce-system</name>
+	<name>shopjoy-data-ecommerce</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>

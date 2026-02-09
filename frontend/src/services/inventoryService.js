@@ -1,4 +1,5 @@
 import api from './api';
+import { getAllProducts } from './productService';
 
 // GET /api/v1/inventory/product/{productId} - Get product inventory
 export const getInventory = (productId) => api.get(`/inventory/product/${productId}`);
@@ -39,3 +40,33 @@ export const getOutOfStockProducts = () => api.get('/inventory/out-of-stock');
 // PATCH /api/v1/inventory/product/{productId}/reorder-level?reorderLevel={level} - Update reorder level
 export const updateReorderLevel = (productId, reorderLevel) =>
     api.patch(`/inventory/product/${productId}/reorder-level`, null, { params: { reorderLevel } });
+
+// GET all inventory items (combines with product service)
+export const getAllInventoryItems = async () => {
+    const products = await getAllProducts();
+    const inventoryItems = await Promise.all(
+        products.data.map(async (product) => {
+            try {
+                const inventory = await getInventory(product.product_id || product.productId || product.id);
+                return {
+                    ...product,
+                    productId: product.product_id || product.productId || product.id,
+                    productName: product.product_name || product.productName || product.name,
+                    stockQuantity: inventory.data?.stockQuantity || 0,
+                    reorderLevel: inventory.data?.reorderLevel || 10,
+                    reservedQuantity: inventory.data?.reservedQuantity || 0
+                };
+            } catch (error) {
+                return {
+                    ...product,
+                    productId: product.product_id || product.productId || product.id,
+                    productName: product.product_name || product.productName || product.name,
+                    stockQuantity: 0,
+                    reorderLevel: 10,
+                    reservedQuantity: 0
+                };
+            }
+        })
+    );
+    return { data: inventoryItems };
+};

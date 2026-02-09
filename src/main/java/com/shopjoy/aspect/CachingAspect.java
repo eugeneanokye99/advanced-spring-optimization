@@ -26,8 +26,8 @@ public class CachingAspect {
     private static final long CACHE_TTL = 300000;
     
     @Around("execution(* com.shopjoy.service.*.findById(..)) || execution(* com.shopjoy.service.*.getById(..))")
-    public Object cacheResult(ProceedingJoinPoint joinPoint) throws Throwable {
-        String cacheKey = generateCacheKey(joinPoint);
+    public Object cacheResult(ProceedingJoinPoint pjp) throws Throwable {
+        String cacheKey = generateCacheKey(pjp);
         
         if (isCacheValid(cacheKey)) {
             incrementCacheHit(cacheKey);
@@ -39,7 +39,7 @@ public class CachingAspect {
         incrementCacheMiss(cacheKey);
         logger.debug("CACHE MISS: {} - executing method", cacheKey);
         
-        Object result = joinPoint.proceed();
+        Object result = pjp.proceed();
         
         if (result != null) {
             cache.put(cacheKey, result);
@@ -51,9 +51,9 @@ public class CachingAspect {
     }
     
     @After("execution(* com.shopjoy.service.*.update*(..)) || execution(* com.shopjoy.service.*.delete*(..))")
-    public void invalidateCache(JoinPoint joinPoint) {
-        String className = AspectUtils.extractClassName(joinPoint);
-        String methodName = AspectUtils.extractMethodName(joinPoint);
+    public void invalidateCache(JoinPoint jp) {
+        String className = AspectUtils.extractClassName(jp);
+        String methodName = AspectUtils.extractMethodName(jp);
         
         int cleared = 0;
         for (String key : cache.keySet()) {
@@ -71,8 +71,8 @@ public class CachingAspect {
     }
     
     @Around("execution(* com.shopjoy.service.*.findAll*(..))")
-    public Object cacheListResult(ProceedingJoinPoint joinPoint) throws Throwable {
-        String cacheKey = generateCacheKey(joinPoint);
+    public Object cacheListResult(ProceedingJoinPoint pjp) throws Throwable {
+        String cacheKey = generateCacheKey(pjp);
         
         if (isCacheValid(cacheKey)) {
             incrementCacheHit(cacheKey);
@@ -81,7 +81,7 @@ public class CachingAspect {
         }
         
         incrementCacheMiss(cacheKey);
-        Object result = joinPoint.proceed();
+        Object result = pjp.proceed();
         
         if (result != null) {
             cache.put(cacheKey, result);

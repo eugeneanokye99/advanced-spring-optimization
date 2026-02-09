@@ -7,6 +7,7 @@ import {
     Filter,
     ChevronLeft,
     ChevronRight,
+    ChevronDown,
     CheckCircle,
     XCircle,
 } from 'lucide-react';
@@ -20,6 +21,7 @@ import {
     deactivateProduct,
 } from '../../services/productService';
 import { getAllCategories } from '../../services/categoryService';
+import { showErrorAlert, formatErrorMessage, extractFieldErrors, isValidationError } from '../../utils/errorHandler';
 
 const ProductManagement = () => {
     const [products, setProducts] = useState([]);
@@ -28,8 +30,15 @@ const ProductManagement = () => {
     const [showModal, setShowModal] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('all');
+    const [priceRange, setPriceRange] = useState({ min: '', max: '' });
+    const [sortBy, setSortBy] = useState('product_id');
+    const [sortDirection, setSortDirection] = useState('ASC');
+    const [statusFilter, setStatusFilter] = useState('all');
+    const [totalElements, setTotalElements] = useState(0);
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
+    const [formErrors, setFormErrors] = useState({});
     const [formData, setFormData] = useState({
         productName: '',
         description: '',
@@ -48,7 +57,7 @@ const ProductManagement = () => {
 
     useEffect(() => {
         loadProducts();
-    }, [currentPage, searchTerm]);
+    }, [currentPage, searchTerm, selectedCategory, priceRange, sortBy, sortDirection, statusFilter]);
 
     const loadProducts = async () => {
         try {
@@ -57,14 +66,24 @@ const ProductManagement = () => {
                 page: currentPage,
                 size: 10,
                 searchTerm: searchTerm || undefined,
+                categoryId: selectedCategory === 'all' ? undefined : parseInt(selectedCategory),
+                minPrice: priceRange.min || undefined,
+                maxPrice: priceRange.max || undefined,
+                sortBy: sortBy,
+                sortDirection: sortDirection,
+                isActive: statusFilter === 'all' ? undefined : statusFilter === 'active'
             };
-            // Use filtering for admin too, to support search across all products
             const response = await getProductsWithFilters(filters);
             console.log(response.data);
             setProducts(response.data?.content || []);
             setTotalPages(response.data?.totalPages || 0);
+            setTotalElements(response.data?.totalElements || 0);
         } catch (error) {
             console.error('Error loading products:', error);
+            // Only show error to user if it's not just an empty result
+            if (error.message && !error.message.includes('No products found')) {
+                showErrorAlert(error, 'Failed to load products');
+            }
         } finally {
             setLoading(false);
         }
@@ -77,11 +96,14 @@ const ProductManagement = () => {
             
         } catch (error) {
             console.error('Error loading categories:', error);
+            showErrorAlert(error, 'Failed to load categories');
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setFormErrors({});
+        
         try {
             const productData = {
                 ...formData,
@@ -93,15 +115,29 @@ const ProductManagement = () => {
 
             if (editingProduct) {
                 await updateProduct(editingProduct.productId, productData);
+                alert('Product updated successfully!');
             } else {
                 await createProduct(productData);
+                alert('Product created successfully!');
             }
 
             setShowModal(false);
             resetForm();
             loadProducts();
         } catch (error) {
-            alert(error.message);
+            console.error('Error saving product:', error);
+            
+            // Handle validation errors
+            if (isValidationError(error)) {
+                const fieldErrors = extractFieldErrors(error);
+                setFormErrors(fieldErrors);
+                
+                if (Object.keys(fieldErrors).length === 0) {
+                    showErrorAlert(error, 'Please check the form for errors');
+                }
+            } else {
+                showErrorAlert(error, editingProduct ? 'Failed to update product' : 'Failed to create product');
+            }
         }
     };
 
@@ -125,9 +161,11 @@ const ProductManagement = () => {
         if (window.confirm('Are you sure you want to delete this product?')) {
             try {
                 await deleteProduct(id);
+                alert('Product deleted successfully!');
                 loadProducts();
             } catch (error) {
-                alert(error.message);
+                console.error('Error deleting product:', error);
+                showErrorAlert(error, 'Failed to delete product');
             }
         }
     };
@@ -136,12 +174,15 @@ const ProductManagement = () => {
         try {
             if (product.active) {
                 await deactivateProduct(product.productId);
+                alert('Product deactivated successfully!');
             } else {
                 await activateProduct(product.productId);
+                alert('Product activated successfully!');
             }
             loadProducts();
         } catch (error) {
-            alert(error.message);
+            console.error('Error toggling product status:', error);
+            showErrorAlert(error, `Failed to ${product.active ? 'deactivate' : 'activate'} product`);
         }
     };
 
@@ -157,7 +198,25 @@ const ProductManagement = () => {
             initialStock: '',
             imageUrl: '',
         });
+        setFormErrors({});
         setEditingProduct(null);
+    };
+
+    const handleSortChange = (value) => {
+        const [field, direction] = value.split('-');
+        setSortBy(field);
+        setSortDirection(direction.toUpperCase());
+        setCurrentPage(0);
+    };
+
+    const handleClearFilters = () => {
+        setSearchTerm('');
+        setSelectedCategory('all');
+        setPriceRange({ min: '', max: '' });
+        setSortBy('product_id');
+        setSortDirection('ASC');
+        setStatusFilter('all');
+        setCurrentPage(0);
     };
 
     const displayedProducts = products;
@@ -169,7 +228,7 @@ const ProductManagement = () => {
             <div className="flex justify-between items-center mb-6">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900">Product Management</h1>
-                    <p className="text-gray-600 mt-1">Manage your product catalog</p>
+                    <p className="text-gray-600 mt-1">Manage your product catalog - {totalElements} products</p>
                 </div>
                 <button
                     onClick={() => {
@@ -184,17 +243,103 @@ const ProductManagement = () => {
             </div>
 
             {/* Search and Filter */}
-            <div className="card p-4 mb-6">
-                <div className="flex gap-4">
+            <div className="card p-6 mb-6">
+                <div className="flex flex-col lg:flex-row gap-4 mb-4">
+                    {/* Search */}
                     <div className="flex-1 relative">
+                        <label className="text-sm font-semibold text-gray-700 ml-1 block mb-1">Search Products</label>
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                         <input
                             type="text"
                             placeholder="Search products..."
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="input-field pl-10"
+                            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(0); }}
+                            className="w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-primary-500 text-sm"
                         />
+                    </div>
+                    
+                    {/* Category Filter */}
+                    <div className="min-w-[200px]">
+                        <label className="text-sm font-semibold text-gray-700 ml-1 block mb-1">Category</label>
+                        <div className="relative">
+                            <select
+                                value={selectedCategory}
+                                onChange={(e) => { setSelectedCategory(e.target.value); setCurrentPage(0); }}
+                                className="w-full appearance-none pl-4 pr-10 py-2 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-primary-500 text-sm"
+                            >
+                                <option value="all">All Categories</option>
+                                {categories.map(cat => (
+                                    <option key={cat.categoryId} value={cat.categoryId}>{cat.categoryName}</option>
+                                ))}
+                            </select>
+                            <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+                        </div>
+                    </div>
+                    
+                    {/* Status Filter */}
+                    <div className="min-w-[150px]">
+                        <label className="text-sm font-semibold text-gray-700 ml-1 block mb-1">Status</label>
+                        <select
+                            value={statusFilter}
+                            onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(0); }}
+                            className="w-full appearance-none pl-4 pr-10 py-2 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-primary-500 text-sm"
+                        >
+                            <option value="all">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div className="flex flex-col lg:flex-row gap-4">
+                    {/* Price Range */}
+                    <div className="flex-1">
+                        <label className="text-sm font-semibold text-gray-700 ml-1 block mb-1">Price Range</label>
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="number"
+                                placeholder="Min Price"
+                                value={priceRange.min}
+                                onChange={(e) => { setPriceRange({ ...priceRange, min: e.target.value }); setCurrentPage(0); }}
+                                className="w-full px-3 py-2 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-primary-500 text-sm"
+                            />
+                            <span className="text-gray-400">-</span>
+                            <input
+                                type="number"
+                                placeholder="Max Price"
+                                value={priceRange.max}
+                                onChange={(e) => { setPriceRange({ ...priceRange, max: e.target.value }); setCurrentPage(0); }}
+                                className="w-full px-3 py-2 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-primary-500 text-sm"
+                            />
+                        </div>
+                    </div>
+                    
+                    {/* Sort By */}
+                    <div className="min-w-[200px]">
+                        <label className="text-sm font-semibold text-gray-700 ml-1 block mb-1">Sort By</label>
+                        <select
+                            onChange={(e) => handleSortChange(e.target.value)}
+                            value={`${sortBy}-${sortDirection.toLowerCase()}`}
+                            className="w-full appearance-none pl-4 pr-10 py-2 bg-gray-50 border-none rounded-lg focus:ring-2 focus:ring-primary-500 text-sm"
+                        >
+                            <option value="product_id-asc">ID: Low to High</option>
+                            <option value="product_id-desc">ID: High to Low</option>
+                            <option value="product_name-asc">Name: A to Z</option>
+                            <option value="product_name-desc">Name: Z to A</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="category_id-asc">Category: A to Z</option>
+                        </select>
+                    </div>
+                    
+                    {/* Clear Filters */}
+                    <div className="flex items-end">
+                        <button
+                            onClick={handleClearFilters}
+                            className="px-4 py-2 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                        >
+                            Clear Filters
+                        </button>
                     </div>
                 </div>
             </div>
