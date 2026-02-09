@@ -74,6 +74,7 @@ const ProductManagement = () => {
         try {
             const response = await getAllCategories();
             setCategories(response.data || []);
+            
         } catch (error) {
             console.error('Error loading categories:', error);
         }
@@ -251,7 +252,7 @@ const ProductManagement = () => {
                                                     onError={(e) => { e.target.src = 'https://via.placeholder.com/40'; }}
                                                 />
                                                 <div>
-                                                    <div className="text-sm font-medium text-gray-900">{product.name}</div>
+                                                    <div className="text-sm font-medium text-gray-900">{product.productName}</div>
                                                     <div className="text-sm text-gray-500 truncate max-w-xs">
                                                         {product.description}
                                                     </div>

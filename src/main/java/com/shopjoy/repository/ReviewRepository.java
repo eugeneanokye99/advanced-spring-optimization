@@ -20,7 +20,7 @@ import java.util.Optional;
  */
 @Repository
 @Transactional(readOnly = true)
-public class ReviewRepository implements GenericRepository<Review, Integer> {
+public class ReviewRepository implements IReviewRepository {
 
     private final JdbcTemplate jdbcTemplate;
 

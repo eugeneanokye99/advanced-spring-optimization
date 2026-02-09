@@ -54,13 +54,7 @@ public class AspectUtils {
         return false;
     }
     
-    public static String generateCacheKey(JoinPoint joinPoint) {
-        String className = joinPoint.getTarget().getClass().getSimpleName();
-        String methodName = joinPoint.getSignature().getName();
-        String args = sanitizeArgs(joinPoint.getArgs());
-        return String.format("%s.%s:%s", className, methodName, args.hashCode());
-    }
-    
+
     public static String extractMethodSignature(JoinPoint joinPoint) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         String className = joinPoint.getTarget().getClass().getSimpleName();

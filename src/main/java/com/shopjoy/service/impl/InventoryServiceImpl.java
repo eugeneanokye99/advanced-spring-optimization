@@ -10,8 +10,7 @@ import com.shopjoy.exception.ValidationException;
 import com.shopjoy.repository.InventoryRepository;
 import com.shopjoy.repository.ProductRepository;
 import com.shopjoy.service.InventoryService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +26,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class InventoryServiceImpl implements InventoryService {
 
-    private static final Logger logger = LoggerFactory.getLogger(InventoryServiceImpl.class);
+
 
     private final InventoryRepository inventoryRepository;
     private final ProductRepository productRepository;
@@ -46,8 +45,6 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     @Transactional()
     public InventoryResponse createInventory(Integer productId, int initialStock, int reorderLevel) {
-        logger.info("Creating inventory for product ID: {}", productId);
-
         Inventory inventory = new Inventory();
         inventory.setProductId(productId);
         inventory.setQuantityInStock(initialStock);
@@ -64,7 +61,6 @@ public class InventoryServiceImpl implements InventoryService {
         inventory.setUpdatedAt(LocalDateTime.now());
 
         Inventory createdInventory = inventoryRepository.save(inventory);
-        logger.info("Successfully created inventory with ID: {}", createdInventory.getInventoryId());
 
         return convertToResponse(createdInventory);
     }
@@ -99,8 +95,6 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     @Transactional()
     public InventoryResponse updateStock(Integer productId, int newQuantity) {
-        logger.info("Updating stock for product ID: {} to {}", productId, newQuantity);
-
         if (newQuantity < 0) {
             throw new ValidationException("quantityInStock", "cannot be negative");
         }
@@ -113,15 +107,12 @@ public class InventoryServiceImpl implements InventoryService {
         inventory.setQuantityInStock(newQuantity);
         inventory.setUpdatedAt(LocalDateTime.now());
 
-        logger.info("Successfully updated stock for product ID: {}", productId);
         return convertToResponse(inventory);
     }
 
     @Override
     @Transactional()
     public InventoryResponse addStock(Integer productId, int quantity) {
-        logger.info("Adding {} units to product ID: {}", quantity, productId);
-
         if (quantity <= 0) {
             throw new ValidationException("quantity", "must be positive");
         }
@@ -135,15 +126,12 @@ public class InventoryServiceImpl implements InventoryService {
         inventory.setLastRestocked(LocalDateTime.now());
         inventory.setUpdatedAt(LocalDateTime.now());
 
-        logger.info("Successfully added {} units to product ID: {}", quantity, productId);
         return convertToResponse(inventory);
     }
 
     @Override
     @Transactional()
     public InventoryResponse removeStock(Integer productId, int quantity) {
-        logger.info("Removing {} units from product ID: {}", quantity, productId);
-
         if (quantity <= 0) {
             throw new ValidationException("quantity", "must be positive");
         }
@@ -163,15 +151,12 @@ public class InventoryServiceImpl implements InventoryService {
         inventory.setQuantityInStock(inventory.getQuantityInStock() - quantity);
         inventory.setUpdatedAt(LocalDateTime.now());
 
-        logger.info("Successfully removed {} units from product ID: {}", quantity, productId);
         return convertToResponse(inventory);
     }
 
     @Override
     @Transactional()
     public void reserveStock(Integer productId, int quantity) {
-        logger.debug("Reserving {} units of product ID: {}", quantity, productId);
-
         if (quantity <= 0) {
             throw new ValidationException("quantity", "must be positive");
         }
@@ -187,20 +172,16 @@ public class InventoryServiceImpl implements InventoryService {
         }
 
         inventoryRepository.decrementStock(productId, quantity);
-        logger.debug("Reserved {} units of product ID: {}", quantity, productId);
     }
 
     @Override
     @Transactional()
     public void releaseStock(Integer productId, int quantity) {
-        logger.debug("Releasing {} units of product ID: {}", quantity, productId);
-
         if (quantity <= 0) {
             throw new ValidationException("quantity", "must be positive");
         }
 
         inventoryRepository.incrementStock(productId, quantity);
-        logger.debug("Released {} units of product ID: {}", quantity, productId);
     }
 
     @Override
@@ -221,8 +202,6 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     @Transactional()
     public InventoryResponse updateReorderLevel(Integer productId, int reorderLevel) {
-        logger.info("Updating reorder level for product ID: {} to {}", productId, reorderLevel);
-
         if (reorderLevel < 0) {
             throw new ValidationException("reorderLevel", "cannot be negative");
         }
@@ -233,7 +212,6 @@ public class InventoryServiceImpl implements InventoryService {
         inventory.setUpdatedAt(LocalDateTime.now());
 
         Inventory updatedInventory = inventoryRepository.update(inventory);
-        logger.info("Successfully updated reorder level for product ID: {}", productId);
 
         return convertToResponse(updatedInventory);
     }
@@ -263,8 +241,7 @@ public class InventoryServiceImpl implements InventoryService {
                     .map(p -> p.getProductName())
                     .orElse("Unknown Product");
         } catch (Exception e) {
-            logger.warn("Could not fetch product name for inventory {}: {}", inventory.getInventoryId(),
-                    e.getMessage());
+            // Ignore product fetch errors
         }
         return InventoryMapper.toInventoryResponse(inventory, productName);
     }

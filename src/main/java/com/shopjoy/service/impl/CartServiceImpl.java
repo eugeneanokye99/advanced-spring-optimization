@@ -12,8 +12,7 @@ import com.shopjoy.repository.CartItemRepository;
 import com.shopjoy.service.CartService;
 import com.shopjoy.service.InventoryService;
 import com.shopjoy.service.ProductService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +28,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class CartServiceImpl implements CartService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CartServiceImpl.class);
+
 
     private final CartItemRepository cartItemRepository;
     private final ProductService productService;
@@ -53,8 +52,6 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional()
     public CartItemResponse addToCart(AddToCartRequest request) {
-        logger.info("Adding product {} to cart for user {}", request.getProductId(), request.getUserId());
-
         if (request.getQuantity() <= 0) {
             throw new ValidationException("quantity", "must be positive");
         }
@@ -95,8 +92,6 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional()
     public CartItemResponse updateCartItemQuantity(Integer cartItemId, int newQuantity) {
-        logger.info("Updating cart item {} quantity to {}", cartItemId, newQuantity);
-
         if (newQuantity <= 0) {
             throw new ValidationException("quantity", "must be positive");
         }
@@ -116,8 +111,6 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional()
     public void removeFromCart(Integer cartItemId) {
-        logger.info("Removing cart item {}", cartItemId);
-
         if (!cartItemRepository.existsById(cartItemId)) {
             throw new ResourceNotFoundException("CartItem", "id", cartItemId);
         }
@@ -136,7 +129,6 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional()
     public void clearCart(Integer userId) {
-        logger.info("Clearing cart for user {}", userId);
         cartItemRepository.clearCart(userId);
     }
 
@@ -168,8 +160,7 @@ public class CartServiceImpl implements CartService {
             productName = product.getProductName();
             price = product.getPrice();
         } catch (Exception e) {
-            logger.warn("Could not fetch product details for cart item {}: {}", cartItem.getCartItemId(),
-                    e.getMessage());
+            // Ignore product fetch errors
         }
         return CartItemMapper.toCartItemResponse(cartItem, productName, price);
     }

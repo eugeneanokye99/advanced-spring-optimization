@@ -1,9 +1,11 @@
 package com.shopjoy.service;
 
 import com.shopjoy.dto.request.CreateOrderRequest;
+import com.shopjoy.dto.request.UpdateOrderRequest;
 import com.shopjoy.dto.response.OrderResponse;
 import com.shopjoy.entity.OrderStatus;
 import com.shopjoy.exception.InsufficientStockException;
+import com.shopjoy.exception.InvalidOrderStateException;
 import com.shopjoy.exception.ResourceNotFoundException;
 import com.shopjoy.exception.ValidationException;
 
@@ -128,10 +130,9 @@ public interface OrderService {
      */
     List<OrderResponse> getPendingOrders();
 
-    /**
-     * Retrieves all orders in the system.
-     * 
-     * @return list of all order responses
-     */
     List<OrderResponse> getAllOrders();
+
+    OrderResponse updateOrder(Integer orderId, UpdateOrderRequest request);
+
+    void deleteOrder(Integer orderId);
 }

@@ -11,8 +11,7 @@ import com.shopjoy.exception.ValidationException;
 import com.shopjoy.repository.CategoryRepository;
 import com.shopjoy.service.CategoryService;
 import com.shopjoy.service.ProductService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +26,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class CategoryServiceImpl implements CategoryService {
     
-    private static final Logger logger = LoggerFactory.getLogger(CategoryServiceImpl.class);
+
     
     private final CategoryRepository categoryRepository;
     private final ProductService productService;
@@ -46,8 +45,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional()
     public CategoryResponse createCategory(CreateCategoryRequest request) {
-        logger.info("Creating new category: {}", request.getCategoryName());
-        
         Category category = CategoryMapper.toCategory(request);
         
         validateCategoryData(category);
@@ -60,7 +57,6 @@ public class CategoryServiceImpl implements CategoryService {
         category.setCreatedAt(LocalDateTime.now());
         Category createdCategory = categoryRepository.save(category);
         
-        logger.info("Successfully created category with ID: {}", createdCategory.getCategoryId());
         return CategoryMapper.toCategoryResponse(createdCategory);
     }
     
@@ -106,8 +102,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional()
     public CategoryResponse updateCategory(Integer categoryId, UpdateCategoryRequest request) {
-        logger.info("Updating category ID: {}", categoryId);
-        
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
         
@@ -125,7 +119,6 @@ public class CategoryServiceImpl implements CategoryService {
         }
         
         Category updatedCategory = categoryRepository.update(category);
-        logger.info("Successfully updated category ID: {}", categoryId);
         
         return CategoryMapper.toCategoryResponse(updatedCategory);
     }
@@ -133,8 +126,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional()
     public void deleteCategory(Integer categoryId) {
-        logger.info("Deleting category ID: {}", categoryId);
-        
         if (!categoryRepository.existsById(categoryId)) {
             throw new ResourceNotFoundException("Category", "id", categoryId);
         }
@@ -150,14 +141,11 @@ public class CategoryServiceImpl implements CategoryService {
         }
         
         categoryRepository.delete(categoryId);
-        logger.info("Successfully deleted category ID: {}", categoryId);
     }
     
     @Override
     @Transactional()
     public CategoryResponse moveCategory(Integer categoryId, Integer newParentId) {
-        logger.info("Moving category {} to parent {}", categoryId, newParentId);
-        
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
         

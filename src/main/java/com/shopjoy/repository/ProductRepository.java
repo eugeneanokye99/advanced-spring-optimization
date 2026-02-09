@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @Repository
 @Transactional(readOnly = true)
-public class ProductRepository implements GenericRepository<Product, Integer> {
+public class ProductRepository implements IProductRepository {
 
     private final JdbcTemplate jdbcTemplate;
 

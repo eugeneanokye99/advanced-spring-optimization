@@ -14,8 +14,7 @@ import com.shopjoy.exception.ValidationException;
 import com.shopjoy.repository.UserRepository;
 import com.shopjoy.service.UserService;
 import org.mindrot.jbcrypt.BCrypt;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +30,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
 
     private final UserRepository userRepository;
 
@@ -48,17 +47,13 @@ public class UserServiceImpl implements UserService {
     @Transactional()
     @Auditable(action = "USER_REGISTRATION", description = "Registering new user")
     public UserResponse registerUser(CreateUserRequest request) {
-        logger.info("Attempting to register new user with username: {}", request.getUsername());
-
         validateCreateUserRequest(request);
 
         if (userRepository.usernameExists(request.getUsername())) {
-            logger.warn("Registration failed: Username already exists: {}", request.getUsername());
             throw new DuplicateResourceException("User", "username", request.getUsername());
         }
 
         if (userRepository.emailExists(request.getEmail())) {
-            logger.warn("Registration failed: Email already exists: {}", request.getEmail());
             throw new DuplicateResourceException("User", "email", request.getEmail());
         }
 
@@ -67,15 +62,12 @@ public class UserServiceImpl implements UserService {
         user.setUpdatedAt(LocalDateTime.now());
 
         User createdUser = userRepository.save(user);
-        logger.info("Successfully registered user with ID: {}", createdUser.getUserId());
 
         return UserMapper.toUserResponse(createdUser);
     }
 
     @Override
     public UserResponse authenticateUser(String username, String password) {
-        logger.info("Authentication attempt for username: {}", username);
-
         if (username == null || username.trim().isEmpty()) {
             throw new ValidationException("Username cannot be empty");
         }
@@ -87,11 +79,9 @@ public class UserServiceImpl implements UserService {
         Optional<User> userOpt = userRepository.authenticate(username, password);
 
         if (userOpt.isEmpty()) {
-            logger.warn("Authentication failed for username: {}", username);
             throw new AuthenticationException();
         }
 
-        logger.info("Successfully authenticated user: {}", username);
         return UserMapper.toUserResponse(userOpt.get());
     }
 
@@ -134,8 +124,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional()
     public UserResponse updateUserProfile(Integer userId, UpdateUserRequest request) {
-        logger.info("Updating profile for user ID: {}", userId);
-
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
@@ -152,7 +140,6 @@ public class UserServiceImpl implements UserService {
         existingUser.setUpdatedAt(LocalDateTime.now());
 
         User updatedUser = userRepository.update(existingUser);
-        logger.info("Successfully updated user profile for ID: {}", userId);
 
         return UserMapper.toUserResponse(updatedUser);
     }
@@ -160,33 +147,26 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional()
     public void changePassword(Integer userId, String oldPassword, String newPassword) {
-        logger.info("Password change requested for user ID: {}", userId);
-
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
         if (!BCrypt.checkpw(oldPassword, user.getPasswordHash())) {
-            logger.warn("Password change failed: Incorrect old password for user ID: {}", userId);
             throw new AuthenticationException("Current password is incorrect");
         }
 
         validatePassword(newPassword);
 
         userRepository.changePassword(userId, newPassword);
-        logger.info("Successfully changed password for user ID: {}", userId);
     }
 
     @Override
     @Transactional()
     public void deleteUser(Integer userId) {
-        logger.info("Deleting user with ID: {}", userId);
-
         if (!userRepository.existsById(userId)) {
             throw new ResourceNotFoundException("User", "id", userId);
         }
 
         userRepository.delete(userId);
-        logger.info("Successfully deleted user with ID: {}", userId);
     }
 
     @Override

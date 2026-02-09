@@ -21,7 +21,7 @@ import java.util.Optional;
  */
 @Repository
 @Transactional(readOnly = true)
-public class AddressRepository implements GenericRepository<Address, Integer> {
+public class AddressRepository implements IAddressRepository {
 
     private final JdbcTemplate jdbcTemplate;
 

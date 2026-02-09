@@ -22,7 +22,7 @@ import java.util.Optional;
  */
 @Repository
 @Transactional(readOnly = true)
-public class UserRepository implements GenericRepository<User, Integer> {
+public class UserRepository implements IUserRepository {
 
     private final JdbcTemplate jdbcTemplate;
 

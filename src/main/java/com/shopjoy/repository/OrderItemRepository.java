@@ -20,7 +20,7 @@ import java.util.Optional;
  */
 @Repository
 @Transactional(readOnly = true)
-public class OrderItemRepository implements GenericRepository<OrderItem, Integer> {
+public class OrderItemRepository implements IOrderItemRepository {
 
     private final JdbcTemplate jdbcTemplate;
 

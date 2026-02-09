@@ -37,3 +37,9 @@ export const getPendingOrders = () => api.get('/orders/pending');
 
 // GET /api/v1/orders - Get all orders
 export const getAllOrders = () => api.get('/orders');
+
+// PUT /api/v1/orders/{id} - Update order (PENDING only)
+export const updateOrder = (id, orderData) => api.put(`/orders/${id}`, orderData);
+
+// DELETE /api/v1/orders/{id} - Delete order (PENDING only)
+export const deleteOrder = (id) => api.delete(`/orders/${id}`);

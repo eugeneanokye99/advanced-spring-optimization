@@ -20,7 +20,7 @@ import java.util.Optional;
  */
 @Repository
 @Transactional(readOnly = true)
-public class CategoryRepository implements GenericRepository<Category, Integer> {
+public class CategoryRepository implements ICategoryRepository {
 
     private final JdbcTemplate jdbcTemplate;
 

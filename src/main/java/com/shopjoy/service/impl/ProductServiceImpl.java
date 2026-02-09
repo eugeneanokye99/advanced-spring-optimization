@@ -12,8 +12,7 @@ import com.shopjoy.exception.ValidationException;
 import com.shopjoy.repository.ProductRepository;
 import com.shopjoy.service.ProductService;
 import com.shopjoy.util.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +29,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class ProductServiceImpl implements ProductService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
+
 
     private final ProductRepository productRepository;
     private final com.shopjoy.repository.InventoryRepository inventoryRepository;
@@ -57,8 +56,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional()
     public ProductResponse createProduct(CreateProductRequest request) {
-        logger.info("Creating new product: {}", request.getProductName());
-
         Product product = ProductMapper.toProduct(request);
         product.setCreatedAt(LocalDateTime.now());
         product.setUpdatedAt(LocalDateTime.now());
@@ -76,8 +73,6 @@ public class ProductServiceImpl implements ProductService {
         inventory.setLastRestocked(LocalDateTime.now());
         inventory.setUpdatedAt(LocalDateTime.now());
         inventoryRepository.save(inventory);
-
-        logger.info("Successfully created product with ID: {} and initial inventory", createdProduct.getProductId());
 
         return convertToResponse(createdProduct);
     }
@@ -140,8 +135,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional()
     public ProductResponse updateProduct(Integer productId, UpdateProductRequest request) {
-        logger.info("Updating product ID: {}", productId);
-
         Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
 
@@ -151,7 +144,6 @@ public class ProductServiceImpl implements ProductService {
         validateProductData(existingProduct);
 
         Product updatedProduct = productRepository.update(existingProduct);
-        logger.info("Successfully updated product ID: {}", productId);
 
         return convertToResponse(updatedProduct);
     }
@@ -160,8 +152,6 @@ public class ProductServiceImpl implements ProductService {
     @Transactional()
     @Auditable(action = "UPDATE_PRICE", description = "Updating product price")
     public ProductResponse updateProductPrice(Integer productId, double newPrice) {
-        logger.info("Updating price for product ID: {} to {}", productId, newPrice);
-
         if (newPrice < 0) {
             throw new ValidationException("price", "must not be negative");
         }
@@ -172,7 +162,6 @@ public class ProductServiceImpl implements ProductService {
         product.setUpdatedAt(LocalDateTime.now());
 
         Product updatedProduct = productRepository.update(product);
-        logger.info("Successfully updated price for product ID: {}", productId);
 
         return convertToResponse(updatedProduct);
     }
@@ -180,8 +169,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional()
     public ProductResponse activateProduct(Integer productId) {
-        logger.info("Activating product ID: {}", productId);
-
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
         product.setActive(true);
@@ -193,8 +180,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional()
     public ProductResponse deactivateProduct(Integer productId) {
-        logger.info("Deactivating product ID: {}", productId);
-
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
         product.setActive(false);
@@ -206,14 +191,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional()
     public void deleteProduct(Integer productId) {
-        logger.info("Deleting product ID: {}", productId);
-
         if (!productRepository.existsById(productId)) {
             throw new ResourceNotFoundException("Product", "id", productId);
         }
 
         productRepository.delete(productId);
-        logger.info("Successfully deleted product ID: {}", productId);
     }
 
     @Override
@@ -231,9 +213,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductResponse> getProductsPaginated(Pageable pageable, String sortBy, String sortDirection) {
-        logger.info("Fetching products with pagination: page={}, size={}, sortBy={}, sortDirection={}",
-                pageable.getPage(), pageable.getSize(), sortBy, sortDirection);
-
         Page<Product> productPage = productRepository.findAllPaginated(pageable, sortBy, sortDirection);
 
         List<ProductResponse> responseList = productPage.getContent().stream()
@@ -249,9 +228,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductResponse> searchProductsPaginated(String keyword, Pageable pageable) {
-        logger.info("Searching products with term: '{}', page={}, size={}",
-                keyword, pageable.getPage(), pageable.getSize());
-
         if (keyword == null || keyword.trim().isEmpty()) {
             throw new ValidationException("Search keyword cannot be empty");
         }
@@ -272,11 +248,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<ProductResponse> getProductsWithFilters(ProductFilter filter, Pageable pageable, String sortBy,
             String sortDirection, String algorithm) {
-        logger.info(
-                "Fetching products with filters: minPrice={}, maxPrice={}, categoryId={}, searchTerm={}, page={}, size={}, algorithm={}",
-                filter.getMinPrice(), filter.getMaxPrice(), filter.getCategoryId(),
-                filter.getSearchTerm(), pageable.getPage(), pageable.getSize(), algorithm);
-
         if (filter.getMinPrice() != null && filter.getMaxPrice() != null &&
                 filter.getMinPrice() > filter.getMaxPrice()) {
             throw new ValidationException("minPrice", "must be less than or equal to maxPrice");
@@ -333,16 +304,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductResponse> getProductsSortedWithQuickSort(String sortBy, boolean ascending) {
-        logger.info("Fetching products sorted with QuickSort: sortBy={}, ascending={}", sortBy, ascending);
-
         List<Product> products = new ArrayList<>(productRepository.findAll());
 
         String direction = ascending ? "ASC" : "DESC";
         Comparator<Product> comparator = ProductComparators.getComparator(sortBy, direction);
 
         SortingAlgorithms.quickSort(products, comparator);
-
-        logger.info("Successfully sorted {} products using QuickSort", products.size());
 
         return products.stream()
                 .map(this::convertToResponse)
@@ -351,16 +318,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductResponse> getProductsSortedWithMergeSort(String sortBy, boolean ascending) {
-        logger.info("Fetching products sorted with MergeSort: sortBy={}, ascending={}", sortBy, ascending);
-
         List<Product> products = new ArrayList<>(productRepository.findAll());
 
         String direction = ascending ? "ASC" : "DESC";
         Comparator<Product> comparator = ProductComparators.getComparator(sortBy, direction);
 
         SortingAlgorithms.mergeSort(products, comparator);
-
-        logger.info("Successfully sorted {} products using MergeSort", products.size());
 
         return products.stream()
                 .map(this::convertToResponse)
@@ -369,8 +332,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse searchProductByIdWithBinarySearch(Integer productId) {
-        logger.info("Searching for product ID: {} using Binary Search", productId);
-
         if (productId == null || productId <= 0) {
             throw new ValidationException("productId", "must be a positive integer");
         }
@@ -390,22 +351,16 @@ public class ProductServiceImpl implements ProductService {
         }
 
         Product product = allProducts.get(index);
-        logger.info("Found product using Binary Search: {}", product.getProductName());
 
         return convertToResponse(product);
     }
 
     @Override
     public List<ProductResponse> findAllSorted(String sortBy, String sortDirection, String algorithm) {
-        logger.info("Fetching products sorted by {} {} using {}", sortBy, sortDirection, algorithm);
-
         List<Product> products = new ArrayList<>(productRepository.findAll());
         Comparator<Product> comparator = ProductComparators.getComparator(sortBy, sortDirection);
 
         switch (algorithm.toUpperCase()) {
-            case "QUICKSORT":
-                SortingAlgorithms.quickSort(products, comparator);
-                break;
             case "MERGESORT":
                 SortingAlgorithms.mergeSort(products, comparator);
                 break;
@@ -436,7 +391,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductResponse> getRecentlyAddedProducts(int limit) {
-        logger.info("Fetching {} recently added products", limit);
+
         return productRepository.findRecentlyAdded(limit).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
@@ -467,9 +422,6 @@ public class ProductServiceImpl implements ProductService {
             throw new ValidationException("costPrice", "must not be negative");
         }
 
-        if (product.getCostPrice() > product.getPrice()) {
-            logger.warn("Cost price ({}) is higher than selling price ({}) for product: {}",
-                    product.getCostPrice(), product.getPrice(), product.getProductName());
-        }
+
     }
 }

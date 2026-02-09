@@ -23,7 +23,7 @@ import java.util.Optional;
  */
 @Repository
 @Transactional(readOnly = true)
-public class OrderRepository implements GenericRepository<Order, Integer> {
+public class OrderRepository implements IOrderRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -100,16 +100,22 @@ public class OrderRepository implements GenericRepository<Order, Integer> {
         return order;
     }
 
-    @Override
-    @Transactional()
-    public Order update(Order order) {
-        String sql = "UPDATE orders SET status = ?, payment_status = ?, notes = ? WHERE order_id = ?";
-        jdbcTemplate.update(sql,
-                order.getStatus() != null ? order.getStatus().toString().toLowerCase() : null,
-                order.getPaymentStatus() != null ? order.getPaymentStatus().toString().toLowerCase() : null,
-                order.getNotes(), order.getOrderId());
-        return order;
-    }
+@Override
+@Transactional()
+public Order update(Order order) {
+    String sql = "UPDATE orders SET status = ?, payment_status = ?, payment_method = ?, " +
+                 "shipping_address = ?, notes = ?, total_amount = ?, updated_at = ? WHERE order_id = ?";
+    jdbcTemplate.update(sql,
+            order.getStatus() != null ? order.getStatus().toString().toLowerCase() : null,
+            order.getPaymentStatus() != null ? order.getPaymentStatus().toString().toLowerCase() : null,
+            order.getPaymentMethod(),
+            order.getShippingAddress(),
+            order.getNotes(),
+            order.getTotalAmount(),
+            LocalDateTime.now(),
+            order.getOrderId());
+    return order;
+}
 
     @Override
     @Transactional()

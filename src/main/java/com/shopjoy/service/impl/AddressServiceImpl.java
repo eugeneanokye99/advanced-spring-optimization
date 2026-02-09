@@ -8,8 +8,7 @@ import com.shopjoy.entity.Address;
 import com.shopjoy.exception.ResourceNotFoundException;
 import com.shopjoy.repository.AddressRepository;
 import com.shopjoy.service.AddressService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +23,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class AddressServiceImpl implements AddressService {
     
-    private static final Logger logger = LoggerFactory.getLogger(AddressServiceImpl.class);
+
     
     private final AddressRepository addressRepository;
 
@@ -40,8 +39,6 @@ public class AddressServiceImpl implements AddressService {
     @Override
     @Transactional()
     public AddressResponse createAddress(CreateAddressRequest request) {
-        logger.info("Creating new address for user {}", request.getUserId());
-        
         Address address = AddressMapper.toAddress(request);
         address.setCreatedAt(LocalDateTime.now());
         
@@ -58,7 +55,7 @@ public class AddressServiceImpl implements AddressService {
     
     @Override
     public List<AddressResponse> getAddressesByUser(Integer userId) {
-        logger.info("Fetching addresses for user {}", userId);
+
         List<Address> addresses = addressRepository.findByUserId(userId);
         return addresses.stream()
                 .map(AddressMapper::toAddressResponse)
@@ -68,8 +65,6 @@ public class AddressServiceImpl implements AddressService {
     @Override
     @Transactional()
     public AddressResponse updateAddress(Integer addressId, UpdateAddressRequest request) {
-        logger.info("Updating address ID: {}", addressId);
-        
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "id", addressId));
         
@@ -82,8 +77,6 @@ public class AddressServiceImpl implements AddressService {
     @Override
     @Transactional()
     public void deleteAddress(Integer addressId) {
-        logger.info("Deleting address ID: {}", addressId);
-        
         if (!addressRepository.existsById(addressId)) {
             throw new ResourceNotFoundException("Address", "id", addressId);
         }
@@ -94,8 +87,6 @@ public class AddressServiceImpl implements AddressService {
     @Override
     @Transactional()
     public AddressResponse setDefaultAddress(Integer addressId) {
-        logger.info("Setting default address {}", addressId);
-        
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "id", addressId));
         

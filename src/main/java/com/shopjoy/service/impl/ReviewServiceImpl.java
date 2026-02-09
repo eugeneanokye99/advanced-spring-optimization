@@ -13,8 +13,7 @@ import com.shopjoy.repository.ProductRepository;
 import com.shopjoy.repository.ReviewRepository;
 import com.shopjoy.repository.UserRepository;
 import com.shopjoy.service.ReviewService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +28,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class ReviewServiceImpl implements ReviewService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ReviewServiceImpl.class);
+
 
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
@@ -67,9 +66,6 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional()
     public ReviewResponse createReview(CreateReviewRequest request) {
-        logger.info("Creating review for product {} by user {}",
-                request.getProductId(), request.getUserId());
-
         Review review = ReviewMapper.toReview(request);
         validateReviewData(review);
 
@@ -81,15 +77,13 @@ public class ReviewServiceImpl implements ReviewService {
                 review.getUserId(), review.getProductId());
 
         if (!hasPurchased) {
-            logger.warn("User {} attempting to review product {} without purchase",
-                    review.getUserId(), review.getProductId());
+            // User reviewing without purchase - allowed but noted
         }
 
         review.setCreatedAt(LocalDateTime.now());
         review.setHelpfulCount(0);
 
         Review createdReview = reviewRepository.save(review);
-        logger.info("Successfully created review ID: {}", createdReview.getReviewId());
 
         return convertToResponse(createdReview);
     }
@@ -118,8 +112,6 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional()
     public ReviewResponse updateReview(Integer reviewId, UpdateReviewRequest request) {
-        logger.info("Updating review ID: {}", reviewId);
-
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ResourceNotFoundException("Review", "id", reviewId));
 
@@ -133,8 +125,6 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional()
     public void deleteReview(Integer reviewId) {
-        logger.info("Deleting review ID: {}", reviewId);
-
         if (!reviewRepository.existsById(reviewId)) {
             throw new ResourceNotFoundException("Review", "id", reviewId);
         }
@@ -161,8 +151,6 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional()
     public ReviewResponse markReviewAsHelpful(Integer reviewId) {
-        logger.debug("Incrementing helpful count for review {}", reviewId);
-
         if (!reviewRepository.existsById(reviewId)) {
             throw new ResourceNotFoundException("Review", "id", reviewId);
         }

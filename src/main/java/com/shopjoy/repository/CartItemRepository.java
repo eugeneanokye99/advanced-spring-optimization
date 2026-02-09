@@ -19,7 +19,7 @@ import java.util.Optional;
  */
 @Repository
 @Transactional(readOnly = true)
-public class CartItemRepository implements GenericRepository<CartItem, Integer> {
+public class CartItemRepository implements ICartItemRepository {
 
     private final JdbcTemplate jdbcTemplate;
 

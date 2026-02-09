@@ -1,6 +1,7 @@
 package com.shopjoy.controller;
 
 import com.shopjoy.dto.request.CreateOrderRequest;
+import com.shopjoy.dto.request.UpdateOrderRequest;
 import com.shopjoy.dto.response.ApiResponse;
 import com.shopjoy.dto.response.OrderResponse;
 import com.shopjoy.entity.OrderStatus;
@@ -255,5 +256,31 @@ public class OrderController {
         public ResponseEntity<ApiResponse<List<OrderResponse>>> getPendingOrders() {
                 List<OrderResponse> response = orderService.getPendingOrders();
                 return ResponseEntity.ok(ApiResponse.success(response, "Pending orders retrieved successfully"));
+        }
+
+        @Operation(summary = "Update order", description = "Updates order details (shipping address, payment method, notes). Only allowed for PENDING orders.")
+        @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
+                        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Order updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderResponse.class))),
+                        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Order not found", content = @Content(mediaType = "application/json")),
+                        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Order cannot be updated (not PENDING)", content = @Content(mediaType = "application/json"))
+        })
+        @PutMapping("/{id}")
+        public ResponseEntity<ApiResponse<OrderResponse>> updateOrder(
+                        @PathVariable Integer id,
+                        @Valid @RequestBody UpdateOrderRequest request) {
+                OrderResponse response = orderService.updateOrder(id, request);
+                return ResponseEntity.ok(ApiResponse.success(response, "Order updated successfully"));
+        }
+
+        @Operation(summary = "Delete order", description = "Deletes an order and restores inventory. Only allowed for PENDING orders.")
+        @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
+                        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Order deleted successfully", content = @Content(mediaType = "application/json")),
+                        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Order not found", content = @Content(mediaType = "application/json")),
+                        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Order cannot be deleted (not PENDING)", content = @Content(mediaType = "application/json"))
+        })
+        @DeleteMapping("/{id}")
+        public ResponseEntity<ApiResponse<Void>> deleteOrder(@PathVariable Integer id) {
+                orderService.deleteOrder(id);
+                return ResponseEntity.ok(ApiResponse.success(null, "Order deleted successfully"));
         }
 }

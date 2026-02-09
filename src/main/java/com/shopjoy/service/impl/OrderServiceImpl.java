@@ -4,6 +4,8 @@ import com.shopjoy.dto.mapper.OrderItemMapper;
 import com.shopjoy.dto.mapper.OrderMapper;
 import com.shopjoy.dto.request.CreateOrderItemRequest;
 import com.shopjoy.dto.request.CreateOrderRequest;
+import com.shopjoy.dto.request.UpdateOrderItemRequest;
+import com.shopjoy.dto.request.UpdateOrderRequest;
 import com.shopjoy.dto.response.OrderItemResponse;
 import com.shopjoy.dto.response.OrderResponse;
 import com.shopjoy.dto.response.ProductResponse;
@@ -21,8 +23,7 @@ import com.shopjoy.service.InventoryService;
 import com.shopjoy.service.OrderService;
 import com.shopjoy.service.ProductService;
 import com.shopjoy.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +39,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class OrderServiceImpl implements OrderService {
 
-    private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
+
 
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
@@ -84,8 +85,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public OrderResponse createOrder(CreateOrderRequest request) {
-        logger.info("Creating order for user ID: {}", request.getUserId());
-
         userService.getUserById(request.getUserId());
 
         if (request.getShippingAddress() == null || request.getShippingAddress().trim().isEmpty()) {
@@ -135,7 +134,6 @@ public class OrderServiceImpl implements OrderService {
             orderItemRepository.save(orderItem);
         }
 
-        logger.info("Created order with ID: {}", createdOrder.getOrderId());
 
         return convertToResponse(createdOrder);
     }
@@ -190,8 +188,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional()
     public OrderResponse updateOrderStatus(Integer orderId, OrderStatus newStatus) {
-        logger.info("Updating order {} status to: {}", orderId, newStatus);
-
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
         OrderStatus currentStatus = order.getStatus();
@@ -202,7 +198,6 @@ public class OrderServiceImpl implements OrderService {
         order.setUpdatedAt(LocalDateTime.now());
 
         Order updatedOrder = orderRepository.update(order);
-        logger.info("Successfully updated order {} status to: {}", orderId, newStatus);
 
         return convertToResponse(updatedOrder);
     }
@@ -259,8 +254,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional()
     public OrderResponse cancelOrder(Integer orderId) {
-        logger.info("Cancelling order ID: {}", orderId);
-
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
 
@@ -275,14 +268,12 @@ public class OrderServiceImpl implements OrderService {
 
         for (OrderItem item : orderItems) {
             inventoryService.releaseStock(item.getProductId(), item.getQuantity());
-            logger.debug("Released {} units of product ID: {}", item.getQuantity(), item.getProductId());
         }
 
         order.setStatus(OrderStatus.CANCELLED);
         order.setUpdatedAt(LocalDateTime.now());
 
         Order cancelledOrder = orderRepository.update(order);
-        logger.info("Successfully cancelled order ID: {}", orderId);
 
         return convertToResponse(cancelledOrder);
     }
@@ -297,6 +288,99 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAll().stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
+    }
+
+@Transactional(isolation = Isolation.SERIALIZABLE)
+public OrderResponse updateOrder(Integer orderId, UpdateOrderRequest request) {
+    Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
+
+    if (order.getStatus() != OrderStatus.PENDING) {
+        throw new InvalidOrderStateException(orderId, order.getStatus().toString(), 
+            "update (can only update PENDING orders)");
+    }
+
+    // Update basic order fields
+    if (request.getShippingAddress() != null && !request.getShippingAddress().trim().isEmpty()) {
+        order.setShippingAddress(request.getShippingAddress());
+    }
+
+    if (request.getPaymentMethod() != null) {
+        order.setPaymentMethod(request.getPaymentMethod());
+    }
+
+    if (request.getNotes() != null) {
+        order.setNotes(request.getNotes());
+    }
+
+    // Handle order items if provided
+    if (request.getOrderItems() != null && !request.getOrderItems().isEmpty()) {
+        List<OrderItem> existingItems = orderItemRepository.findByOrderId(orderId);
+        
+        // Release inventory for old items
+        for (OrderItem item : existingItems) {
+            inventoryService.releaseStock(item.getProductId(), item.getQuantity());
+        }
+
+        // Delete old items
+        for (OrderItem item : existingItems) {
+            orderItemRepository.delete(item.getOrderItemId());
+        }
+
+        // Validate and reserve inventory for new items
+        double newTotal = 0.0;
+        for (UpdateOrderItemRequest itemReq : request.getOrderItems()) {
+            ProductResponse product = productService.getProductById(itemReq.getProductId());
+            if (!product.isActive()) {
+                throw new ValidationException("Product " + product.getProductName() + " is not active");
+            }
+            if (!inventoryService.hasAvailableStock(itemReq.getProductId(), itemReq.getQuantity())) {
+                throw new ValidationException("Insufficient stock for product: " + product.getProductName());
+            }
+            inventoryService.reserveStock(itemReq.getProductId(), itemReq.getQuantity());
+            newTotal += itemReq.getPrice() * itemReq.getQuantity();
+        }
+
+        // Create new order items
+        for (UpdateOrderItemRequest itemReq : request.getOrderItems()) {
+            OrderItem orderItem = OrderItem.builder()
+                    .orderId(orderId)
+                    .productId(itemReq.getProductId())
+                    .quantity(itemReq.getQuantity())
+                    .unitPrice(itemReq.getPrice())
+                    .subtotal(itemReq.getQuantity() * itemReq.getPrice())
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            orderItemRepository.save(orderItem);
+        }
+
+        // Update total amount
+        order.setTotalAmount(newTotal);
+    }
+
+    order.setUpdatedAt(LocalDateTime.now());
+    Order updatedOrder = orderRepository.update(order);
+    
+    return convertToResponse(updatedOrder);
+}
+
+
+    @Override
+    @Transactional()
+    public void deleteOrder(Integer orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
+
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new InvalidOrderStateException(orderId, order.getStatus().toString(), "delete (can only delete PENDING orders)");
+        }
+
+        List<OrderItem> orderItems = orderItemRepository.findByOrderId(orderId);
+        for (OrderItem item : orderItems) {
+            inventoryService.releaseStock(item.getProductId(), item.getQuantity());
+        }
+
+        orderRepository.delete(orderId);
     }
 
     private void validateStatusTransition(OrderStatus currentStatus, OrderStatus newStatus) {
@@ -348,7 +432,7 @@ public class OrderServiceImpl implements OrderService {
             UserResponse user = userService.getUserById(order.getUserId());
             userName = user.getFirstName() + " " + user.getLastName();
         } catch (Exception e) {
-            logger.warn("Could not fetch user name for order {}: {}", order.getOrderId(), e.getMessage());
+            // Ignore user fetch errors
         }
 
         List<OrderItem> items = orderItemRepository.findByOrderId(order.getOrderId());
@@ -358,7 +442,7 @@ public class OrderServiceImpl implements OrderService {
                 ProductResponse product = productService.getProductById(item.getProductId());
                 productName = product.getProductName();
             } catch (Exception e) {
-                logger.warn("Could not fetch product name for item {}: {}", item.getOrderItemId(), e.getMessage());
+                // Ignore product fetch errors
             }
             return OrderItemMapper.toOrderItemResponse(item, productName);
         }).collect(Collectors.toList());

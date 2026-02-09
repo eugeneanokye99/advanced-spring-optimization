@@ -1,0 +1,5 @@
+2026-01-23 11:12:29.541 - [2026-01-23 11:12:29.541] AUDIT: PRODUCT CREATED - Method: createProduct, Arguments: [com.shopjoy.dto.request.CreateProductRequest@5a2b3069]
+2026-01-23 11:14:43.542 - [2026-01-23 11:14:43.542] AUDIT: PRODUCT UPDATED - Method: updateProduct, Arguments: [84, com.shopjoy.dto.request.UpdateProductRequest@b1d79fb]
+2026-01-23 11:15:48.513 - [2026-01-23 11:15:48.513] AUDIT: USER DELETED - Method: deleteUser, Arguments: [21]
+2026-01-23 11:16:51.841 - [2026-01-23 11:16:51.841] AUDIT: STOCK RESERVED - Method: reserveStock, Arguments: [85, 3]
+2026-01-23 11:16:51.864 - [2026-01-23 11:16:51.864] AUDIT: ORDER CREATED - Method: createOrder, Arguments: [com.shopjoy.dto.request.CreateOrderRequest@1fb0ca66]
