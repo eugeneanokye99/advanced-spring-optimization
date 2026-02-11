@@ -121,6 +121,21 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<ProductResponse> getProductsByIds(List<Integer> productIds) {
+        if (productIds == null || productIds.isEmpty()) {
+            return java.util.Collections.emptyList();
+        }
+        
+        List<Integer> distinctIds = productIds.stream()
+                .distinct()
+                .filter(java.util.Objects::nonNull)
+                .toList();
+        
+        List<Product> products = productRepository.findAllById(distinctIds);
+        return convertToResponses(products);
+    }
+
+    @Override
     public List<ProductResponse> getAllProducts() {
         return convertToResponses(productRepository.findAll());
     }
@@ -139,6 +154,14 @@ public class ProductServiceImpl implements ProductService {
             throw new ValidationException("Category ID cannot be null");
         }
         return convertToResponses(productRepository.findByCategoryId(categoryId));
+    }
+
+    @Override
+    public List<ProductResponse> getProductsByCategories(List<Integer> categoryIds) {
+        if (categoryIds == null || categoryIds.isEmpty()) {
+            return java.util.Collections.emptyList();
+        }
+        return convertToResponses(productRepository.findByCategoryIdIn(categoryIds));
     }
 
     @Override

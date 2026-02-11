@@ -17,6 +17,15 @@ public interface CategoryService {
     
     CategoryResponse getCategoryById(Integer categoryId);
     
+    /**
+     * Retrieves multiple categories by their IDs in a single batch.
+     * Useful for optimizing GraphQL N+1 queries.
+     * 
+     * @param categoryIds list of category IDs to retrieve
+     * @return list of category response DTOs
+     */
+    List<CategoryResponse> getCategoriesByIds(List<Integer> categoryIds);
+    
     List<CategoryResponse> getAllCategories();
     
     List<CategoryResponse> getTopLevelCategories();

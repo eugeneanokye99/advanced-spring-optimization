@@ -58,6 +58,23 @@ public class CategoryServiceImpl implements CategoryService {
     }
     
     @Override
+    public List<CategoryResponse> getCategoriesByIds(List<Integer> categoryIds) {
+        if (categoryIds == null || categoryIds.isEmpty()) {
+            return java.util.Collections.emptyList();
+        }
+        
+        List<Integer> distinctIds = categoryIds.stream()
+                .distinct()
+                .filter(java.util.Objects::nonNull)
+                .toList();
+        
+        List<Category> categories = categoryRepository.findAllById(distinctIds);
+        return categories.stream()
+                .map(categoryMapper::toCategoryResponse)
+                .toList();
+    }
+    
+    @Override
     public List<CategoryResponse> getAllCategories() {
         return categoryRepository.findAll().stream()
                 .map(categoryMapper::toCategoryResponse)

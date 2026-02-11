@@ -2,6 +2,7 @@ package com.shopjoy.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -15,6 +16,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Entity
 @Table(name = "cart_items")
+@BatchSize(size = 20)
 public class CartItem implements Serializable {
 
     @Serial

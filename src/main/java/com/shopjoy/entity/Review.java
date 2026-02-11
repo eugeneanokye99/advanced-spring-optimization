@@ -2,6 +2,7 @@ package com.shopjoy.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 @Table(name = "reviews", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"product_id", "user_id"})
 })
+@BatchSize(size = 20)
 public class Review implements Serializable {
 
     @Serial

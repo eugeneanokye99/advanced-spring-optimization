@@ -120,6 +120,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserResponse> getUsersByIds(List<Integer> userIds) {
+        if (userIds == null || userIds.isEmpty()) {
+            return java.util.Collections.emptyList();
+        }
+        
+        // Remove duplicates and call repository
+        List<Integer> distinctIds = userIds.stream()
+                .distinct()
+                .filter(java.util.Objects::nonNull)
+                .toList();
+        
+        List<User> users = userRepository.findAllById(distinctIds);
+        return users.stream()
+                .map(userMapper::toUserResponse)
+                .toList();
+    }
+
+    @Override
     public Optional<UserResponse> getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .map(userMapper::toUserResponse);

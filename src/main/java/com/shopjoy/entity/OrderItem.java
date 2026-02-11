@@ -2,6 +2,7 @@ package com.shopjoy.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "order_items")
+@BatchSize(size = 20)
 public class OrderItem implements Serializable {
 
     @Serial

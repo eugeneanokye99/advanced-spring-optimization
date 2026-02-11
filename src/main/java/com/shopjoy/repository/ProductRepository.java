@@ -14,6 +14,8 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer>, JpaSpecificationExecutor<Product> {
     List<Product> findByCategoryId(Integer categoryId);
+
+    List<Product> findByCategoryIdIn(List<Integer> categoryIds);
     
     @Query("SELECT p FROM Product p WHERE LOWER(p.productName) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     List<Product> findByNameContaining(@Param("keyword") String keyword);

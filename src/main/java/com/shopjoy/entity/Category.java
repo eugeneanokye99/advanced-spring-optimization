@@ -3,6 +3,8 @@ package com.shopjoy.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import org.hibernate.annotations.BatchSize;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -18,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "categories")
+@BatchSize(size = 20)
 public class Category implements Serializable {
 
     @Serial
@@ -47,12 +50,14 @@ public class Category implements Serializable {
     @Builder.Default
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @BatchSize(size = 20)
     private List<Category> subcategories = new ArrayList<>();
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     @Builder.Default
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @BatchSize(size = 20)
     private List<Product> products = new ArrayList<>();
 
     @Column(name = "created_at")

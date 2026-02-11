@@ -62,6 +62,15 @@ public interface UserService {
      * @throws ResourceNotFoundException if user not found
      */
     UserResponse getUserById(Integer userId);
+
+    /**
+     * Retrieves multiple users by their IDs in a single batch.
+     * Useful for optimizing GraphQL N+1 queries.
+     * 
+     * @param userIds list of user IDs to retrieve
+     * @return list of user response DTOs
+     */
+    List<UserResponse> getUsersByIds(List<Integer> userIds);
     
     /**
      * Retrieves a user by their email address.

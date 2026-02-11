@@ -10,9 +10,10 @@ import com.shopjoy.dto.request.UpdateOrderRequest;
 import com.shopjoy.dto.response.OrderItemResponse;
 import com.shopjoy.dto.response.OrderResponse;
 import com.shopjoy.dto.response.ProductResponse;
-import com.shopjoy.dto.response.UserResponse;
 import com.shopjoy.entity.Order;
 import com.shopjoy.entity.OrderItem;
+import com.shopjoy.entity.Product;
+import com.shopjoy.entity.User;
 import com.shopjoy.entity.OrderStatus;
 import com.shopjoy.entity.PaymentStatus;
 import com.shopjoy.exception.InvalidOrderStateException;
@@ -532,19 +533,26 @@ public OrderResponse updateOrder(Integer orderId, UpdateOrderRequest request) {
     private OrderResponse convertToResponse(Order order) {
         String userName = "Unknown User";
         try {
-            UserResponse user = userService.getUserById(order.getUserId());
-            userName = user.getFirstName() + " " + user.getLastName();
+            // Using the JPA relationship with @BatchSize for efficiency 
+            // instead of calling userService in a loop (N+1)
+            User user = order.getUser();
+            if (user != null) {
+                userName = user.getFirstName() + " " + user.getLastName();
+            }
         } catch (Exception e) {
-            // Ignore user fetch errors
+            // Fallback to Unknown if user cannot be fetched
         }
 
-        List<OrderItem> items = orderItemRepository.findByOrderId(order.getOrderId());
-        List<OrderItemResponse> itemResponses = items.stream().map(item -> {
+        // Using order.getOrderItems() instead of repository call
+        // This leverages @BatchSize(size = 20) added to the collection
+        List<OrderItemResponse> itemResponses = order.getOrderItems().stream().map(item -> {
             try {
-                ProductResponse product = productService.getProductById(item.getProductId());
-                return orderItemMapper.toOrderItemResponse(item, product);
+                // Leveraging the lazy-loaded Product association within OrderItem
+                // Hibernate will batch fetch these products too due to @BatchSize on Product class
+                Product product = item.getProduct();
+                String productName = product != null ? product.getProductName() : "Unknown Product";
+                return orderItemMapper.toOrderItemResponse(item, productName);
             } catch (Exception e) {
-                // Ignore product fetch errors, fallback to unknown
                 return orderItemMapper.toOrderItemResponse(item, "Unknown Product");
             }
         }).collect(Collectors.toList());
