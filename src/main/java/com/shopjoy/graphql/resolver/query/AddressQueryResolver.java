@@ -24,6 +24,9 @@ public class AddressQueryResolver {
 
     @QueryMapping
     public List<AddressResponse> addresses(@Argument Long userId) {
+        if (userId == null) {
+            return java.util.Collections.emptyList();
+        }
         return addressService.getAddressesByUser(userId.intValue());
     }
 }

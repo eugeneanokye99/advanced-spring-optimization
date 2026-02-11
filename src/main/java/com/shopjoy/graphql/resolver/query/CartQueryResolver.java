@@ -19,6 +19,9 @@ public class CartQueryResolver {
 
     @QueryMapping
     public List<CartItemResponse> cartItems(@Argument Long userId) {
+        if (userId == null) {
+            return java.util.Collections.emptyList();
+        }
         return cartService.getCartItems(userId.intValue());
     }
 }

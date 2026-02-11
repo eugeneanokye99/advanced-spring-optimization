@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getLowStockProducts, getOutOfStockProducts, getAllInventoryItems, updateStock, addStock } from '../../services/inventoryService';
 import { AlertTriangle, Package, Plus, Search, Filter } from 'lucide-react';
-import { showErrorAlert, formatErrorMessage } from '../../utils/errorHandler';
+import { showErrorAlert, showSuccessToast, formatErrorMessage } from '../../utils/errorHandler';
 
 const InventoryManagement = () => {
     const [allItems, setAllItems] = useState([]);
@@ -70,7 +70,7 @@ const InventoryManagement = () => {
         if (quantity && !isNaN(quantity)) {
             try {
                 await addStock(productId, parseInt(quantity));
-                alert(`Successfully added ${quantity} units to inventory!`);
+                showSuccessToast(`Successfully added ${quantity} units to inventory!`);
                 loadInventory();
             } catch (error) {
                 console.error('Error adding stock:', error);

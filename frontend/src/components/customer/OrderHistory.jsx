@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { useUserOrders, useUpdateOrderStatus } from '../../services/graphqlService';
+import { useUserOrders, useUpdateOrderStatus, useUpdateOrder, useDeleteOrder } from '../../services/graphqlService';
 import { useAuth } from '../../context/AuthContext';
 import { Package, Clock, Truck, CheckCircle, XCircle, Trash2, X, Edit, Plus, Minus } from 'lucide-react';
+import { showErrorAlert, showSuccessToast, showWarningToast } from '../../utils/errorHandler';
 
 const OrderHistory = () => {
     const [editingOrder, setEditingOrder] = useState(null);
@@ -12,6 +13,8 @@ const OrderHistory = () => {
 
     const { data, loading, error, refetch } = useUserOrders(user?.userId, currentPage, pageSize);
     const [updateOrderStatusMutation] = useUpdateOrderStatus();
+    const [updateOrderMutation] = useUpdateOrder();
+    const [deleteOrderMutation] = useDeleteOrder();
 
     const orders = data?.orders?.orders || [];
     const pageInfo = data?.orders?.pageInfo || {};
@@ -25,22 +28,26 @@ const OrderHistory = () => {
                     status: 'CANCELLED' 
                 }
             });
+            showSuccessToast('Order cancelled successfully');
             // Refetch data to show updated status
             refetch();
         } catch (error) {
             const errorMessage = error?.graphQLErrors?.[0]?.message || error.message || 'Failed to cancel order';
-            alert(errorMessage);
+            showErrorAlert({ message: errorMessage }, 'Failed to cancel order');
         }
     };
 
     const handleDeleteOrder = async (orderId) => {
         if (!window.confirm('Are you sure you want to delete this order?')) return;
         try {
-            // Note: Delete functionality would need to be added to GraphQL schema
-            // For now, we'll just show an alert
-            alert('Delete functionality not available in GraphQL version yet');
+            await deleteOrderMutation({
+                variables: { id: orderId.toString() }
+            });
+            showSuccessToast('Order deleted successfully');
+            refetch();
         } catch (error) {
-            alert(error.message || 'Failed to delete order');
+            const errorMessage = error?.graphQLErrors?.[0]?.message || error.message || 'Failed to delete order';
+            showErrorAlert({ message: errorMessage }, 'Failed to delete order');
         }
     };
 
@@ -52,7 +59,7 @@ const OrderHistory = () => {
             paymentMethod: order.paymentMethod || 'CASH',
             notes: order.notes || '',
             orderItems: (order.orderItems || []).map(item => {
-                const unitPrice = item.price || (item.subtotal / item.quantity) || 0;
+                const unitPrice = item.unitPrice || item.price || (item.subtotal / item.quantity) || 0;
                 return {
                     orderItemId: item.orderItemId,
                     productId: item.productId,
@@ -79,12 +86,21 @@ const handleUpdateOrder = async (orderId) => {
         };
 
         console.log('Updating order with data:', updateData);
-        await updateOrder(orderId, updateData);
+        
+        await updateOrderMutation({
+            variables: {
+                id: orderId.toString(),
+                input: updateData
+            }
+        });
+
+        showSuccessToast('Order updated successfully');
         setEditingOrder(null);
-        loadOrders();
+        refetch();
     } catch (error) {
         console.error('Update error:', error);
-        alert(error.response?.data?.message || 'Failed to update order');
+        const errorMessage = error?.graphQLErrors?.[0]?.message || error.message || 'Failed to update order';
+        showErrorAlert({ message: errorMessage }, 'Failed to update order');
     }
 };
 
@@ -98,7 +114,7 @@ const handleUpdateOrder = async (orderId) => {
 
     const removeItem = (index) => {
         if (editForm.orderItems.length === 1) {
-            alert('Order must have at least one item');
+            showWarningToast('Order must have at least one item');
             return;
         }
         const updatedItems = editForm.orderItems.filter((_, i) => i !== index);

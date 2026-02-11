@@ -101,15 +101,27 @@ public class OrderServiceImpl implements OrderService {
             throw new ValidationException("Order must have at least one item");
         }
 
-        // Validate products and inventory FIRST
+        // Fetch all products once and cache them
+        java.util.Map<Integer, ProductResponse> productCache = new java.util.HashMap<>();
         for (CreateOrderItemRequest itemReq : request.getOrderItems()) {
             ProductResponse product = productService.getProductById(itemReq.getProductId());
+            productCache.put(itemReq.getProductId(), product);
+        }
+
+        // Validate products and inventory
+        java.math.BigDecimal totalAmount = java.math.BigDecimal.ZERO;
+        for (CreateOrderItemRequest itemReq : request.getOrderItems()) {
+            ProductResponse product = productCache.get(itemReq.getProductId());
             if (!product.isActive()) {
                 throw new ValidationException("Product " + product.getProductName() + " is not active");
             }
             if (!inventoryService.hasAvailableStock(itemReq.getProductId(), itemReq.getQuantity())) {
                 throw new ValidationException("Insufficient stock for product: " + product.getProductName());
             }
+            // Calculate total amount from actual product prices
+            java.math.BigDecimal itemTotal = java.math.BigDecimal.valueOf(product.getPrice())
+                    .multiply(java.math.BigDecimal.valueOf(itemReq.getQuantity()));
+            totalAmount = totalAmount.add(itemTotal);
         }
 
         // Reserve inventory
@@ -119,6 +131,7 @@ public class OrderServiceImpl implements OrderService {
 
         // Create the order
         Order order = orderMapper.toOrder(request);
+        order.setTotalAmount(totalAmount);
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(OrderStatus.PENDING);
         order.setPaymentStatus(PaymentStatus.UNPAID);
@@ -131,23 +144,28 @@ public class OrderServiceImpl implements OrderService {
         order.setCreatedAt(LocalDateTime.now());
         order.setUpdatedAt(LocalDateTime.now());
 
+        // Save order first to generate order ID and handle common fields
         Order createdOrder = orderRepository.save(order);
 
-        // Create order items
+        // Create order items using cached product prices and link to the saved order
         for (CreateOrderItemRequest itemReq : request.getOrderItems()) {
+            ProductResponse product = productCache.get(itemReq.getProductId());
+            java.math.BigDecimal unitPrice = java.math.BigDecimal.valueOf(product.getPrice());
+            java.math.BigDecimal subtotal = unitPrice.multiply(java.math.BigDecimal.valueOf(itemReq.getQuantity()));
+            
             OrderItem orderItem = OrderItem.builder()
                     .orderId(createdOrder.getOrderId())
                     .productId(itemReq.getProductId())
                     .quantity(itemReq.getQuantity())
-                    .unitPrice(new java.math.BigDecimal(itemReq.getPrice().toString()))
-                    .subtotal(new java.math.BigDecimal(itemReq.getQuantity() * itemReq.getPrice()))
+                    .unitPrice(unitPrice)
+                    .subtotal(subtotal)
                     .createdAt(LocalDateTime.now())
                     .build();
             orderItemRepository.save(orderItem);
         }
 
-
-        return convertToResponse(createdOrder);
+        // Return refreshed order with items
+        return getOrderById(createdOrder.getOrderId());
     }
 
     @Override

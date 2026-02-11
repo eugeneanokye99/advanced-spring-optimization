@@ -1,0 +1,33 @@
+2026-02-10 08:10:31.166 - [2026-02-10 08:10:31.165] AUDIT START: Action=USER_REGISTRATION, Description=Registering new user, Method=UserServiceImpl.registerUser(CreateUserRequest), Arguments=[com.shopjoy.dto.request.CreateUserRequest@3ba4a0b2]
+2026-02-10 08:10:31.174 - [2026-02-10 08:10:31.174] AUDIT FAILURE: Action=USER_REGISTRATION, Method=UserServiceImpl.registerUser(CreateUserRequest), Exception=Validation failed for field 'password': must contain at least one uppercase letter
+2026-02-10 08:10:42.505 - [2026-02-10 08:10:42.505] AUDIT START: Action=USER_REGISTRATION, Description=Registering new user, Method=UserServiceImpl.registerUser(CreateUserRequest), Arguments=[com.shopjoy.dto.request.CreateUserRequest@79ed966f]
+2026-02-10 08:10:42.511 - [2026-02-10 08:10:42.511] AUDIT FAILURE: Action=USER_REGISTRATION, Method=UserServiceImpl.registerUser(CreateUserRequest), Exception=User already exists with username: 'jane_smith'
+2026-02-10 10:22:04.105 - [2026-02-10 10:22:04.105] AUDIT: ORDER UPDATED - Method: updateOrderStatus, Arguments: [12, PROCESSING]
+2026-02-10 10:22:57.453 - [2026-02-10 10:22:57.453] AUDIT: ORDER UPDATED - Method: updateOrderStatus, Arguments: [12, SHIPPED]
+2026-02-10 10:24:23.992 - [2026-02-10 10:24:23.992] AUDIT: ORDER UPDATED - Method: updateOrderStatus, Arguments: [12, DELIVERED]
+2026-02-10 10:25:07.828 - [2026-02-10 10:25:07.828] AUDIT: ORDER UPDATED - Method: updateOrderStatus, Arguments: [5, DELIVERED]
+2026-02-10 10:29:26.557 - [2026-02-10 10:29:26.557] AUDIT: STOCK RESERVED - Method: reserveStock, Arguments: [47, 1]
+2026-02-10 10:29:26.587 - [2026-02-10 10:29:26.587] AUDIT: ORDER CREATED - Method: createOrder, Arguments: [com.shopjoy.dto.request.CreateOrderRequest@6fc74de5]
+2026-02-10 10:30:01.281 - [2026-02-10 10:30:01.281] AUDIT: ORDER UPDATED - Method: updateOrderStatus, Arguments: [13, PROCESSING]
+2026-02-10 10:30:02.314 - [2026-02-10 10:30:02.314] AUDIT: ORDER UPDATED - Method: updateOrderStatus, Arguments: [13, SHIPPED]
+2026-02-10 10:30:03.436 - [2026-02-10 10:30:03.436] AUDIT: ORDER UPDATED - Method: updateOrderStatus, Arguments: [13, DELIVERED]
+2026-02-10 13:49:53.870 - [2026-02-10 13:49:53.869] AUDIT START: Action=USER_REGISTRATION, Description=Registering new user, Method=UserServiceImpl.registerUser(CreateUserRequest), Arguments=[com.shopjoy.dto.request.CreateUserRequest@5950daf7]
+2026-02-10 13:49:53.871 - [2026-02-10 13:49:53.871] AUDIT FAILURE: Action=USER_REGISTRATION, Method=UserServiceImpl.registerUser(CreateUserRequest), Exception=Validation failed for field 'password': must contain at least one uppercase letter
+2026-02-10 13:50:03.083 - [2026-02-10 13:50:03.083] AUDIT START: Action=USER_REGISTRATION, Description=Registering new user, Method=UserServiceImpl.registerUser(CreateUserRequest), Arguments=[com.shopjoy.dto.request.CreateUserRequest@41861e5c]
+2026-02-10 13:50:03.197 - [2026-02-10 13:50:03.197] AUDIT SUCCESS: Action=USER_REGISTRATION, Method=UserServiceImpl.registerUser(CreateUserRequest)
+2026-02-10 14:46:50.941 - [2026-02-10 14:46:50.940] AUDIT START: Action=USER_REGISTRATION, Description=Registering new user, Method=UserServiceImpl.registerUser(CreateUserRequest), Arguments=[com.shopjoy.dto.request.CreateUserRequest@24ba5d5e]
+2026-02-10 14:46:51.144 - [2026-02-10 14:46:51.144] AUDIT SUCCESS: Action=USER_REGISTRATION, Method=UserServiceImpl.registerUser(CreateUserRequest)
+2026-02-10 14:51:47.190 - [2026-02-10 14:51:47.189] AUDIT START: Action=USER_REGISTRATION, Description=Registering new user, Method=UserServiceImpl.registerUser(CreateUserRequest), Arguments=[com.shopjoy.dto.request.CreateUserRequest@429c8582]
+2026-02-10 14:51:47.508 - [2026-02-10 14:51:47.507] AUDIT SUCCESS: Action=USER_REGISTRATION, Method=UserServiceImpl.registerUser(CreateUserRequest)
+2026-02-10 14:59:02.786 - [2026-02-10 14:59:02.785] AUDIT START: Action=USER_REGISTRATION, Description=Registering new user, Method=UserServiceImpl.registerUser(CreateUserRequest), Arguments=[com.shopjoy.dto.request.CreateUserRequest@6489c2ba]
+2026-02-10 14:59:02.972 - [2026-02-10 14:59:02.972] AUDIT SUCCESS: Action=USER_REGISTRATION, Method=UserServiceImpl.registerUser(CreateUserRequest)
+2026-02-10 15:08:34.235 - [2026-02-10 15:08:34.234] AUDIT START: Action=USER_REGISTRATION, Description=Registering new user, Method=UserServiceImpl.registerUser(CreateUserRequest), Arguments=[com.shopjoy.dto.request.CreateUserRequest@6ef90e5d]
+2026-02-10 15:08:34.571 - [2026-02-10 15:08:34.571] AUDIT SUCCESS: Action=USER_REGISTRATION, Method=UserServiceImpl.registerUser(CreateUserRequest)
+2026-02-10 16:09:36.412 - [2026-02-10 16:09:36.409] AUDIT: STOCK RESERVED - Method: reserveStock, Arguments: [86, 2]
+2026-02-10 16:15:14.553 - [2026-02-10 16:15:14.553] AUDIT: STOCK RESERVED - Method: reserveStock, Arguments: [86, 2]
+2026-02-10 16:23:21.380 - [2026-02-10 16:23:21.380] AUDIT: STOCK RESERVED - Method: reserveStock, Arguments: [86, 2]
+2026-02-10 16:23:21.580 - [2026-02-10 16:23:21.580] AUDIT: ORDER CREATED - Method: createOrder, Arguments: [com.shopjoy.dto.request.CreateOrderRequest@4bc65446]
+2026-02-10 16:33:14.345 - [2026-02-10 16:33:14.345] AUDIT: STOCK RESERVED - Method: reserveStock, Arguments: [86, 3]
+2026-02-10 16:33:14.505 - [2026-02-10 16:33:14.505] AUDIT: ORDER UPDATED - Method: updateOrder, Arguments: [16, com.shopjoy.dto.request.UpdateOrderRequest@7179fb2c]
+2026-02-10 16:40:26.096 - [2026-02-10 16:40:26.093] AUDIT: STOCK RESERVED - Method: reserveStock, Arguments: [86, 3]
+2026-02-10 16:40:26.305 - [2026-02-10 16:40:26.305] AUDIT: ORDER UPDATED - Method: updateOrder, Arguments: [16, com.shopjoy.dto.request.UpdateOrderRequest@553768e4]

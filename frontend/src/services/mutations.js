@@ -12,6 +12,33 @@ export const UPDATE_ORDER_STATUS = gql`
   }
 `;
 
+export const UPDATE_ORDER = gql`
+  mutation UpdateOrder($id: ID!, $input: UpdateOrderInput!) {
+    updateOrder(id: $id, input: $input) {
+      orderId
+      totalAmount
+      status
+      paymentStatus
+      shippingAddress
+      notes
+      orderItems {
+        orderItemId
+        productId
+        productName
+        quantity
+        unitPrice
+        subtotal
+      }
+    }
+  }
+`;
+
+export const DELETE_ORDER = gql`
+  mutation DeleteOrder($id: ID!) {
+    deleteOrder(id: $id)
+  }
+`;
+
 export const CREATE_ORDER = gql`
   mutation CreateOrder($input: CreateOrderInput!) {
     createOrder(input: $input) {

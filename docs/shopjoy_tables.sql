@@ -109,7 +109,7 @@ CREATE TABLE reviews (
 CREATE TABLE addresses (
     address_id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-    address_type VARCHAR(20) CHECK (address_type IN ('shipping', 'billing')),
+    address_type VARCHAR(20) CHECK (address_type IN ('shipping', 'billing', 'home', 'work', 'other')),
     street_address VARCHAR(255) NOT NULL,
     city VARCHAR(100) NOT NULL,
     state VARCHAR(100),

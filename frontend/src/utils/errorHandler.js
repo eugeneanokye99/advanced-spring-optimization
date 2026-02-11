@@ -1,3 +1,5 @@
+import toast from 'react-hot-toast';
+
 /**
  * Enhanced error handling utilities for better user experience
  */
@@ -19,13 +21,66 @@ export const formatErrorMessage = (error, showDetails = false) => {
 };
 
 /**
- * Creates a user-friendly alert with detailed error information
+ * Shows error toast notification with detailed error information
  * @param {Error} error - Error object from API
  * @param {string} fallbackMessage - Fallback message if no specific error
  */
 export const showErrorAlert = (error, fallbackMessage = 'Operation failed') => {
     const message = formatErrorMessage(error, true);
-    alert(message || fallbackMessage);
+    toast.error(message || fallbackMessage);
+};
+
+/**
+ * Shows success toast notification
+ * @param {string} message - Success message to display
+ */
+export const showSuccessToast = (message) => {
+    toast.success(message);
+};
+
+/**
+ * Shows error toast notification
+ * @param {string} message - Error message to display
+ */
+export const showErrorToast = (message) => {
+    toast.error(message);
+};
+
+/**
+ * Shows info toast notification
+ * @param {string} message - Info message to display
+ */
+export const showInfoToast = (message) => {
+    toast(message, {
+        icon: 'ℹ️',
+    });
+};
+
+/**
+ * Shows warning toast notification
+ * @param {string} message - Warning message to display
+ */
+export const showWarningToast = (message) => {
+    toast(message, {
+        icon: '⚠️',
+        style: {
+            background: '#fef3c7',
+            color: '#92400e',
+        },
+    });
+};
+
+/**
+ * Shows loading toast and returns a promise handler
+ * @param {Promise} promise - Promise to track
+ * @param {Object} messages - Messages for loading, success, and error states
+ */
+export const showLoadingToast = (promise, messages = {}) => {
+    return toast.promise(promise, {
+        loading: messages.loading || 'Loading...',
+        success: messages.success || 'Success!',
+        error: (err) => messages.error || formatErrorMessage(err) || 'Something went wrong',
+    });
 };
 
 /**

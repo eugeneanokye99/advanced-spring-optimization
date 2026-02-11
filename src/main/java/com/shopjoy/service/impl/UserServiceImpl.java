@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
 
-        User createdUser = userRepository.saveAndFlush(user);
+        User createdUser = userRepository.save(user);
 
         return userMapper.toUserResponse(createdUser);
     }
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
 
-        User createdUser = userRepository.saveAndFlush(user);
+        User createdUser = userRepository.save(user);
 
         return userMapper.toUserResponse(createdUser);
     }

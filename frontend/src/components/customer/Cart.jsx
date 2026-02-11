@@ -3,7 +3,7 @@ import { getCartItems, updateCartItemQuantity, removeFromCart, getCartTotal, cle
 import { createOrder } from '../../services/orderService';
 import { useAuth } from '../../context/AuthContext';
 import { Trash2, Plus, Minus, ShoppingBag, X, CreditCard, MapPin } from 'lucide-react';
-import { showErrorAlert, isInsufficientStockError } from '../../utils/errorHandler';
+import { showErrorAlert, showSuccessToast, showWarningToast, isInsufficientStockError } from '../../utils/errorHandler';
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
@@ -51,22 +51,23 @@ const Cart = () => {
             await updateCartItemQuantity(cartItemId, newQuantity);
             loadCart();
         } catch (error) {
-            alert(error.message);
+            showErrorAlert(error, 'Failed to update quantity');
         }
     };
 
     const handleRemove = async (cartItemId) => {
         try {
             await removeFromCart(cartItemId);
+            showSuccessToast('Item removed from cart');
             loadCart();
         } catch (error) {
-            alert(error.message);
+            showErrorAlert(error, 'Failed to remove item');
         }
     };
 
     const handleCheckout = async () => {
         if (cartItems.length === 0) {
-            alert('Your cart is empty');
+            showWarningToast('Your cart is empty');
             return;
         }
 
@@ -85,10 +86,10 @@ const Cart = () => {
             });
 
             await clearCart(user.userId);
-            alert('Order placed successfully!');
+            showSuccessToast('Order placed successfully!');
             loadCart();
         } catch (error) {
-            alert(error.message);
+            showErrorAlert(error, 'Failed to place order');
         }
     };
 

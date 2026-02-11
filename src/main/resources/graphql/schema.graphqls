@@ -151,6 +151,20 @@ input CreateOrderInput {
     orderItems: [OrderItemInput!]!
 }
 
+input UpdateOrderInput {
+    shippingAddress: String
+    paymentMethod: String
+    notes: String
+    orderItems: [UpdateOrderItemInput!]
+}
+
+input UpdateOrderItemInput {
+    orderItemId: ID
+    productId: ID!
+    quantity: Int!
+    price: Float!
+}
+
 input OrderItemInput {
     productId: ID!
     quantity: Int!
@@ -245,10 +259,10 @@ type Query {
     review(id: ID!): Review
     reviews(productId: ID, userId: ID, page: Int, size: Int): ReviewConnection
     
-    cartItems(userId: ID!): [CartItem]
+    cartItems(userId: ID): [CartItem]
     
     address(id: ID!): Address
-    addresses(userId: ID!): [Address]
+    addresses(userId: ID): [Address]
     
     inventory(productId: ID!): Inventory
     lowStockProducts: [Inventory]
@@ -268,6 +282,8 @@ type Mutation {
     deleteCategory(id: ID!): Boolean
     
     createOrder(input: CreateOrderInput!): Order
+    updateOrder(id: ID!, input: UpdateOrderInput!): Order
+    deleteOrder(id: ID!): Boolean
     updateOrderStatus(id: ID!, status: String!): Order
     
     createReview(input: CreateReviewInput!): Review

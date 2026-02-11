@@ -68,7 +68,7 @@ export const GET_DASHBOARD_ANALYTICS = gql`
 `;
 
 export const GET_USER_ANALYTICS = gql`
-  query GetUserAnalytics($userId: ID!) {
+  query GetUserAnalytics($userId: ID) {
     orders(userId: $userId) {
       orders {
         orderId
@@ -186,7 +186,7 @@ export const GET_ORDER_BY_ID = gql`
 `;
 
 export const GET_USER_ORDERS = gql`
-  query GetUserOrders($userId: ID!, $page: Int, $size: Int) {
+  query GetUserOrders($userId: ID, $page: Int, $size: Int) {
     orders(userId: $userId, page: $page, size: $size) {
       orders {
         orderId

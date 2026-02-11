@@ -33,6 +33,7 @@ public interface OrderMapperStruct {
     @Mapping(target = "paymentStatus", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "orderItems", ignore = true)
     Order toOrder(CreateOrderRequest request);
 
     /**

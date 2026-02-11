@@ -54,4 +54,24 @@ public interface GraphQLMapperStruct {
      */
     @Mapping(target = "userId", expression = "java(input.userId().intValue())")
     CreateOrderRequest toCreateOrderRequest(CreateOrderInput input);
+
+    /**
+     * Convert OrderItemInput to CreateOrderItemRequest.
+     */
+    @Mapping(target = "productId", expression = "java(input.productId().intValue())")
+    @Mapping(target = "price", expression = "java(input.price().doubleValue())")
+    CreateOrderItemRequest toCreateOrderItemRequest(OrderItemInput input);
+
+    /**
+     * Convert UpdateOrderInput to UpdateOrderRequest.
+     */
+    UpdateOrderRequest toUpdateOrderRequest(UpdateOrderInput input);
+
+    /**
+     * Convert UpdateOrderItemInput to UpdateOrderItemRequest.
+     */
+    @Mapping(target = "orderItemId", expression = "java(input.orderItemId() != null ? input.orderItemId().intValue() : null)")
+    @Mapping(target = "productId", expression = "java(input.productId().intValue())")
+    @Mapping(target = "price", expression = "java(input.price().doubleValue())")
+    UpdateOrderItemRequest toUpdateOrderItemRequest(UpdateOrderItemInput input);
 }

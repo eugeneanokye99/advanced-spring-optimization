@@ -5,7 +5,7 @@ import { addToCart } from '../../services/cartService';
 import { useAuth } from '../../context/AuthContext';
 import { ShoppingCart, Search, ChevronDown, Package, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
 import ProductDetailModal from './ProductDetailModal';
-import { showErrorAlert, formatErrorMessage, isInsufficientStockError } from '../../utils/errorHandler';
+import { showErrorAlert, showSuccessToast, showWarningToast, isInsufficientStockError } from '../../utils/errorHandler';
 
 const ProductBrowse = () => {
     const [products, setProducts] = useState([]);
@@ -71,12 +71,12 @@ const ProductBrowse = () => {
     const handleAddToCart = async (e, productId) => {
         e.stopPropagation();
         if (!user) {
-            alert('Please login to add items to cart');
+            showWarningToast('Please login to add items to cart');
             return;
         }
         try {
             await addToCart({ userId: user.userId, productId, quantity: 1 });
-            alert('Product added to cart!');
+            showSuccessToast('Product added to cart!');
         } catch (error) {
             console.error('Error adding to cart:', error);
             

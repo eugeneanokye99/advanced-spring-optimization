@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { getAddressesByUser, createAddress, updateAddress, deleteAddress, setDefaultAddress } from '../../services/addressService';
 import { useAuth } from '../../context/AuthContext';
 import { MapPin, Plus, Trash2, Home, Briefcase, Star, CheckCircle } from 'lucide-react';
-import { showErrorAlert, formatErrorMessage } from '../../utils/errorHandler';
+import { showErrorAlert, showSuccessToast, showWarningToast } from '../../utils/errorHandler';
 
 const AddressManagement = () => {
     const { user } = useAuth();
@@ -50,15 +50,17 @@ const AddressManagement = () => {
         try {
             if (editingAddress) {
                 await updateAddress(editingAddress.addressId, formData);
+                showSuccessToast('Address updated successfully');
             } else {
                 await createAddress({ ...formData, userId: user.userId });
+                showSuccessToast('Address added successfully');
             }
             setShowForm(false);
             setEditingAddress(null);
             resetForm();
             loadAddresses();
         } catch (error) {
-            alert(error.message);
+            showErrorAlert(error, editingAddress ? 'Failed to update address' : 'Failed to add address');
         }
     };
 
@@ -80,10 +82,10 @@ const AddressManagement = () => {
         if (window.confirm('Delete this address?')) {
             try {
                 await deleteAddress(id);
+                showSuccessToast('Address deleted successfully');
                 loadAddresses();
             } catch (error) {
-                console.error('Error saving address:', error);
-                showErrorAlert(error, editingAddress ? 'Failed to update address' : 'Failed to add address');
+                showErrorAlert(error, 'Failed to delete address');
             }
         }
     };
@@ -91,9 +93,10 @@ const AddressManagement = () => {
     const handleSetDefault = async (id) => {
         try {
             await setDefaultAddress(id);
+            showSuccessToast('Default address updated');
             loadAddresses();
         } catch (error) {
-            alert(error.message);
+            showErrorAlert(error, 'Failed to set default address');
         }
     };
 

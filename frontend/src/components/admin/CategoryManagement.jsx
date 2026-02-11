@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { getAllCategories, createCategory, updateCategory, deleteCategory } from '../../services/categoryService';
-import { Plus, Edit, Trash2 } from 'lucide-react';import { showErrorAlert, formatErrorMessage, extractFieldErrors, isValidationError } from '../../utils/errorHandler';
+import { Plus, Edit, Trash2 } from 'lucide-react';
+import { showErrorAlert, showSuccessToast } from '../../utils/errorHandler';
+
 const CategoryManagement = () => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -28,15 +30,17 @@ const CategoryManagement = () => {
         try {
             if (editingCategory) {
                 await updateCategory(editingCategory.categoryId, formData);
+                showSuccessToast('Category updated successfully');
             } else {
                 await createCategory(formData);
+                showSuccessToast('Category created successfully');
             }
             setShowModal(false);
             setFormData({ categoryName: '', description: '' });
             setEditingCategory(null);
             loadCategories();
         } catch (error) {
-            alert(error.message);
+            showErrorAlert(error, editingCategory ? 'Failed to update category' : 'Failed to create category');
         }
     };
 
@@ -44,9 +48,10 @@ const CategoryManagement = () => {
         if (window.confirm('Are you sure you want to delete this category?')) {
             try {
                 await deleteCategory(id);
+                showSuccessToast('Category deleted successfully');
                 loadCategories();
             } catch (error) {
-                alert(error.message);
+                showErrorAlert(error, 'Failed to delete category');
             }
         }
     };

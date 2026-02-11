@@ -11,6 +11,8 @@ import {
 } from './queries';
 import {
   UPDATE_ORDER_STATUS,
+  UPDATE_ORDER,
+  DELETE_ORDER,
   CREATE_ORDER,
   CREATE_PRODUCT,
   UPDATE_PRODUCT,
@@ -89,6 +91,20 @@ export const useLowStockProducts = () => {
 export const useUpdateOrderStatus = () => {
   return useMutation(UPDATE_ORDER_STATUS, {
     refetchQueries: [{ query: GET_ALL_ORDERS }],
+    awaitRefetchQueries: true
+  });
+};
+
+export const useUpdateOrder = () => {
+  return useMutation(UPDATE_ORDER, {
+    refetchQueries: [{ query: GET_ALL_ORDERS }, { query: GET_USER_ORDERS }],
+    awaitRefetchQueries: true
+  });
+};
+
+export const useDeleteOrder = () => {
+  return useMutation(DELETE_ORDER, {
+    refetchQueries: [{ query: GET_ALL_ORDERS }, { query: GET_USER_ORDERS }],
     awaitRefetchQueries: true
   });
 };

@@ -277,9 +277,9 @@ public class GlobalExceptionHandler {
     }
     
     /**
-     * Handles database constraint violations (unique constraints, foreign key violations, etc.).
-     * Returns 409 Conflict for constraint violations, 400 for deletion restrictions.
-     * Example: Violating unique email constraint, trying to delete referenced records
+     * Handles database constraint violations (unique constraints, foreign key violations, check constraints, etc.).
+     * Returns 409 Conflict for constraint violations, 400 for validation/deletion restrictions.
+     * Example: Violating unique email constraint, trying to delete referenced records, invalid enum values
      */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiResponse<Object>> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
@@ -287,6 +287,7 @@ public class GlobalExceptionHandler {
         
         String message = "Data integrity violation. This operation conflicts with existing data.";
         String errorCode = "DATA_INTEGRITY_VIOLATION";
+        String field = null;
         HttpStatus status = HttpStatus.CONFLICT;
         
         // Try to provide more specific message based on constraint violation
@@ -296,6 +297,45 @@ public class GlobalExceptionHandler {
             if (errorMsg.contains("unique") || errorMsg.contains("duplicate")) {
                 message = "A record with this value already exists. Please use a unique value.";
                 errorCode = "DUPLICATE_VALUE";
+                
+            } else if (errorMsg.contains("check constraint") || errorMsg.contains("violates check")) {
+                // Handle CHECK constraint violations - these are validation errors
+                status = HttpStatus.BAD_REQUEST;
+                errorCode = "INVALID_VALUE";
+                
+                // Extract constraint name and provide specific messages
+                if (errorMsg.contains("address_type_check") || errorMsg.contains("addresses_address_type")) {
+                    message = "Invalid address type. Please select a valid address type (Home, Work, Shipping, Billing, or Other).";
+                    field = "addressType";
+                    errorCode = "INVALID_ADDRESS_TYPE";
+                } else if (errorMsg.contains("user_type_check") || errorMsg.contains("users_user_type")) {
+                    message = "Invalid user type. Please select a valid user type.";
+                    field = "userType";
+                    errorCode = "INVALID_USER_TYPE";
+                } else if (errorMsg.contains("status_check") || errorMsg.contains("order_status")) {
+                    message = "Invalid order status. Please select a valid status.";
+                    field = "status";
+                    errorCode = "INVALID_STATUS";
+                } else if (errorMsg.contains("payment_status_check")) {
+                    message = "Invalid payment status. Please select a valid payment status.";
+                    field = "paymentStatus";
+                    errorCode = "INVALID_PAYMENT_STATUS";
+                } else if (errorMsg.contains("rating_check") || errorMsg.contains("reviews_rating")) {
+                    message = "Invalid rating. Rating must be between 1 and 5.";
+                    field = "rating";
+                    errorCode = "INVALID_RATING";
+                } else if (errorMsg.contains("price") && errorMsg.contains("check")) {
+                    message = "Invalid price. Price must be a positive value.";
+                    field = "price";
+                    errorCode = "INVALID_PRICE";
+                } else if (errorMsg.contains("quantity") && errorMsg.contains("check")) {
+                    message = "Invalid quantity. Quantity must be a positive value.";
+                    field = "quantity";
+                    errorCode = "INVALID_QUANTITY";
+                } else {
+                    // Generic check constraint message
+                    message = "The provided value is not valid. Please check your input and try again.";
+                }
                 
             } else if (errorMsg.contains("foreign key") && errorMsg.contains("restrict")) {
                 // Handle foreign key RESTRICT violations (cannot delete because referenced)
@@ -331,7 +371,9 @@ public class GlobalExceptionHandler {
         }
         
         ErrorDetail error = new ErrorDetail(
+                field,
                 message,
+                null,
                 errorCode
         );
         
