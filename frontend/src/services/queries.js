@@ -46,6 +46,7 @@ export const GET_DASHBOARD_ANALYTICS = gql`
           orderItemId
           productId
           productName
+          categoryName
           quantity
           unitPrice
           subtotal
@@ -81,6 +82,7 @@ export const GET_USER_ANALYTICS = gql`
           orderItemId
           productId
           productName
+          categoryName
           quantity
           unitPrice
           subtotal

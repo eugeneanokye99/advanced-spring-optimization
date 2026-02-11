@@ -5,8 +5,8 @@ import com.shopjoy.dto.request.CreateProductRequest;
 import com.shopjoy.dto.request.UpdateProductRequest;
 import com.shopjoy.dto.response.ProductResponse;
 import com.shopjoy.entity.Product;
-import com.shopjoy.util.Page;
-import com.shopjoy.util.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 

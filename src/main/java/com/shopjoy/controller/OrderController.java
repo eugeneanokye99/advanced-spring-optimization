@@ -12,6 +12,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -95,6 +101,30 @@ public class OrderController {
         }
 
         /**
+         * Gets orders by user paginated.
+         *
+         * @param userId        the user id
+         * @param page          the page
+         * @param size          the size
+         * @param sortBy        the sort by
+         * @param sortDirection the sort direction
+         * @return the orders by user paginated
+         */
+        @Operation(summary = "Get user orders with pagination", description = "Retrieves orders for a specific user with pagination and sorting")
+        @GetMapping("/user/{userId}/paginated")
+        public ResponseEntity<ApiResponse<Page<OrderResponse>>> getOrdersByUserPaginated(
+                        @PathVariable Integer userId,
+                        @RequestParam(defaultValue = "0") @Min(0) int page,
+                        @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size,
+                        @RequestParam(defaultValue = "orderDate") String sortBy,
+                        @RequestParam(defaultValue = "DESC") String sortDirection) {
+                Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
+                Pageable pageable = PageRequest.of(page, size, sort);
+                Page<OrderResponse> response = orderService.getOrdersByUserPaginated(userId, pageable);
+                return ResponseEntity.ok(ApiResponse.success(response, "User orders retrieved with pagination"));
+        }
+
+        /**
          * Gets orders by status.
          *
          * @param status the status
@@ -109,6 +139,30 @@ public class OrderController {
                         @Parameter(description = "Order status filter", required = true, example = "PENDING") @PathVariable OrderStatus status) {
                 List<OrderResponse> response = orderService.getOrdersByStatus(status);
                 return ResponseEntity.ok(ApiResponse.success(response, "Orders by status retrieved successfully"));
+        }
+
+        /**
+         * Gets orders by status paginated.
+         *
+         * @param status        the status
+         * @param page          the page
+         * @param size          the size
+         * @param sortBy        the sort by
+         * @param sortDirection the sort direction
+         * @return the orders by status paginated
+         */
+        @Operation(summary = "Get orders by status with pagination", description = "Retrieves orders with a specific status using pagination and sorting")
+        @GetMapping("/status/{status}/paginated")
+        public ResponseEntity<ApiResponse<Page<OrderResponse>>> getOrdersByStatusPaginated(
+                        @PathVariable OrderStatus status,
+                        @RequestParam(defaultValue = "0") @Min(0) int page,
+                        @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size,
+                        @RequestParam(defaultValue = "orderDate") String sortBy,
+                        @RequestParam(defaultValue = "DESC") String sortDirection) {
+                Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
+                Pageable pageable = PageRequest.of(page, size, sort);
+                Page<OrderResponse> response = orderService.getOrdersByStatusPaginated(status, pageable);
+                return ResponseEntity.ok(ApiResponse.success(response, "Orders by status retrieved with pagination"));
         }
 
         /**
@@ -129,6 +183,54 @@ public class OrderController {
                         @Parameter(description = "End date (ISO format)", required = true, example = "2024-12-31T23:59:59") @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
                 List<OrderResponse> response = orderService.getOrdersByDateRange(startDate, endDate);
                 return ResponseEntity.ok(ApiResponse.success(response, "Orders by date range retrieved successfully"));
+        }
+
+        /**
+         * Gets orders by date range paginated.
+         *
+         * @param startDate     the start date
+         * @param endDate       the end date
+         * @param page          the page
+         * @param size          the size
+         * @param sortBy        the sort by
+         * @param sortDirection the sort direction
+         * @return the orders by date range paginated
+         */
+        @Operation(summary = "Get orders by date range with pagination", description = "Retrieves orders within a date range using pagination and sorting")
+        @GetMapping("/date-range/paginated")
+        public ResponseEntity<ApiResponse<Page<OrderResponse>>> getOrdersByDateRangePaginated(
+                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+                        @RequestParam(defaultValue = "0") @Min(0) int page,
+                        @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size,
+                        @RequestParam(defaultValue = "orderDate") String sortBy,
+                        @RequestParam(defaultValue = "DESC") String sortDirection) {
+                Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
+                Pageable pageable = PageRequest.of(page, size, sort);
+                Page<OrderResponse> response = orderService.getOrdersByDateRangePaginated(startDate, endDate, pageable);
+                return ResponseEntity.ok(ApiResponse.success(response, "Orders by date range retrieved with pagination"));
+        }
+
+        /**
+         * Gets all orders paginated.
+         *
+         * @param page          the page
+         * @param size          the size
+         * @param sortBy        the sort by
+         * @param sortDirection the sort direction
+         * @return the all orders paginated
+         */
+        @Operation(summary = "Get all orders with pagination", description = "Retrieves all orders in the system with pagination and sorting support")
+        @GetMapping("/paginated")
+        public ResponseEntity<ApiResponse<Page<OrderResponse>>> getAllOrdersPaginated(
+                        @RequestParam(defaultValue = "0") @Min(0) int page,
+                        @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size,
+                        @RequestParam(defaultValue = "orderDate") String sortBy,
+                        @RequestParam(defaultValue = "DESC") String sortDirection) {
+                Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
+                Pageable pageable = PageRequest.of(page, size, sort);
+                Page<OrderResponse> response = orderService.getAllOrdersPaginated(pageable);
+                return ResponseEntity.ok(ApiResponse.success(response, "All orders retrieved with pagination"));
         }
 
         /**

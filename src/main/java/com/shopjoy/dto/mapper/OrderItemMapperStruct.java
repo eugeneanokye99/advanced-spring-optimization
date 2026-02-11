@@ -1,6 +1,7 @@
 package com.shopjoy.dto.mapper;
 
 import com.shopjoy.dto.response.OrderItemResponse;
+import com.shopjoy.dto.response.ProductResponse;
 import com.shopjoy.entity.OrderItem;
 import org.mapstruct.*;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,18 @@ import org.springframework.stereotype.Component;
 public interface OrderItemMapperStruct {
 
     /**
+     * Maps OrderItem entity to OrderItemResponse with product info.
+     * 
+     * @param item the order item entity
+     * @param product the product response to include
+     * @return the mapped order item response
+     */
+    @Mapping(target = "productName", source = "product.productName")
+    @Mapping(target = "categoryName", source = "product.categoryName")
+    @Mapping(target = "productId", source = "item.productId")
+    OrderItemResponse toOrderItemResponse(OrderItem item, ProductResponse product);
+
+    /**
      * Maps OrderItem entity to OrderItemResponse with product name.
      * 
      * @param item the order item entity
@@ -25,6 +38,7 @@ public interface OrderItemMapperStruct {
      * @return the mapped order item response
      */
     @Mapping(target = "productName", source = "productName")
+    @Mapping(target = "categoryName", source = "item.product.category.categoryName")
     OrderItemResponse toOrderItemResponse(OrderItem item, String productName);
 
     /**
@@ -34,6 +48,7 @@ public interface OrderItemMapperStruct {
      * @return the mapped order item response
      */
     @Mapping(target = "productName", ignore = true)
+    @Mapping(target = "categoryName", source = "product.category.categoryName")
     OrderItemResponse toOrderItemResponse(OrderItem item);
 
     /**

@@ -8,6 +8,8 @@ import com.shopjoy.exception.InsufficientStockException;
 import com.shopjoy.exception.InvalidOrderStateException;
 import com.shopjoy.exception.ResourceNotFoundException;
 import com.shopjoy.exception.ValidationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,12 +51,30 @@ public interface OrderService {
     List<OrderResponse> getOrdersByUser(Integer userId);
 
     /**
+     * Retrieves orders for a user with pagination.
+     * 
+     * @param userId the user ID
+     * @param pageable pagination parameters
+     * @return paginated order responses
+     */
+    Page<OrderResponse> getOrdersByUserPaginated(Integer userId, Pageable pageable);
+
+    /**
      * Retrieves all orders with a specific status.
      * 
      * @param status the order status
      * @return list of order responses with the status
      */
     List<OrderResponse> getOrdersByStatus(OrderStatus status);
+
+    /**
+     * Retrieves orders by status with pagination.
+     * 
+     * @param status order status
+     * @param pageable pagination parameters
+     * @return paginated order responses
+     */
+    Page<OrderResponse> getOrdersByStatusPaginated(OrderStatus status, Pageable pageable);
 
     /**
      * Retrieves orders within a date range.
@@ -64,6 +84,24 @@ public interface OrderService {
      * @return list of order responses in the date range
      */
     List<OrderResponse> getOrdersByDateRange(LocalDateTime startDate, LocalDateTime endDate);
+
+    /**
+     * Retrieves orders by date range with pagination.
+     * 
+     * @param startDate start date
+     * @param endDate end date
+     * @param pageable pagination parameters
+     * @return paginated order responses
+     */
+    Page<OrderResponse> getOrdersByDateRangePaginated(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
+
+    /**
+     * Retrieves all orders with pagination.
+     * 
+     * @param pageable pagination parameters
+     * @return paginated order responses
+     */
+    Page<OrderResponse> getAllOrdersPaginated(Pageable pageable);
 
     /**
      * Updates an order's status.

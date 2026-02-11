@@ -6,8 +6,10 @@ import com.shopjoy.graphql.input.ProductFilterInput;
 import com.shopjoy.graphql.type.PageInfo;
 import com.shopjoy.graphql.type.ProductConnection;
 import com.shopjoy.service.ProductService;
-import com.shopjoy.util.Page;
-import com.shopjoy.util.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
@@ -50,7 +52,9 @@ public class ProductQueryResolver {
         }
 
         // Create Pageable object and call correct service method
-        Pageable pageable = new Pageable(pageNum, pageSize);
+        Sort sortObj = Sort.by(Sort.Direction.fromString(direction), sort);
+        Pageable pageable = PageRequest.of(pageNum, pageSize, sortObj);
+        
         Page<ProductResponse> productsPage = productService.getProductsWithFilters(
                 productFilter,
                 pageable,

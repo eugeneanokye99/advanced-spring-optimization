@@ -8,8 +8,6 @@ import com.shopjoy.dto.response.ProductResponse;
 import com.shopjoy.service.PerformanceComparisonService;
 import com.shopjoy.service.ProductService;
 import com.shopjoy.util.BenchmarkResult;
-import com.shopjoy.util.Page;
-import com.shopjoy.util.Pageable;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,6 +18,10 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -49,6 +51,23 @@ public class ProductController {
                         PerformanceComparisonService performanceComparisonService) {
                 this.productService = productService;
                 this.performanceComparisonService = performanceComparisonService;
+        }
+
+        private String normalizeFieldName(String fieldName) {
+                if (fieldName == null) {
+                        return "productId";
+                }
+                return switch (fieldName) {
+                        case "product_id" -> "productId";
+                        case "product_name" -> "productName";
+                        case "category_id" -> "categoryId";
+                        case "cost_price" -> "costPrice";
+                        case "image_url" -> "imageUrl";
+                        case "is_active" -> "active";
+                        case "created_at" -> "createdAt";
+                        case "updated_at" -> "updatedAt";
+                        default -> fieldName;
+                };
         }
 
         /**
@@ -326,7 +345,8 @@ public class ProductController {
                         @Parameter(description = "Page size (number of items per page)", example = "10") @RequestParam(defaultValue = "10") @Min(value = 1, message = "Page size must be at least 1") @Max(value = 100, message = "Page size cannot exceed 100") int size,
                         @Parameter(description = "Field to sort by", example = "product_id") @RequestParam(defaultValue = "product_id") String sortBy,
                         @Parameter(description = "Sort direction (ASC or DESC)", example = "ASC") @RequestParam(defaultValue = "ASC") String sortDirection) {
-                Pageable pageable = Pageable.of(page, size);
+                Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), normalizeFieldName(sortBy));
+                Pageable pageable = PageRequest.of(page, size, sort);
                 Page<ProductResponse> response = productService.getProductsPaginated(pageable, sortBy, sortDirection);
                 return ResponseEntity.ok(ApiResponse.success(response, "Products retrieved with pagination"));
         }
@@ -349,7 +369,7 @@ public class ProductController {
                         @Parameter(description = "Search term for product name", required = true, example = "Laptop") @RequestParam String term,
                         @Parameter(description = "Page number (0-indexed)", example = "0") @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number cannot be negative") int page,
                         @Parameter(description = "Page size (number of items per page)", example = "10") @RequestParam(defaultValue = "10") @Min(value = 1, message = "Page size must be at least 1") @Max(value = 100, message = "Page size cannot exceed 100") int size) {
-                Pageable pageable = Pageable.of(page, size);
+                Pageable pageable = PageRequest.of(page, size);
                 Page<ProductResponse> response = productService.searchProductsPaginated(term, pageable);
                 return ResponseEntity.ok(ApiResponse.success(response, "Product search completed with pagination"));
         }
@@ -402,7 +422,9 @@ public class ProductController {
                 filter.setMaxStock(maxStock);
                 filter.setActive(isActive);
 
-                Pageable pageable = Pageable.of(page, size);
+                Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), normalizeFieldName(sortBy));
+                Pageable pageable = PageRequest.of(page, size, sort);
+                
                 Page<ProductResponse> response = productService.getProductsWithFilters(filter, pageable, sortBy,
                                 sortDirection, algorithm);
                 return ResponseEntity.ok(ApiResponse.success(response, "Filtered products retrieved successfully"));

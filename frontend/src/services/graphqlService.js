@@ -290,8 +290,7 @@ export const transformUserAnalytics = (data) => {
   orders.orders.forEach(order => {
     if (order.status === 'DELIVERED' && order.orderItems) {
       order.orderItems.forEach(item => {
-        // We don't have category info in order items, so we'll create mock data for now
-        const category = 'General';
+        const category = item.categoryName || 'General';
         if (!spendingByCategory[category]) {
           spendingByCategory[category] = { categoryName: category, amountSpent: 0 };
         }

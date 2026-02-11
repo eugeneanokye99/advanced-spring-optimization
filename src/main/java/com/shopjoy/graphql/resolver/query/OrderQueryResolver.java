@@ -4,6 +4,9 @@ import com.shopjoy.dto.response.OrderResponse;
 import com.shopjoy.graphql.type.OrderConnection;
 import com.shopjoy.graphql.type.PageInfo;
 import com.shopjoy.service.OrderService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
@@ -32,32 +35,22 @@ public class OrderQueryResolver {
     ) {
         int pageNum = page != null ? page : 0;
         int pageSize = size != null ? size : 20;
+        Pageable pageable = PageRequest.of(pageNum, pageSize);
 
-        // Service doesn't support pagination, so get all and paginate manually
-        List<OrderResponse> allOrders;
+        Page<OrderResponse> orderPage;
         if (userId != null) {
-            allOrders = orderService.getOrdersByUser(userId.intValue());
+            orderPage = orderService.getOrdersByUserPaginated(userId.intValue(), pageable);
         } else {
-            // Get all orders for dashboard analytics
-            allOrders = orderService.getAllOrders();
+            orderPage = orderService.getAllOrdersPaginated(pageable);
         }
         
-        int start = pageNum * pageSize;
-        int end = Math.min(start + pageSize, allOrders.size());
-        List<OrderResponse> paginatedOrders = (start < allOrders.size()) 
-            ? allOrders.subList(start, end) 
-            : List.of();
-        
-        int totalElements = allOrders.size();
-        int totalPages = (int) Math.ceil((double) totalElements / pageSize);
-
         PageInfo pageInfo = new PageInfo(
                 pageNum,
                 pageSize,
-                totalElements,
-                totalPages
+                orderPage.getTotalElements(),
+                orderPage.getTotalPages()
         );
 
-        return new OrderConnection(paginatedOrders, pageInfo);
+        return new OrderConnection(orderPage.getContent(), pageInfo);
     }
 }

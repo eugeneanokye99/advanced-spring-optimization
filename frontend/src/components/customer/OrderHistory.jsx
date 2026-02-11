@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useUserOrders, useUpdateOrderStatus, useUpdateOrder, useDeleteOrder } from '../../services/graphqlService';
 import { useAuth } from '../../context/AuthContext';
-import { Package, Clock, Truck, CheckCircle, XCircle, Trash2, X, Edit, Plus, Minus } from 'lucide-react';
+import { Package, Clock, Truck, CheckCircle, XCircle, Trash2, X, Edit, Plus, Minus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { showErrorAlert, showSuccessToast, showWarningToast } from '../../utils/errorHandler';
 
 const OrderHistory = () => {
@@ -408,6 +408,40 @@ const handleUpdateOrder = async (orderId) => {
                             )}
                         </div>
                     ))}
+                </div>
+            )}
+
+            {/* Pagination Controls */}
+            {pageInfo.totalPages > 1 && (
+                <div className="mt-8 flex items-center justify-center gap-4">
+                    <button
+                        onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
+                        disabled={currentPage === 0}
+                        className="p-2 rounded-xl bg-white border border-gray-100 shadow-sm disabled:opacity-50 hover:bg-gray-50 transition-colors"
+                    >
+                        <ChevronLeft className="w-6 h-6" />
+                    </button>
+                    <div className="flex gap-2">
+                        {[...Array(pageInfo.totalPages)].map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setCurrentPage(i)}
+                                className={`w-10 h-10 rounded-xl font-bold transition-all ${currentPage === i
+                                    ? 'bg-primary-600 text-black shadow-lg shadow-primary-200'
+                                    : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-100'
+                                    }`}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+                    </div>
+                    <button
+                        onClick={() => setCurrentPage(p => Math.min(pageInfo.totalPages - 1, p + 1))}
+                        disabled={currentPage === pageInfo.totalPages - 1}
+                        className="p-2 rounded-xl bg-white border border-gray-100 shadow-sm disabled:opacity-50 hover:bg-gray-50 transition-colors"
+                    >
+                        <ChevronRight className="w-6 h-6" />
+                    </button>
                 </div>
             )}
         </div>

@@ -51,6 +51,7 @@ type OrderItem {
     productId: Int!
     product: Product
     productName: String!
+    categoryName: String
     quantity: Int!
     unitPrice: Float!
     subtotal: Float!

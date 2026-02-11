@@ -23,7 +23,9 @@ import com.shopjoy.service.InventoryService;
 import com.shopjoy.service.OrderService;
 import com.shopjoy.service.ProductService;
 import com.shopjoy.service.UserService;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -184,6 +186,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Page<OrderResponse> getOrdersByUserPaginated(Integer userId, Pageable pageable) {
+        Page<Order> orderPage = orderRepository.findByUserId(userId, pageable);
+        
+        List<OrderResponse> content = orderPage.getContent().stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+                
+        return new PageImpl<>(content, pageable, orderPage.getTotalElements());
+    }
+
+    @Override
     public List<OrderResponse> getOrdersByStatus(OrderStatus status) {
         if (status == null) {
             throw new ValidationException("Order status cannot be null");
@@ -192,6 +205,20 @@ public class OrderServiceImpl implements OrderService {
         return orders.stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<OrderResponse> getOrdersByStatusPaginated(OrderStatus status, Pageable pageable) {
+        if (status == null) {
+            throw new ValidationException("Order status cannot be null");
+        }
+        Page<Order> orderPage = orderRepository.findByStatus(status, pageable);
+        
+        List<OrderResponse> content = orderPage.getContent().stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+                
+        return new PageImpl<>(content, pageable, orderPage.getTotalElements());
     }
 
     @Override
@@ -206,6 +233,34 @@ public class OrderServiceImpl implements OrderService {
         return orders.stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<OrderResponse> getOrdersByDateRangePaginated(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
+        if (startDate == null || endDate == null) {
+            throw new ValidationException("Start and end dates cannot be null");
+        }
+        if (startDate.isAfter(endDate)) {
+            throw new ValidationException("Start date must be before end date");
+        }
+        Page<Order> orderPage = orderRepository.findByDateRange(startDate, endDate, pageable);
+        
+        List<OrderResponse> content = orderPage.getContent().stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+                
+        return new PageImpl<>(content, pageable, orderPage.getTotalElements());
+    }
+
+    @Override
+    public Page<OrderResponse> getAllOrdersPaginated(Pageable pageable) {
+        Page<Order> orderPage = orderRepository.findAll(pageable);
+        
+        List<OrderResponse> content = orderPage.getContent().stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
+                
+        return new PageImpl<>(content, pageable, orderPage.getTotalElements());
     }
 
     /**
@@ -467,14 +522,13 @@ public OrderResponse updateOrder(Integer orderId, UpdateOrderRequest request) {
 
         List<OrderItem> items = orderItemRepository.findByOrderId(order.getOrderId());
         List<OrderItemResponse> itemResponses = items.stream().map(item -> {
-            String productName = "Unknown Product";
             try {
                 ProductResponse product = productService.getProductById(item.getProductId());
-                productName = product.getProductName();
+                return orderItemMapper.toOrderItemResponse(item, product);
             } catch (Exception e) {
-                // Ignore product fetch errors
+                // Ignore product fetch errors, fallback to unknown
+                return orderItemMapper.toOrderItemResponse(item, "Unknown Product");
             }
-            return orderItemMapper.toOrderItemResponse(item, productName);
         }).collect(Collectors.toList());
 
         return orderMapper.toOrderResponse(order, userName, itemResponses);

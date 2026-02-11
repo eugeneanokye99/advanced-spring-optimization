@@ -32,4 +32,7 @@ public class OrderItemResponse {
 
     @Schema(description = "Subtotal for this item (quantity * price)", example = "2599.98")
     private double subtotal;
+
+    @Schema(description = "Category name of the product", example = "Electronics")
+    private String categoryName;
 }

@@ -13,11 +13,14 @@ import com.shopjoy.repository.CategoryRepository;
 import com.shopjoy.repository.InventoryRepository;
 import com.shopjoy.repository.ProductRepository;
 import com.shopjoy.service.ProductService;
-import com.shopjoy.util.*;
-
+import com.shopjoy.util.ProductComparators;
+import com.shopjoy.util.SearchAlgorithms;
+import com.shopjoy.util.SortingAlgorithms;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,26 +52,6 @@ public class ProductServiceImpl implements ProductService {
                 .map(com.shopjoy.entity.Inventory::getQuantityInStock)
                 .orElse(0);
         return productMapper.toProductResponse(product, categoryName, stock);
-    }
-
-    /**
-     * Converts database column names (snake_case) to Java field names (camelCase).
-     */
-    private String normalizeFieldName(String fieldName) {
-        if (fieldName == null) {
-            return "productId";
-        }
-        return switch (fieldName) {
-            case "product_id" -> "productId";
-            case "product_name" -> "productName";
-            case "category_id" -> "categoryId";
-            case "cost_price" -> "costPrice";
-            case "image_url" -> "imageUrl";
-            case "is_active" -> "active";
-            case "created_at" -> "createdAt";
-            case "updated_at" -> "updatedAt";
-            default -> fieldName;
-        };
     }
 
     /**
@@ -258,19 +241,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductResponse> getProductsPaginated(Pageable pageable, String sortBy, String sortDirection) {
-        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection != null ? sortDirection : "ASC"), 
-                           normalizeFieldName(sortBy));
-        PageRequest pageRequest = PageRequest.of(pageable.getPage(), pageable.getSize(), sort);
-        
-        org.springframework.data.domain.Page<Product> productPage = productRepository.findAll(pageRequest);
+        org.springframework.data.domain.Page<Product> productPage = productRepository.findAll(pageable);
 
         List<ProductResponse> responseList = convertToResponses(productPage.getContent());
 
-        return new Page<>(
-                responseList,
-                productPage.getNumber(),
-                productPage.getSize(),
-                productPage.getTotalElements());
+        return new PageImpl<>(responseList, pageable, productPage.getTotalElements());
     }
 
     @Override
@@ -279,16 +254,11 @@ public class ProductServiceImpl implements ProductService {
             throw new ValidationException("Search keyword cannot be empty");
         }
 
-        PageRequest pageRequest = PageRequest.of(pageable.getPage(), pageable.getSize());
-        org.springframework.data.domain.Page<Product> productPage = productRepository.searchProducts(keyword, pageRequest);
+        org.springframework.data.domain.Page<Product> productPage = productRepository.searchProducts(keyword, pageable);
 
         List<ProductResponse> responseList = convertToResponses(productPage.getContent());
 
-        return new Page<>(
-                responseList,
-                productPage.getNumber(),
-                productPage.getSize(),
-                productPage.getTotalElements());
+        return new PageImpl<>(responseList, pageable, productPage.getTotalElements());
     }
 
     @Override
@@ -324,8 +294,8 @@ public class ProductServiceImpl implements ProductService {
             }
 
             // Manually paginate
-            int start = pageable.getOffset();
-            int end = Math.min((start + pageable.getSize()), allProducts.size());
+            int start = (int) pageable.getOffset();
+            int end = Math.min((start + pageable.getPageSize()), allProducts.size());
 
             List<Product> pagedContent;
             if (start >= allProducts.size()) {
@@ -336,18 +306,10 @@ public class ProductServiceImpl implements ProductService {
 
             List<ProductResponse> responseList = convertToResponses(pagedContent);
 
-            return new Page<>(
-                    responseList,
-                    pageable.getPage(),
-                    pageable.getSize(),
-                    allProducts.size());
+            return new PageImpl<>(responseList, pageable, allProducts.size());
         }
 
         // Default database sorting/pagination
-        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection != null ? sortDirection : "ASC"), 
-                           normalizeFieldName(sortBy));
-        PageRequest pageRequest = PageRequest.of(pageable.getPage(), pageable.getSize(), sort);
-        
         org.springframework.data.domain.Page<Product> productPage = productRepository.findWithFilters(
                 filter.getSearchTerm(),
                 filter.getCategoryId(),
@@ -355,15 +317,11 @@ public class ProductServiceImpl implements ProductService {
                 filter.getMaxPrice(),
                 filter.getBrand(),
                 filter.getActive(),
-                pageRequest);
+                pageable);
 
         List<ProductResponse> responseList = convertToResponses(productPage.getContent());
 
-        return new Page<>(
-                responseList,
-                productPage.getNumber(),
-                productPage.getSize(),
-                productPage.getTotalElements());
+        return new PageImpl<>(responseList, pageable, productPage.getTotalElements());
     }
 
     @Override

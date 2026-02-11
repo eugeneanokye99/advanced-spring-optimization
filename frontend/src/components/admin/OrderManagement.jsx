@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAllOrders, useUpdateOrderStatus } from '../../services/graphqlService';
-import { Package, Clock, Truck, CheckCircle, XCircle, Search, Eye, Filter, MapPin, CreditCard, User, ShoppingBag } from 'lucide-react';
+import { Package, Clock, Truck, CheckCircle, XCircle, Search, Eye, Filter, MapPin, CreditCard, User, ShoppingBag, ChevronLeft, ChevronRight } from 'lucide-react';
 import { showErrorAlert } from '../../utils/errorHandler';
 
 const OrderManagement = () => {
@@ -317,6 +317,34 @@ const OrderManagement = () => {
                     </tbody>
                 </table>
             </div>
+
+            {/* Pagination Controls */}
+            {pageInfo.totalPages > 1 && (
+                <div className="flex items-center justify-between bg-white px-6 py-4 rounded-2xl border border-gray-100 shadow-sm mt-4">
+                    <div className="text-sm text-gray-500 font-medium">
+                        Showing <span className="font-bold text-gray-900">{orders.length}</span> of <span className="font-bold text-gray-900">{pageInfo.totalElements}</span> orders
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
+                            disabled={currentPage === 0}
+                            className="p-2 rounded-xl hover:bg-gray-50 border border-gray-100 disabled:opacity-30 transition-all"
+                        >
+                            <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        <span className="text-sm font-black px-4 py-2 bg-primary-50 text-primary-900 rounded-xl">
+                            PAGE {currentPage + 1} OF {pageInfo.totalPages}
+                        </span>
+                        <button
+                            onClick={() => setCurrentPage(p => Math.min(pageInfo.totalPages - 1, p + 1))}
+                            disabled={currentPage >= pageInfo.totalPages - 1}
+                            className="p-2 rounded-xl hover:bg-gray-50 border border-gray-100 disabled:opacity-30 transition-all"
+                        >
+                            <ChevronRight className="w-5 h-5" />
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Order Summary Statistics */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
