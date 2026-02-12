@@ -22,6 +22,6 @@ public class CartItemResponse {
     private String productName;
     private double productPrice;
     private int quantity;
-    private LocalDateTime createdAt;
+    private LocalDateTime addedAt;
 
 }

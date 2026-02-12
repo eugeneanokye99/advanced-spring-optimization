@@ -3,9 +3,11 @@ package com.shopjoy.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * The type Cart item.
@@ -47,4 +49,8 @@ public class CartItem implements Serializable {
 
     @Column(name = "quantity", nullable = false)
     private int quantity;
+
+    @CreationTimestamp
+    @Column(name = "added_at", nullable = false, updatable = false)
+    private LocalDateTime addedAt;
 }

@@ -119,6 +119,18 @@ CREATE TABLE addresses (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- ============================================
+-- CART ITEMS TABLE
+-- ============================================
+CREATE TABLE cart_items (
+    cart_item_id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    product_id INTEGER NOT NULL REFERENCES products(product_id) ON DELETE CASCADE,
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, product_id)
+);
+
 
 -- ============================================
 -- USERS TABLE INDEXES

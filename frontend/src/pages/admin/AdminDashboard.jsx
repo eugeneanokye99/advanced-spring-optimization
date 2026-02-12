@@ -13,6 +13,7 @@ import {
     Home,
     FolderTree,
     MessageSquare,
+    Zap,
 } from 'lucide-react';
 import ProductManagement from '../../components/admin/ProductManagement';
 import OrderManagement from '../../components/admin/OrderManagement';
@@ -22,6 +23,7 @@ import InventoryManagement from '../../components/admin/InventoryManagement';
 import ReviewManagement from '../../components/admin/ReviewManagement';
 import Dashboard from '../../components/admin/Dashboard';
 import AlgorithmPerformance from '../../components/admin/AlgorithmPerformance';
+import OptimizationMetrics from '../../components/admin/OptimizationMetrics';
 
 const AdminDashboard = () => {
     const { user, logout } = useAuth();
@@ -49,6 +51,7 @@ const AdminDashboard = () => {
         { id: 'inventory', label: 'Inventory', icon: AlertTriangle },
         { id: 'reviews', label: 'Reviews', icon: MessageSquare },
         { id: 'algorithms', label: 'Algorithms', icon: TrendingUp },
+        { id: 'performance', label: 'Optimization', icon: Zap },
     ];
 
     const renderContent = () => {
@@ -69,6 +72,8 @@ const AdminDashboard = () => {
                 return <ReviewManagement />;
             case 'algorithms':
                 return <AlgorithmPerformance />;
+            case 'performance':
+                return <OptimizationMetrics />;
             default:
                 return <Dashboard />;
         }

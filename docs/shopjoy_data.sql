@@ -10,6 +10,14 @@ DELETE FROM orders;
 DELETE FROM addresses;
 DELETE FROM inventory;
 DELETE FROM products;
+
+-- ============================================
+-- INSERT CART ITEMS
+-- ============================================
+INSERT INTO cart_items (user_id, product_id, quantity, added_at) VALUES
+(2, 1, 1, CURRENT_TIMESTAMP - INTERVAL '1 hour'),
+(2, 11, 2, CURRENT_TIMESTAMP - INTERVAL '30 minutes'),
+(3, 5, 1, CURRENT_TIMESTAMP - INTERVAL '2 hours');
 DELETE FROM categories;
 DELETE FROM users;
 
