@@ -579,6 +579,17 @@ mvn test -Dtest=RestVsGraphQLPerformanceTest
 - REST vs GraphQL comparison (RestVsGraphQLPerformanceTest)
 - Algorithm benchmarking (AlgorithmPerformanceTest)
 
+### Caching and Performance Validation
+
+To verify the effectiveness of the caching and transaction monitoring:
+
+1.  **Monitor Logs**: Run the application and observe `application.log`. Look for `CACHE HIT` and `CACHE STORED` messages.
+2.  **Verify Invalidation**: 
+    - Perform a `get` request (e.g., fetch a product).
+    - Update the product via a `PUT` or `PATCH` request.
+    - Re-fetch the product and verify the logs show a `CACHE MISS` followed by a `CACHE STORED` (indicating invalidation worked).
+3.  **Stress Testing**: Use JMeter with the provided `jmeter/load-test.jmx` to see the performance gains with caching enabled vs. disabled.
+
 ### Postman Collection
 
 Import the Postman collection for manual testing:
@@ -613,6 +624,17 @@ The application collects performance metrics across multiple layers:
 - **API Layer**: Threshold 2000ms
 - **GraphQL Layer**: Threshold 2000ms
 
+### Caching Strategy
+
+The system implements an automated, AOP-based caching layer for high-performance data retrieval.
+
+- **Configuration**:
+    - **Back-end**: `ConcurrentHashMap` with time-based expiration.
+    - **TTL**: 5 minutes (300,000ms).
+    - **Pointcuts**: Automatically caches all `find*` and `get*` methods in the service layer.
+- **Invalidation rules**:
+    - Cache entries for a class are automatically cleared when any write operation (`update*`, `delete*`, `save*`, `create*`, `add*`, `remove*`, `clear*`, `process*`, `cancel*`, `place*`) is performed within that class.
+- **Monitoring**: Cache hit/miss rates are tracked in real-time and visible via the [Performance Dashboard](http://localhost:5173/admin/dashboard?tab=performance).
 
 ### Logging
 

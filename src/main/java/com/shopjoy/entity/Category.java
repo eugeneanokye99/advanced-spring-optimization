@@ -50,15 +50,7 @@ public class Category implements Serializable {
     @Builder.Default
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @BatchSize(size = 20)
-    private List<Category> subcategories = new ArrayList<>();
-
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    @Builder.Default
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @BatchSize(size = 20)
-    private List<Product> products = new ArrayList<>();
+    private List<Category> subCategories = new ArrayList<>();
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

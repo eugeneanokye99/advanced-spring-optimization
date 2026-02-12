@@ -117,11 +117,6 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<!-- HikariCP for connection pooling -->
-		<dependency>
-			<groupId>com.zaxxer</groupId>
-			<artifactId>HikariCP</artifactId>
-		</dependency>
 
 		<!-- Spring Boot Test -->
 		<dependency>

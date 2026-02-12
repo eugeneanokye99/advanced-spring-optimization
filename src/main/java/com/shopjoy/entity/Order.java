@@ -40,6 +40,12 @@ public class Order implements Serializable {
     @EqualsAndHashCode.Exclude
     private User user;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<OrderItem> orderItems = new ArrayList<>();
+
     @Column(name = "order_date")
     private LocalDateTime orderDate;
 
@@ -66,13 +72,6 @@ public class Order implements Serializable {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    @BatchSize(size = 20)
-    @Builder.Default
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private List<OrderItem> orderItems = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
