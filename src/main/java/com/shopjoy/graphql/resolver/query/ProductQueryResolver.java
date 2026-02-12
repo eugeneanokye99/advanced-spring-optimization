@@ -59,8 +59,7 @@ public class ProductQueryResolver {
                 productFilter,
                 pageable,
                 sort,
-                direction,
-                null // Default to DATABASE
+                direction
         );
 
         PageInfo pageInfo = new PageInfo(

@@ -212,7 +212,8 @@ public class UserServiceImpl implements UserService {
 
         // Hash the new password before saving
         String hashedNewPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
-        userRepository.changePassword(userId, hashedNewPassword);
+        user.setPasswordHash(hashedNewPassword);
+        userRepository.save(user);
     }
 
     @Override

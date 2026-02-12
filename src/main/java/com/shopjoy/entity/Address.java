@@ -40,7 +40,7 @@ public class Address implements Serializable {
     @Column(name = "address_type", length = 20)
     private AddressType addressType;
 
-    @Column(name = "street_address", nullable = false, length = 255)
+    @Column(name = "street_address", nullable = false)
     private String streetAddress;
 
     @Column(name = "city", nullable = false, length = 100)

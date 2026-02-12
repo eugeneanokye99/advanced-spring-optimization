@@ -4,25 +4,22 @@ import com.shopjoy.entity.UserType;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
-/**
- * JPA Converter for UserType enum to handle lowercase database values.
- */
 @Converter(autoApply = true)
 public class UserTypeConverter implements AttributeConverter<UserType, String> {
 
     @Override
-    public String convertToDatabaseColumn(UserType userType) {
-        if (userType == null) {
+    public String convertToDatabaseColumn(UserType attribute) {
+        if (attribute == null) {
             return null;
         }
-        return userType.name().toLowerCase();
+        return attribute.name().toLowerCase();
     }
 
     @Override
-    public UserType convertToEntityAttribute(String dbValue) {
-        if (dbValue == null) {
+    public UserType convertToEntityAttribute(String dbData) {
+        if (dbData == null) {
             return null;
         }
-        return UserType.valueOf(dbValue.toUpperCase());
+        return UserType.fromString(dbData);
     }
 }

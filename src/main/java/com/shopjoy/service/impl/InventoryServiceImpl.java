@@ -94,12 +94,11 @@ public class InventoryServiceImpl implements InventoryService {
         Inventory inventory = inventoryRepository.findByProductId(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Inventory", "productId", productId));
 
-        inventoryRepository.updateStock(productId, newQuantity);
-
         inventory.setQuantityInStock(newQuantity);
         inventory.setUpdatedAt(LocalDateTime.now());
-
-        return convertToResponse(inventory);
+        
+        Inventory savedInventory = inventoryRepository.save(inventory);
+        return convertToResponse(savedInventory);
     }
 
     @Override
@@ -112,13 +111,12 @@ public class InventoryServiceImpl implements InventoryService {
         Inventory inventory = inventoryRepository.findByProductId(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Inventory", "productId", productId));
 
-        inventoryRepository.incrementStock(productId, quantity);
-
         inventory.setQuantityInStock(inventory.getQuantityInStock() + quantity);
         inventory.setLastRestocked(LocalDateTime.now());
         inventory.setUpdatedAt(LocalDateTime.now());
 
-        return convertToResponse(inventory);
+        Inventory savedInventory = inventoryRepository.save(inventory);
+        return convertToResponse(savedInventory);
     }
 
     @Override
@@ -138,12 +136,11 @@ public class InventoryServiceImpl implements InventoryService {
                     inventory.getQuantityInStock());
         }
 
-        inventoryRepository.decrementStock(productId, quantity);
-
         inventory.setQuantityInStock(inventory.getQuantityInStock() - quantity);
         inventory.setUpdatedAt(LocalDateTime.now());
 
-        return convertToResponse(inventory);
+        Inventory savedInventory = inventoryRepository.save(inventory);
+        return convertToResponse(savedInventory);
     }
 
     /**
@@ -170,7 +167,9 @@ public class InventoryServiceImpl implements InventoryService {
                     inventory.getQuantityInStock());
         }
 
-        inventoryRepository.decrementStock(productId, quantity);
+        inventory.setQuantityInStock(inventory.getQuantityInStock() - quantity);
+        inventory.setUpdatedAt(LocalDateTime.now());
+        inventoryRepository.save(inventory);
     }
 
     @Override
@@ -180,7 +179,12 @@ public class InventoryServiceImpl implements InventoryService {
             throw new ValidationException("quantity", "must be positive");
         }
 
-        inventoryRepository.incrementStock(productId, quantity);
+        Inventory inventory = inventoryRepository.findByProductId(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Inventory", "productId", productId));
+                
+        inventory.setQuantityInStock(inventory.getQuantityInStock() + quantity);
+        inventory.setUpdatedAt(LocalDateTime.now());
+        inventoryRepository.save(inventory);
     }
 
     @Override

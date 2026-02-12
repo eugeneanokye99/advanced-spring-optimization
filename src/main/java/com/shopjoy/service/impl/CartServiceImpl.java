@@ -48,7 +48,7 @@ public class CartServiceImpl implements CartService {
             throw new InsufficientStockException(request.getProductId(), request.getQuantity(), 0);
         }
 
-        Optional<CartItem> existingItem = cartItemRepository.findByUserAndProduct(request.getUserId(),
+        Optional<CartItem> existingItem = cartItemRepository.findByUserIdAndProductId(request.getUserId(),
                 request.getProductId());
 
         if (existingItem.isPresent()) {
@@ -114,7 +114,7 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional()
     public void clearCart(Integer userId) {
-        cartItemRepository.clearCart(userId);
+        cartItemRepository.deleteByUserId(userId);
     }
 
     @Override

@@ -160,7 +160,7 @@ export const transformDashboardData = (data) => {
   
   // Calculate analytics from the raw data
   const totalRevenue = orders.orders.reduce((sum, order) => {
-    return order.status === 'DELIVERED' ? sum + order.totalAmount : sum;
+    return (order.status || '').toUpperCase() === 'DELIVERED' ? sum + order.totalAmount : sum;
   }, 0);
 
   const totalOrders = orders.pageInfo.totalElements;
@@ -176,7 +176,7 @@ export const transformDashboardData = (data) => {
       salesByDate[date] = 0;
     }
     // Include all orders for activity tracking, but only count delivered for revenue
-    if (order.status === 'DELIVERED') {
+    if ((order.status || '').toUpperCase() === 'DELIVERED') {
       salesByDate[date] += order.totalAmount;
     }
   });
@@ -216,20 +216,7 @@ export const transformDashboardData = (data) => {
     salesOverTime,
     categoryDistribution,
     lowStockProducts: lowStockProducts || [],
-    performanceMetrics: {
-      'api:getUserById': { average: 25, callCount: 150 },
-      'api:getProducts': { average: 45, callCount: 89 },
-      'api:createOrder': { average: 78, callCount: 23 },
-      'api:updateInventory': { average: 12, callCount: 67 },
-      'service:validateUser': { average: 8, callCount: 145 },
-      'service:processPayment': { average: 156, callCount: 18 },
-      'service:calculateTax': { average: 15, callCount: 42 },
-      'service:generateInvoice': { average: 89, callCount: 15 },
-      'database:userQuery': { average: 5, callCount: 200 },
-      'database:productQuery': { average: 12, callCount: 156 },
-      'database:orderInsert': { average: 23, callCount: 28 },
-      'database:inventoryUpdate': { average: 18, callCount: 75 }
-    }
+    performanceMetrics: {}
   };
 };
 
@@ -253,7 +240,7 @@ export const transformUserAnalytics = (data) => {
   }
   
   const totalSpent = orders.orders.reduce((sum, order) => {
-    return order.status === 'DELIVERED' ? sum + order.totalAmount : sum;
+    return (order.status || '').toUpperCase() === 'DELIVERED' ? sum + order.totalAmount : sum;
   }, 0);
 
   const totalOrders = orders.pageInfo.totalElements;
@@ -275,7 +262,7 @@ export const transformUserAnalytics = (data) => {
     if (!ordersByDate[date]) {
       ordersByDate[date] = 0;
     }
-    if (order.status === 'DELIVERED') {
+    if ((order.status || '').toUpperCase() === 'DELIVERED') {
       ordersByDate[date] += order.totalAmount;
     }
   });
@@ -288,7 +275,7 @@ export const transformUserAnalytics = (data) => {
   // Calculate spending by category from order items
   const spendingByCategory = {};
   orders.orders.forEach(order => {
-    if (order.status === 'DELIVERED' && order.orderItems) {
+    if ((order.status || '').toUpperCase() === 'DELIVERED' && order.orderItems) {
       order.orderItems.forEach(item => {
         const category = item.categoryName || 'General';
         if (!spendingByCategory[category]) {

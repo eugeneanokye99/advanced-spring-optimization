@@ -172,35 +172,7 @@ public interface ProductService {
      * @return the products with filters
      */
     Page<ProductResponse> getProductsWithFilters(ProductFilter filter, Pageable pageable, String sortBy,
-            String sortDirection, String algorithm);
-
-    /**
-     * Gets products sorted with quick sort.
-     *
-     * @param sortBy    the sort by
-     * @param ascending the ascending
-     * @return the products sorted with quick sort
-     */
-    List<ProductResponse> getProductsSortedWithQuickSort(String sortBy, boolean ascending);
-
-    /**
-     * Gets products sorted with merge sort.
-     *
-     * @param sortBy    the sort by
-     * @param ascending the ascending
-     * @return the products sorted with merge sort
-     */
-    List<ProductResponse> getProductsSortedWithMergeSort(String sortBy, boolean ascending);
-
-    /**
-     * Search product by id with binary search product response.
-     *
-     * @param productId the product id
-     * @return the product response
-     */
-    ProductResponse searchProductByIdWithBinarySearch(Integer productId);
-
-    List<ProductResponse> findAllSorted(String sortBy, String sortDirection, String algorithm);
+            String sortDirection);
 
     Product searchById(Integer id);
 

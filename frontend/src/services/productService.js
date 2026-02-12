@@ -56,33 +56,6 @@ export const searchProductsPaginated = (term, page = 0, size = 10) =>
 export const getProductsWithFilters = (filters) =>
     api.get('/products/filter', { params: filters });
 
-// GET /api/v1/products/sorted/quicksort - Get products sorted with QuickSort
-export const getProductsSortedWithQuickSort = (sortBy = 'product_id', ascending = true) =>
-    api.get('/products/sorted/quicksort', { params: { sortBy, ascending } });
-
-// GET /api/v1/products/sorted/mergesort - Get products sorted with MergeSort
-export const getProductsSortedWithMergeSort = (sortBy = 'product_id', ascending = true) =>
-    api.get('/products/sorted/mergesort', { params: { sortBy, ascending } });
-
-// GET /api/v1/products/{id}/binary-search - Search product by ID with Binary Search
-export const searchProductByIdWithBinarySearch = (id) => api.get(`/products/${id}/binary-search`);
-
-// GET /api/v1/products/algorithms/sort-comparison - Compare sorting algorithms
-export const compareSortingAlgorithms = (datasetSize = 1000) =>
-    api.get('/products/algorithms/sort-comparison', { params: { datasetSize } });
-
-// GET /api/v1/products/algorithms/search-comparison - Compare search algorithms
-export const compareSearchAlgorithms = (datasetSize = 1000) =>
-    api.get('/products/algorithms/search-comparison', { params: { datasetSize } });
-
-// GET /api/v1/products/algorithms/recommendations - Get algorithm recommendations
-export const getAlgorithmRecommendations = (datasetSize = 5000) =>
-    api.get('/products/algorithms/recommendations', { params: { datasetSize } });
-
-// GET /api/v1/products/sorted/{algorithm} - Get products with custom sorting algorithm
-export const getProductsWithAlgorithm = (algorithm, sortBy = 'price', sortDirection = 'ASC') =>
-    api.get(`/products/sorted/${algorithm}`, { params: { sortBy, sortDirection } });
-
 // GET /api/v1/products/new-arrivals - Get recently added products
 export const getNewArrivals = (limit = 10) =>
     api.get('/products/new-arrivals', { params: { limit } });

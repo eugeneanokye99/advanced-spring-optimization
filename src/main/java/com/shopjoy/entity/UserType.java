@@ -1,5 +1,7 @@
 package com.shopjoy.entity;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 /**
@@ -22,12 +24,12 @@ public enum UserType {
         this.displayName = displayName;
     }
 
-    /**
-     * From string user type.
-     *
-     * @param value the value
-     * @return the user type
-     */
+    @JsonValue
+    public String getJsonValue() {
+        return name().toLowerCase();
+    }
+
+    @JsonCreator
     public static UserType fromString(String value) {
         if (value == null)
             return null;
@@ -36,7 +38,7 @@ public enum UserType {
             return UserType.valueOf(v.toUpperCase());
         } catch (IllegalArgumentException e) {
             for (UserType t : values()) {
-                if (t.displayName.equalsIgnoreCase(v))
+                if (t.displayName.equalsIgnoreCase(v) || t.name().equalsIgnoreCase(v))
                     return t;
             }
             return null;
@@ -45,6 +47,6 @@ public enum UserType {
 
     @Override
     public String toString() {
-        return name();
+        return name().toLowerCase();
     }
 }

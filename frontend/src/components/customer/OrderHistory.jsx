@@ -161,6 +161,7 @@ const handleUpdateOrder = async (orderId) => {
     };
 
     const getStatusBadge = (status) => {
+        const normalizedStatus = (status || 'PENDING').toUpperCase();
         const badges = {
             PENDING: { color: 'bg-yellow-100 text-yellow-800', icon: Clock },
             PROCESSING: { color: 'bg-blue-100 text-blue-800', icon: CheckCircle },
@@ -168,24 +169,25 @@ const handleUpdateOrder = async (orderId) => {
             DELIVERED: { color: 'bg-green-100 text-green-800', icon: Package },
             CANCELLED: { color: 'bg-red-100 text-red-800', icon: XCircle },
         };
-        const badge = badges[status] || badges.PENDING;
+        const badge = badges[normalizedStatus] || badges.PENDING;
         const Icon = badge.icon;
         return (
             <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${badge.color}`}>
-                <Icon className="w-3 h-3" /> {status}
+                <Icon className="w-3 h-3" /> {normalizedStatus}
             </span>
         );
     };
 
     const getPaymentStatusBadge = (status) => {
+        const normalizedStatus = (status || 'UNPAID').toUpperCase();
         const badges = {
             PAID: 'bg-green-100 text-green-800',
             UNPAID: 'bg-red-100 text-red-800',
             PENDING: 'bg-yellow-100 text-yellow-800',
         };
         return (
-            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${badges[status] || badges.UNPAID}`}>
-                {status}
+            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${badges[normalizedStatus] || badges.UNPAID}`}>
+                {normalizedStatus}
             </span>
         );
     };
@@ -414,7 +416,7 @@ const handleUpdateOrder = async (orderId) => {
                                                     ${(parseFloat(order.totalAmount) || 0).toFixed(2)}
                                                 </p>
                                             </div>
-                                            {order.status === 'PENDING' && (
+                                            {order.status && order.status.toUpperCase() === 'PENDING' && (
                                                 <div className="flex gap-2">
                                                     <button
                                                         onClick={() => handleEditOrder(order)}

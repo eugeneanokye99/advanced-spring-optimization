@@ -4,25 +4,22 @@ import com.shopjoy.entity.AddressType;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
-/**
- * JPA Converter for AddressType enum to handle lowercase database values.
- */
 @Converter(autoApply = true)
 public class AddressTypeConverter implements AttributeConverter<AddressType, String> {
 
     @Override
-    public String convertToDatabaseColumn(AddressType addressType) {
-        if (addressType == null) {
+    public String convertToDatabaseColumn(AddressType attribute) {
+        if (attribute == null) {
             return null;
         }
-        return addressType.name().toLowerCase();
+        return attribute.name().toLowerCase();
     }
 
     @Override
-    public AddressType convertToEntityAttribute(String dbValue) {
-        if (dbValue == null) {
+    public AddressType convertToEntityAttribute(String dbData) {
+        if (dbData == null) {
             return null;
         }
-        return AddressType.valueOf(dbValue.toUpperCase());
+        return AddressType.fromString(dbData);
     }
 }

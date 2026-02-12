@@ -4,25 +4,22 @@ import com.shopjoy.entity.OrderStatus;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
-/**
- * JPA Converter for OrderStatus enum to handle lowercase database values.
- */
 @Converter(autoApply = true)
 public class OrderStatusConverter implements AttributeConverter<OrderStatus, String> {
 
     @Override
-    public String convertToDatabaseColumn(OrderStatus status) {
-        if (status == null) {
+    public String convertToDatabaseColumn(OrderStatus attribute) {
+        if (attribute == null) {
             return null;
         }
-        return status.name().toLowerCase();
+        return attribute.name().toLowerCase();
     }
 
     @Override
-    public OrderStatus convertToEntityAttribute(String dbValue) {
-        if (dbValue == null) {
+    public OrderStatus convertToEntityAttribute(String dbData) {
+        if (dbData == null) {
             return null;
         }
-        return OrderStatus.valueOf(dbValue.toUpperCase());
+        return OrderStatus.fromString(dbData);
     }
 }

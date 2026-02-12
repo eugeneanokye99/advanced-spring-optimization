@@ -4,25 +4,22 @@ import com.shopjoy.entity.PaymentStatus;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
-/**
- * JPA Converter for PaymentStatus enum to handle lowercase database values.
- */
 @Converter(autoApply = true)
 public class PaymentStatusConverter implements AttributeConverter<PaymentStatus, String> {
 
     @Override
-    public String convertToDatabaseColumn(PaymentStatus status) {
-        if (status == null) {
+    public String convertToDatabaseColumn(PaymentStatus attribute) {
+        if (attribute == null) {
             return null;
         }
-        return status.name().toLowerCase();
+        return attribute.name().toLowerCase();
     }
 
     @Override
-    public PaymentStatus convertToEntityAttribute(String dbValue) {
-        if (dbValue == null) {
+    public PaymentStatus convertToEntityAttribute(String dbData) {
+        if (dbData == null) {
             return null;
         }
-        return PaymentStatus.valueOf(dbValue.toUpperCase());
+        return PaymentStatus.fromString(dbData);
     }
 }

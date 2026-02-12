@@ -1,14 +1,34 @@
-import { Package, ShoppingCart, Users, TrendingUp, AlertTriangle, DollarSign, Activity } from 'lucide-react';
+import { Package, ShoppingCart, Users, TrendingUp, AlertTriangle, DollarSign, Activity, RefreshCw } from 'lucide-react';
 import { useDashboardAnalytics, transformDashboardData } from '../../services/graphqlService';
+import { getPerformanceMetrics } from '../../services/analyticsService';
+import { useState, useEffect } from 'react';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     LineChart, Line, PieChart, Pie, Cell, Legend
 } from 'recharts';
 
 const Dashboard = () => {
-    const { data: rawData, loading, error, refetch } = useDashboardAnalytics();
+    const { data: rawData, loading: gqlLoading, error: gqlError, refetch } = useDashboardAnalytics();
+    const [performanceMetrics, setPerformanceMetrics] = useState(null);
+    const [perfLoading, setPerfLoading] = useState(true);
+
+    const fetchPerformance = async () => {
+        setPerfLoading(true);
+        try {
+            const res = await getPerformanceMetrics();
+            setPerformanceMetrics(res.data);
+        } catch (err) {
+            console.error("Dashboard performance fetch error:", err);
+        } finally {
+            setPerfLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchPerformance();
+    }, []);
     
-    if (loading) {
+    if (gqlLoading || perfLoading) {
         return (
             <div className="flex flex-col items-center justify-center h-96">
                 <div className="w-12 h-12 border-4 border-primary-600 border-t-transparent rounded-full animate-spin mb-4"></div>
@@ -17,11 +37,11 @@ const Dashboard = () => {
         );
     }
 
-    if (error) {
+    if (gqlError) {
         return (
             <div className="flex flex-col items-center justify-center h-96">
                 <div className="text-red-600 mb-4">Error loading dashboard data:</div>
-                <p className="text-gray-500 mb-4">{error.message}</p>
+                <p className="text-gray-500 mb-4">{gqlError.message}</p>
                 <button 
                     onClick={refetch}
                     className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
@@ -39,6 +59,11 @@ const Dashboard = () => {
                 <p className="text-gray-500 font-medium">No data available</p>
             </div>
         );
+    }
+
+    // Merge real performance metrics if available
+    if (performanceMetrics) {
+        data.performanceMetrics = performanceMetrics;
     }
 
     const { overallStats, salesOverTime, categoryDistribution, lowStockProducts } = data;
@@ -190,18 +215,26 @@ const Dashboard = () => {
                         <h3 className="text-xl font-bold text-gray-900">System Performance Metrics</h3>
                     </div>
                     <div className="flex gap-2">
-                        {['api', 'service', 'database'].map(cat => (
+                        {['api', 'service', 'database', 'sorting'].map(cat => (
                             <span key={cat} className="px-3 py-1 bg-gray-50 text-[10px] font-black text-gray-400 uppercase rounded-full border border-gray-100">
                                 {cat}
                             </span>
                         ))}
+                        <button 
+                            onClick={fetchPerformance}
+                            className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                            title="Refresh Metrics"
+                        >
+                            <RefreshCw className="w-4 h-4 text-gray-400" />
+                        </button>
                     </div>
                 </div>
 
                 <div className="space-y-8">
-                    {data.performanceMetrics && ['api', 'service', 'database'].map(category => {
+                    {data.performanceMetrics && ['api', 'service', 'database', 'sorting'].map(category => {
                         const categoryMetrics = Object.entries(data.performanceMetrics)
                             .filter(([key]) => key.startsWith(`${category}:`))
+                            .sort((a, b) => b[1].average - a[1].average) // Show slowest first
                             .slice(0, 4);
 
                         if (categoryMetrics.length === 0) return null;
@@ -214,10 +247,11 @@ const Dashboard = () => {
                                 </h4>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                     {categoryMetrics.map(([key, stats]) => {
-                                        const methodName = key.split('.').pop();
+                                        const fullLabel = key.split(':').pop();
+                                        const methodName = fullLabel.split('.').pop();
                                         return (
                                             <div key={key} className="p-5 bg-gray-50 rounded-3xl border border-transparent hover:border-primary-100 hover:bg-white transition-all group">
-                                                <p className="text-[10px] font-bold text-gray-400 uppercase mb-3 truncate group-hover:text-primary-600" title={key}>
+                                                <p className="text-[10px] font-bold text-gray-400 uppercase mb-3 truncate group-hover:text-primary-600" title={fullLabel}>
                                                     {methodName}
                                                 </p>
                                                 <div className="flex items-end justify-between">

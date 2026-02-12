@@ -13,9 +13,6 @@ import com.shopjoy.repository.CategoryRepository;
 import com.shopjoy.repository.InventoryRepository;
 import com.shopjoy.repository.ProductRepository;
 import com.shopjoy.service.ProductService;
-import com.shopjoy.util.ProductComparators;
-import com.shopjoy.util.SearchAlgorithms;
-import com.shopjoy.util.SortingAlgorithms;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -29,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -180,7 +176,7 @@ public class ProductServiceImpl implements ProductService {
         if (keyword == null || keyword.trim().isEmpty()) {
             throw new ValidationException("Search keyword cannot be empty");
         }
-        return convertToResponses(productRepository.findByNameContaining(keyword));
+        return convertToResponses(productRepository.findByProductNameContainingIgnoreCase(keyword));
     }
 
     @Override
@@ -191,7 +187,7 @@ public class ProductServiceImpl implements ProductService {
         if (maxPrice < minPrice) {
             throw new ValidationException("Maximum price must be greater than or equal to minimum price");
         }
-        return convertToResponses(productRepository.findByPriceRange(minPrice, maxPrice));
+        return convertToResponses(productRepository.findByPriceBetween(minPrice, maxPrice));
     }
 
     @Override
@@ -295,7 +291,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductResponse> getProductsPaginated(Pageable pageable, String sortBy, String sortDirection) {
-        org.springframework.data.domain.Page<Product> productPage = productRepository.findAll(pageable);
+        Page<Product> productPage = productRepository.findAll(pageable);
 
         List<ProductResponse> responseList = convertToResponses(productPage.getContent());
 
@@ -308,7 +304,7 @@ public class ProductServiceImpl implements ProductService {
             throw new ValidationException("Search keyword cannot be empty");
         }
 
-        org.springframework.data.domain.Page<Product> productPage = productRepository.searchProducts(keyword, pageable);
+        Page<Product> productPage = productRepository.findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword, pageable);
 
         List<ProductResponse> responseList = convertToResponses(productPage.getContent());
 
@@ -317,7 +313,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductResponse> getProductsWithFilters(ProductFilter filter, Pageable pageable, String sortBy,
-            String sortDirection, String algorithm) {
+            String sortDirection) {
         // Handle null filter by creating an empty one
         if (filter == null) {
             filter = ProductFilter.builder().build();
@@ -328,43 +324,8 @@ public class ProductServiceImpl implements ProductService {
             throw new ValidationException("minPrice", "must be less than or equal to maxPrice");
         }
 
-        if (algorithm != null && !algorithm.equalsIgnoreCase("DATABASE")) {
-            // Fetch all matching products without pagination
-            List<Product> allProducts = productRepository.findAllWithFilters(
-                    filter.getSearchTerm(),
-                    filter.getCategoryId(),
-                    filter.getMinPrice(),
-                    filter.getMaxPrice(),
-                    filter.getBrand(),
-                    filter.getActive());
-
-            // Sort in memory using requested algorithm
-            Comparator<Product> comparator = ProductComparators.getComparator(sortBy, sortDirection);
-            switch (algorithm.toUpperCase()) {
-                case "QUICKSORT" -> SortingAlgorithms.quickSort(allProducts, comparator);
-                case "MERGESORT" -> SortingAlgorithms.mergeSort(allProducts, comparator);
-                case "HEAPSORT" -> SortingAlgorithms.heapSort(allProducts, comparator);
-                default -> throw new ValidationException("Unknown sorting algorithm: " + algorithm);
-            }
-
-            // Manually paginate
-            int start = (int) pageable.getOffset();
-            int end = Math.min((start + pageable.getPageSize()), allProducts.size());
-
-            List<Product> pagedContent;
-            if (start >= allProducts.size()) {
-                pagedContent = new ArrayList<>();
-            } else {
-                pagedContent = allProducts.subList(start, end);
-            }
-
-            List<ProductResponse> responseList = convertToResponses(pagedContent);
-
-            return new PageImpl<>(responseList, pageable, allProducts.size());
-        }
-
         // Default database sorting/pagination
-        org.springframework.data.domain.Page<Product> productPage = productRepository.findWithFilters(
+        Page<Product> productPage = productRepository.findWithFilters(
                 filter.getSearchTerm(),
                 filter.getCategoryId(),
                 filter.getMinPrice(),
@@ -379,84 +340,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponse> getProductsSortedWithQuickSort(String sortBy, boolean ascending) {
-        List<Product> products = new ArrayList<>(productRepository.findAll());
-
-        String direction = ascending ? "ASC" : "DESC";
-        Comparator<Product> comparator = ProductComparators.getComparator(sortBy, direction);
-
-        SortingAlgorithms.quickSort(products, comparator);
-
-        return convertToResponses(products);
-    }
-
-    @Override
-    public List<ProductResponse> getProductsSortedWithMergeSort(String sortBy, boolean ascending) {
-        List<Product> products = new ArrayList<>(productRepository.findAll());
-
-        String direction = ascending ? "ASC" : "DESC";
-        Comparator<Product> comparator = ProductComparators.getComparator(sortBy, direction);
-
-        SortingAlgorithms.mergeSort(products, comparator);
-
-        return convertToResponses(products);
-    }
-
-    @Override
-    public ProductResponse searchProductByIdWithBinarySearch(Integer productId) {
-        if (productId == null || productId <= 0) {
-            throw new ValidationException("productId", "must be a positive integer");
-        }
-
-        List<Product> allProducts = new ArrayList<>(productRepository.findAll());
-
-        Comparator<Product> comparator = ProductComparators.BY_ID_ASC;
-        SortingAlgorithms.quickSort(allProducts, comparator);
-
-        Product searchTarget = new Product();
-        searchTarget.setProductId(productId);
-
-        int index = SearchAlgorithms.binarySearch(allProducts, searchTarget, comparator);
-
-        if (index == -1) {
-            throw new ResourceNotFoundException("Product", "id", productId);
-        }
-
-        Product product = allProducts.get(index);
-
-        return convertToResponse(product);
-    }
-
-    @Override
-    public List<ProductResponse> findAllSorted(String sortBy, String sortDirection, String algorithm) {
-        List<Product> products = new ArrayList<>(productRepository.findAll());
-        Comparator<Product> comparator = ProductComparators.getComparator(sortBy, sortDirection);
-
-        switch (algorithm.toUpperCase()) {
-            case "MERGESORT":
-                SortingAlgorithms.mergeSort(products, comparator);
-                break;
-            case "HEAPSORT":
-                SortingAlgorithms.heapSort(products, comparator);
-                break;
-            default:
-                SortingAlgorithms.quickSort(products, comparator);
-        }
-
-        return convertToResponses(products);
-    }
-
-    @Override
     public Product searchById(Integer id) {
-        List<Product> sortedProducts = new ArrayList<>(productRepository.findAll());
-        SortingAlgorithms.quickSort(sortedProducts, ProductComparators.BY_ID_ASC);
-
-        Product searchTarget = new Product();
-        searchTarget.setProductId(id);
-
-        int index = SearchAlgorithms.binarySearch(sortedProducts, searchTarget, ProductComparators.BY_ID_ASC);
-
-        return index >= 0 ? sortedProducts.get(index) : null;
+        return productRepository.findById(id).orElse(null);
     }
 
     @Override

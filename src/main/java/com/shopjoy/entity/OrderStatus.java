@@ -1,5 +1,7 @@
 package com.shopjoy.entity;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 /**
@@ -34,12 +36,12 @@ public enum OrderStatus {
         this.displayName = displayName;
     }
 
-    /**
-     * From string order status.
-     *
-     * @param value the value
-     * @return the order status
-     */
+    @JsonValue
+    public String getJsonValue() {
+        return name().toLowerCase();
+    }
+
+    @JsonCreator
     public static OrderStatus fromString(String value) {
         if (value == null)
             return null;
@@ -48,7 +50,7 @@ public enum OrderStatus {
             return OrderStatus.valueOf(v.toUpperCase());
         } catch (IllegalArgumentException e) {
             for (OrderStatus s : values()) {
-                if (s.displayName.equalsIgnoreCase(v))
+                if (s.displayName.equalsIgnoreCase(v) || s.name().equalsIgnoreCase(v))
                     return s;
             }
             return null;
@@ -57,6 +59,6 @@ public enum OrderStatus {
 
     @Override
     public String toString() {
-        return name();
+        return name().toLowerCase();
     }
 }

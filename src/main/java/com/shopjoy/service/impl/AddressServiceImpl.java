@@ -82,7 +82,13 @@ public class AddressServiceImpl implements AddressService {
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "id", addressId));
         
-        addressRepository.clearDefaultAddresses(address.getUserId());
+        // Find existing default and unset it
+        addressRepository.findByUserIdAndIsDefaultTrue(address.getUserId())
+                .ifPresent(currentDefault -> {
+                    currentDefault.setDefault(false);
+                    addressRepository.save(currentDefault);
+                });
+
         address.setDefault(true);
         Address updatedAddress = addressRepository.save(address);
         return addressMapper.toAddressResponse(updatedAddress);
@@ -90,7 +96,7 @@ public class AddressServiceImpl implements AddressService {
     
     @Override
     public AddressResponse getDefaultAddress(Integer userId) {
-        Address address = addressRepository.findDefaultAddress(userId)
+        Address address = addressRepository.findByUserIdAndIsDefaultTrue(userId)
                 .orElse(null);
         return address != null ? addressMapper.toAddressResponse(address) : null;
     }

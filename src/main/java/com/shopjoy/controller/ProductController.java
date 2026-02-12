@@ -5,9 +5,7 @@ import com.shopjoy.dto.request.CreateProductRequest;
 import com.shopjoy.dto.request.UpdateProductRequest;
 import com.shopjoy.dto.response.ApiResponse;
 import com.shopjoy.dto.response.ProductResponse;
-import com.shopjoy.service.PerformanceComparisonService;
 import com.shopjoy.service.ProductService;
-import com.shopjoy.util.BenchmarkResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -39,18 +37,14 @@ import java.util.List;
 public class ProductController {
 
         private final ProductService productService;
-        private final PerformanceComparisonService performanceComparisonService;
 
         /**
          * Instantiates a new Product controller.
          *
          * @param productService               the product service
-         * @param performanceComparisonService the performance comparison service
          */
-        public ProductController(ProductService productService,
-                        PerformanceComparisonService performanceComparisonService) {
+        public ProductController(ProductService productService) {
                 this.productService = productService;
-                this.performanceComparisonService = performanceComparisonService;
         }
 
         private String normalizeFieldName(String fieldName) {
@@ -409,8 +403,7 @@ public class ProductController {
                         @Parameter(description = "Page number (0-indexed)", example = "0") @RequestParam(defaultValue = "0") int page,
                         @Parameter(description = "Page size", example = "10") @RequestParam(defaultValue = "10") int size,
                         @Parameter(description = "Field to sort by", example = "product_id") @RequestParam(defaultValue = "product_id") String sortBy,
-                        @Parameter(description = "Sort direction (ASC or DESC)", example = "ASC") @RequestParam(defaultValue = "ASC") String sortDirection,
-                        @Parameter(description = "Sorting algorithm (DATABASE, QUICKSORT, MERGESORT, HEAPSORT)", example = "DATABASE") @RequestParam(defaultValue = "DATABASE") String algorithm) {
+                        @Parameter(description = "Sort direction (ASC or DESC)", example = "ASC") @RequestParam(defaultValue = "ASC") String sortDirection) {
 
                 ProductFilter filter = new ProductFilter();
                 filter.setMinPrice(minPrice);
@@ -426,135 +419,10 @@ public class ProductController {
                 Pageable pageable = PageRequest.of(page, size, sort);
                 
                 Page<ProductResponse> response = productService.getProductsWithFilters(filter, pageable, sortBy,
-                                sortDirection, algorithm);
+                                sortDirection);
                 return ResponseEntity.ok(ApiResponse.success(response, "Filtered products retrieved successfully"));
         }
 
-        /**
-         * Gets products sorted with quick sort.
-         *
-         * @param sortBy    the sort by
-         * @param ascending the ascending
-         * @return the products sorted with quick sort
-         */
-        @Operation(summary = "Get products sorted with QuickSort algorithm", description = "Retrieves products sorted using the QuickSort algorithm with O(n log n) average time complexity")
-        @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
-                        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Products sorted with QuickSort algorithm", content = @Content(mediaType = "application/json"))
-        })
-        @GetMapping("/sorted/quicksort")
-        public ResponseEntity<ApiResponse<List<ProductResponse>>> getProductsSortedWithQuickSort(
-                        @Parameter(description = "Field to sort by", example = "product_id") @RequestParam(defaultValue = "product_id") String sortBy,
-                        @Parameter(description = "Sort in ascending order", example = "true") @RequestParam(defaultValue = "true") boolean ascending) {
-                List<ProductResponse> response = productService.getProductsSortedWithQuickSort(sortBy, ascending);
-                return ResponseEntity.ok(ApiResponse.success(response, "Products sorted with QuickSort algorithm"));
-        }
-
-        /**
-         * Gets products sorted with merge sort.
-         *
-         * @param sortBy    the sort by
-         * @param ascending the ascending
-         * @return the products sorted with merge sort
-         */
-        @Operation(summary = "Get products sorted with MergeSort algorithm", description = "Retrieves products sorted using the MergeSort algorithm with O(n log n) guaranteed time complexity")
-        @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
-                        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Products sorted with MergeSort algorithm", content = @Content(mediaType = "application/json"))
-        })
-        @GetMapping("/sorted/mergesort")
-        public ResponseEntity<ApiResponse<List<ProductResponse>>> getProductsSortedWithMergeSort(
-                        @Parameter(description = "Field to sort by", example = "product_id") @RequestParam(defaultValue = "product_id") String sortBy,
-                        @Parameter(description = "Sort in ascending order", example = "true") @RequestParam(defaultValue = "true") boolean ascending) {
-                List<ProductResponse> response = productService.getProductsSortedWithMergeSort(sortBy, ascending);
-                return ResponseEntity.ok(ApiResponse.success(response, "Products sorted with MergeSort algorithm"));
-        }
-
-        /**
-         * Search product by id with binary search response entity.
-         *
-         * @param id the id
-         * @return the response entity
-         */
-        @Operation(summary = "Search product by ID using Binary Search algorithm", description = "Searches for a product by its ID using the Binary Search algorithm with O(log n) time complexity")
-        @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
-                        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Product found using Binary Search algorithm", content = @Content(mediaType = "application/json")),
-                        @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Product not found", content = @Content(mediaType = "application/json"))
-        })
-        @GetMapping("/{id}/binary-search")
-        public ResponseEntity<ApiResponse<ProductResponse>> searchProductByIdWithBinarySearch(
-                        @Parameter(description = "Product unique identifier", required = true, example = "1") @PathVariable Integer id) {
-                ProductResponse response = productService.searchProductByIdWithBinarySearch(id);
-                return ResponseEntity.ok(ApiResponse.success(response, "Product found using Binary Search algorithm"));
-        }
-
-        /**
-         * Compare sorting algorithms response entity.
-         *
-         * @param datasetSize the dataset size
-         * @return the response entity
-         */
-        @Operation(summary = "Compare sorting algorithms", description = "Benchmarks QuickSort, MergeSort, and HeapSort performance")
-        @GetMapping("/algorithms/sort-comparison")
-        public ResponseEntity<ApiResponse<java.util.Map<String, BenchmarkResult>>> compareSortingAlgorithms(
-                        @Parameter(description = "Size of test dataset", example = "1000") @RequestParam(defaultValue = "1000") int datasetSize) {
-                java.util.Map<String, BenchmarkResult> results = performanceComparisonService
-                                .compareSortingAlgorithms(datasetSize);
-                return ResponseEntity.ok(ApiResponse.success(results, "Sorting algorithms compared successfully"));
-        }
-
-        /**
-         * Compare search algorithms response entity.
-         *
-         * @param datasetSize the dataset size
-         * @return the response entity
-         */
-        @Operation(summary = "Compare search algorithms", description = "Benchmarks Binary Search, Jump Search, and Linear Search performance")
-        @GetMapping("/algorithms/search-comparison")
-        public ResponseEntity<ApiResponse<java.util.Map<String, BenchmarkResult>>> compareSearchAlgorithms(
-                        @Parameter(description = "Size of test dataset", example = "1000") @RequestParam(defaultValue = "1000") int datasetSize) {
-                java.util.Map<String, BenchmarkResult> results = performanceComparisonService
-                                .compareSearchAlgorithms(datasetSize);
-                return ResponseEntity.ok(ApiResponse.success(results, "Search algorithms compared successfully"));
-        }
-
-        /**
-         * Gets algorithm recommendations.
-         *
-         * @param datasetSize the dataset size
-         * @return the algorithm recommendations
-         */
-        @Operation(summary = "Get algorithm recommendations", description = "Provides recommendations for optimal algorithms based on dataset size")
-        @GetMapping("/algorithms/recommendations")
-        public ResponseEntity<ApiResponse<java.util.Map<String, Object>>> getAlgorithmRecommendations(
-                        @Parameter(description = "Size of dataset", example = "5000") @RequestParam(defaultValue = "5000") int datasetSize) {
-                java.util.Map<String, Object> recommendations = performanceComparisonService
-                                .generateRecommendations(datasetSize);
-                return ResponseEntity.ok(ApiResponse.success(recommendations, "Algorithm recommendations generated"));
-        }
-
-        /**
-         * Gets products with algorithm.
-         *
-         * @param algorithm     the algorithm
-         * @param sortBy        the sort by
-         * @param sortDirection the sort direction
-         * @return the products with algorithm
-         */
-        @Operation(summary = "Get products with custom sorting algorithm", description = "Fetches products sorted using specified algorithm")
-        @GetMapping("/sorted/{algorithm}")
-        public ResponseEntity<ApiResponse<List<ProductResponse>>> getProductsWithAlgorithm(
-                        @Parameter(description = "Sorting algorithm: QUICKSORT, MERGESORT, HEAPSORT", example = "QUICKSORT") @PathVariable String algorithm,
-                        @Parameter(description = "Field to sort by", example = "price") @RequestParam(defaultValue = "price") String sortBy,
-                        @Parameter(description = "Sort direction: ASC or DESC", example = "ASC") @RequestParam(defaultValue = "ASC") String sortDirection) {
-                List<ProductResponse> products = productService.findAllSorted(sortBy, sortDirection, algorithm);
-                return ResponseEntity.ok(ApiResponse.success(products, "Products sorted with " + algorithm));
-        }
-
-        /**
-         * Gets new arrivals.
-         *
-         * @param limit the limit
-         * @return the new arrivals
-         */
         @Operation(summary = "Get recently added products", description = "Retrieves a list of newest products added to the catalog")
         @GetMapping("/new-arrivals")
         public ResponseEntity<ApiResponse<List<ProductResponse>>> getNewArrivals(

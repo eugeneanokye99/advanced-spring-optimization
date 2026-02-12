@@ -7,6 +7,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 @Aspect
@@ -34,6 +36,15 @@ public class PerformanceAspect {
             
             metricsCollector.recordMetric("service", methodKey, executionTime);
             
+            // Explicitly track sorting performance if Sort/Pageable is present
+            for (Object arg : joinPoint.getArgs()) {
+                if (arg instanceof Pageable p && p.getSort().isSorted()) {
+                    metricsCollector.recordMetric("sorting", methodKey + "[" + p.getSort().toString() + "]", executionTime);
+                } else if (arg instanceof Sort s && s.isSorted()) {
+                    metricsCollector.recordMetric("sorting", methodKey + "[" + s.toString() + "]", executionTime);
+                }
+            }
+
             if (executionTime > SLOW_METHOD_THRESHOLD) {
                 logger.warn("SLOW SERVICE METHOD: {}.{} took {}", 
                     className, methodName, AspectUtils.formatExecutionTime(executionTime));

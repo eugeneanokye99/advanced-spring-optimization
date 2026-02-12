@@ -247,7 +247,7 @@ public class OrderServiceImpl implements OrderService {
         if (startDate.isAfter(endDate)) {
             throw new ValidationException("Start date must be before end date");
         }
-        List<Order> orders = orderRepository.findByDateRange(startDate, endDate);
+        List<Order> orders = orderRepository.findByOrderDateBetween(startDate, endDate);
         return orders.stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
@@ -261,7 +261,7 @@ public class OrderServiceImpl implements OrderService {
         if (startDate.isAfter(endDate)) {
             throw new ValidationException("Start date must be before end date");
         }
-        Page<Order> orderPage = orderRepository.findByDateRange(startDate, endDate, pageable);
+        Page<Order> orderPage = orderRepository.findByOrderDateBetween(startDate, endDate, pageable);
         
         List<OrderResponse> content = orderPage.getContent().stream()
                 .map(this::convertToResponse)
@@ -532,16 +532,14 @@ public OrderResponse updateOrder(Integer orderId, UpdateOrderRequest request) {
 
     private OrderResponse convertToResponse(Order order) {
         String userName = "Unknown User";
-        try {
-            // Using the JPA relationship with @BatchSize for efficiency 
-            // instead of calling userService in a loop (N+1)
-            User user = order.getUser();
-            if (user != null) {
-                userName = user.getFirstName() + " " + user.getLastName();
-            }
-        } catch (Exception e) {
-            // Fallback to Unknown if user cannot be fetched
+
+        // Using the JPA relationship with @BatchSize for efficiency
+        // instead of calling userService in a loop (N+1)
+        User user = order.getUser();
+        if (user != null) {
+            userName = user.getFirstName() + " " + user.getLastName();
         }
+
 
         // Using order.getOrderItems() instead of repository call
         // This leverages @BatchSize(size = 20) added to the collection

@@ -21,11 +21,9 @@ public interface OrderRepository extends JpaRepository<Order, Integer>, JpaSpeci
     List<Order> findByStatus(OrderStatus status);
     Page<Order> findByStatus(OrderStatus status, Pageable pageable);
     
-    @Query("SELECT o FROM Order o WHERE o.orderDate BETWEEN :startDate AND :endDate")
-    List<Order> findByDateRange(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+    List<Order> findByOrderDateBetween(LocalDateTime startDate, LocalDateTime endDate);
 
-    @Query("SELECT o FROM Order o WHERE o.orderDate BETWEEN :startDate AND :endDate")
-    Page<Order> findByDateRange(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, Pageable pageable);
+    Page<Order> findByOrderDateBetween(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
     
     @Query("SELECT CASE WHEN COUNT(oi) > 0 THEN true ELSE false END FROM OrderItem oi " +
            "JOIN oi.order o WHERE o.userId = :userId AND oi.productId = :productId AND o.status <> 'CANCELLED'")

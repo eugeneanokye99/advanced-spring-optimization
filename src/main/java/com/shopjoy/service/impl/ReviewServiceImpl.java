@@ -137,13 +137,12 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional()
     public ReviewResponse markReviewAsHelpful(Integer reviewId) {
-        if (!reviewRepository.existsById(reviewId)) {
-            throw new ResourceNotFoundException("Review", "id", reviewId);
-        }
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ResourceNotFoundException("Review", "id", reviewId));
 
-        reviewRepository.incrementHelpfulCount(reviewId);
-        Review review = reviewRepository.findById(reviewId).orElseThrow();
-        return convertToResponse(review);
+        review.setHelpfulCount(review.getHelpfulCount() + 1);
+        Review updatedReview = reviewRepository.save(review);
+        return convertToResponse(updatedReview);
     }
 
     @Override

@@ -113,7 +113,8 @@ const AddressManagement = () => {
     };
 
     const getTypeIcon = (type) => {
-        switch (type) {
+        const normalizedType = (type || 'OTHER').toUpperCase();
+        switch (normalizedType) {
             case 'HOME': return <Home className="w-4 h-4" />;
             case 'WORK': return <Briefcase className="w-4 h-4" />;
             default: return <MapPin className="w-4 h-4" />;
@@ -283,7 +284,7 @@ const AddressManagement = () => {
 
                             <div className="space-y-1">
                                 <div className="flex items-center gap-2">
-                                    <span className="text-xs font-black text-gray-400 uppercase tracking-widest">{address.addressType}</span>
+                                    <span className="text-xs font-black text-gray-400 uppercase tracking-widest">{(address.addressType || 'OTHER').toUpperCase()}</span>
                                     {address.isDefault && (
                                         <span className="flex items-center gap-1 text-[10px] bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full font-black uppercase">
                                             <CheckCircle className="w-2 h-2" /> Default

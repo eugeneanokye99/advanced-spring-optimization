@@ -91,7 +91,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Cacheable(value = "topLevelCategories")
     public List<CategoryResponse> getTopLevelCategories() {
-        return categoryRepository.findTopLevelCategories().stream()
+        return categoryRepository.findByParentCategoryIdIsNull().stream()
                 .map(categoryMapper::toCategoryResponse)
                 .collect(Collectors.toList());
     }
@@ -102,7 +102,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (parentCategoryId == null) {
             throw new ValidationException("Parent category ID cannot be null");
         }
-        return categoryRepository.findSubcategories(parentCategoryId).stream()
+        return categoryRepository.findByParentCategoryId(parentCategoryId).stream()
                 .map(categoryMapper::toCategoryResponse)
                 .collect(Collectors.toList());
     }
@@ -112,7 +112,7 @@ public class CategoryServiceImpl implements CategoryService {
         if (categoryId == null) {
             throw new ValidationException("Category ID cannot be null");
         }
-        return categoryRepository.hasSubcategories(categoryId);
+        return categoryRepository.existsByParentCategoryId(categoryId);
     }
     
     @Override

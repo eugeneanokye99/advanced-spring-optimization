@@ -17,17 +17,13 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
 
     List<Product> findByCategoryIdIn(List<Integer> categoryIds);
     
-    @Query("SELECT p FROM Product p WHERE LOWER(p.productName) LIKE LOWER(CONCAT('%', :keyword, '%'))")
-    List<Product> findByNameContaining(@Param("keyword") String keyword);
+    List<Product> findByProductNameContainingIgnoreCase(String keyword);
     
-    @Query("SELECT p FROM Product p WHERE p.price BETWEEN :minPrice AND :maxPrice")
-    List<Product> findByPriceRange(@Param("minPrice") double minPrice, @Param("maxPrice") double maxPrice);
+    List<Product> findByPriceBetween(double minPrice, double maxPrice);
     
     long countByCategoryId(Integer categoryId);
     
-    @Query("SELECT p FROM Product p WHERE LOWER(p.productName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) " +
-           "OR LOWER(p.description) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
-    Page<Product> searchProducts(@Param("searchTerm") String searchTerm, Pageable pageable);
+    Page<Product> findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String productName, String description, Pageable pageable);
     
     @Query("SELECT p FROM Product p WHERE p.active = true ORDER BY p.createdAt DESC")
     List<Product> findRecentlyAdded(Pageable pageable);

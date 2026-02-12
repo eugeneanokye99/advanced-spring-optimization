@@ -69,10 +69,10 @@ const UserManagement = () => {
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-900">{user.email}</td>
                                     <td className="px-6 py-4">
-                                        <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${user.userType === 'ADMIN' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
+                                        <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${(user.userType || '').toUpperCase() === 'ADMIN' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'
                                             }`}>
-                                            {user.userType === 'ADMIN' && <Shield className="w-3 h-3" />}
-                                            {user.userType}
+                                            {(user.userType || '').toUpperCase() === 'ADMIN' && <Shield className="w-3 h-3" />}
+                                            {(user.userType || '').toUpperCase()}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-900">{user.phone || 'N/A'}</td>
