@@ -19,7 +19,7 @@ public interface CartItemMapperStruct {
      * @param price the product price
      * @return the cart item response
      */
-    @Mapping(target = "cartItemId", source = "cartItem.id")
+    @Mapping(target = "id", source = "cartItem.id")
     @Mapping(target = "userId", source = "cartItem.user.id")
     @Mapping(target = "productId", source = "cartItem.product.id")
     @Mapping(target = "productName", source = "cartItem.product.productName")
@@ -29,7 +29,7 @@ public interface CartItemMapperStruct {
     /**
      * Convert CartItem entity to CartItemResponse with manual product information.
      */
-    @Mapping(target = "cartItemId", source = "cartItem.id")
+    @Mapping(target = "id", source = "cartItem.id")
     @Mapping(target = "userId", source = "cartItem.user.id")
     @Mapping(target = "productId", source = "cartItem.product.id")
     @Mapping(target = "productName", source = "productName")

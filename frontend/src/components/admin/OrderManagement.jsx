@@ -196,7 +196,7 @@ const OrderManagement = () => {
                                         <td className="px-6 py-5">
                                             <div className="flex flex-col">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-sm font-black text-gray-900">#{order.orderId}</span>
+                                                    <span className="text-sm font-black text-gray-900">#{order.id}</span>
                                                     <button
                                                         onClick={() => setExpandedOrder(expandedOrder === order.orderId ? null : order.orderId)}
                                                         className="p-1 text-gray-400 hover:text-gray-600 transition-colors"

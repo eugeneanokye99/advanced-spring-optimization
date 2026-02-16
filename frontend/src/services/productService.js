@@ -45,7 +45,7 @@ export const getTotalProductCount = () => api.get('/products/count');
 export const getProductCountByCategory = (categoryId) => api.get(`/products/count/category/${categoryId}`);
 
 // GET /api/v1/products/paginated - Get products with pagination
-export const getProductsPaginated = (page = 0, size = 10, sortBy = 'product_id', sortDirection = 'ASC') =>
+export const getProductsPaginated = (page = 0, size = 10, sortBy = 'id', sortDirection = 'ASC') =>
     api.get('/products/paginated', { params: { page, size, sortBy, sortDirection } });
 
 // GET /api/v1/products/search/paginated - Search products with pagination

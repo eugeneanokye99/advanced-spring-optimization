@@ -15,3 +15,4 @@
 2026-02-16 12:06:30.658 - [2026-02-16 12:06:30.658] AUDIT: ORDER UPDATED - Method: updateOrderStatus, Arguments: [24, PROCESSING]
 2026-02-16 12:06:36.748 - [2026-02-16 12:06:36.748] AUDIT: ORDER UPDATED - Method: updateOrderStatus, Arguments: [24, SHIPPED]
 2026-02-16 12:06:37.916 - [2026-02-16 12:06:37.916] AUDIT: ORDER UPDATED - Method: updateOrderStatus, Arguments: [24, DELIVERED]
+2026-02-16 14:52:58.291 - [2026-02-16 14:52:58.290] AUDIT: PRODUCT UPDATED - Method: updateProduct, Arguments: [1, com.shopjoy.dto.request.UpdateProductRequest@3fb7350a]

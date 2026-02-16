@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CartItemResponse {
     
-    private Integer cartItemId;
+    private Integer id;
     private Integer userId;
     private Integer productId;
     private String productName;

@@ -35,7 +35,7 @@ public interface ReviewMapperStruct {
      * @param review the review entity
      * @return the review response
      */
-    @Mapping(source = "id", target = "reviewId")
+    @Mapping(source = "id", target = "id")
     @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "productId", source = "product.id")
     @Mapping(target = "userName", expression = "java(review.getUser() != null ? review.getUser().getFirstName() + \" \" + review.getUser().getLastName() : \"Unknown User\")")

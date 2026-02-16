@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ReviewResponse {
     
-    private Integer reviewId;
+    private Integer id;
     private Integer userId;
     private String userName;
     private Integer productId;

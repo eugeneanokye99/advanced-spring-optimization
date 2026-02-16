@@ -1,7 +1,7 @@
 scalar DateTime
 
 type User {
-    userId: Int!
+    id: ID!
     username: String!
     email: String!
     firstName: String
@@ -12,7 +12,7 @@ type User {
 }
 
 type Product {
-    productId: Int!
+    id: ID!
     productName: String!
     description: String
     price: Float!
@@ -22,7 +22,7 @@ type Product {
 }
 
 type Category {
-    categoryId: Int!
+    id: ID!
     categoryName: String!
     description: String
     parentCategoryId: Int
@@ -32,7 +32,7 @@ type Category {
 }
 
 type Order {
-    orderId: Int!
+    id: ID!
     userId: Int!
     user: User
     totalAmount: Float!
@@ -46,7 +46,7 @@ type Order {
 }
 
 type OrderItem {
-    orderItemId: Int!
+    id: ID!
     orderId: Int!
     productId: Int!
     product: Product
@@ -59,7 +59,7 @@ type OrderItem {
 }
 
 type CartItem {
-    cartItemId: Int!
+    id: ID!
     userId: Int!
     productId: Int!
     product: Product
@@ -68,7 +68,7 @@ type CartItem {
 }
 
 type Review {
-    reviewId: Int!
+    id: ID!
     productId: Int!
     product: Product
     userId: Int!
@@ -79,7 +79,7 @@ type Review {
 }
 
 type Address {
-    addressId: Int!
+    id: ID!
     userId: Int!
     addressType: String!
     streetAddress: String!
@@ -92,7 +92,7 @@ type Address {
 }
 
 type Inventory {
-    inventoryId: Int!
+    id: ID!
     productId: Int!
     product: Product
     stockQuantity: Int!

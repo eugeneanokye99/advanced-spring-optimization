@@ -171,7 +171,7 @@ const ProductDetailModal = ({ product, onClose }) => {
                             </div>
                         ) : (
                             reviews.map((review) => (
-                                <div key={review.reviewId} className="space-y-2">
+                                <div key={review.id} className="space-y-2">
                                     <div className="flex justify-between items-start">
                                         <div>
                                             <div className="flex gap-1 mb-1">
@@ -192,7 +192,7 @@ const ProductDetailModal = ({ product, onClose }) => {
                                     <div className="flex items-center justify-between pt-2">
                                         <span className="text-xs font-bold text-gray-900">{review.userName || 'Anonymous'}</span>
                                         <button
-                                            onClick={() => handleHelpful(review.reviewId)}
+                                            onClick={() => handleHelpful(review.id)}
                                             className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-primary-600 transition-colors"
                                         >
                                             <ThumbsUp className="w-3 h-3" />

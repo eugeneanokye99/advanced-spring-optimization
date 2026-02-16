@@ -39,9 +39,9 @@ public interface AddressMapperStruct {
      * @param address the address entity
      * @return the mapped address response
      */
-    @Mapping(target = "addressId", source = "id")
+    @Mapping(target = "id", source = "id")
     @Mapping(target = "userId", source = "user.id")
-    @Mapping(target = "default", source = "address.default")
+    @Mapping(target = "default", source = "default")
     AddressResponse toAddressResponse(Address address);
 
     /**

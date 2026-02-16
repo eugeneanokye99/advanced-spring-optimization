@@ -4,7 +4,7 @@ import { gql } from '@apollo/client';
 export const UPDATE_ORDER_STATUS = gql`
   mutation UpdateOrderStatus($id: ID!, $status: String!) {
     updateOrderStatus(id: $id, status: $status) {
-      orderId
+      id
       status
       orderDate
       totalAmount
@@ -15,14 +15,14 @@ export const UPDATE_ORDER_STATUS = gql`
 export const UPDATE_ORDER = gql`
   mutation UpdateOrder($id: ID!, $input: UpdateOrderInput!) {
     updateOrder(id: $id, input: $input) {
-      orderId
+      id
       totalAmount
       status
       paymentStatus
       shippingAddress
       notes
       orderItems {
-        orderItemId
+        id
         productId
         productName
         quantity
@@ -42,7 +42,7 @@ export const DELETE_ORDER = gql`
 export const CREATE_ORDER = gql`
   mutation CreateOrder($input: CreateOrderInput!) {
     createOrder(input: $input) {
-      orderId
+      id
       userId
       totalAmount
       status
@@ -56,12 +56,12 @@ export const CREATE_ORDER = gql`
 export const CREATE_PRODUCT = gql`
   mutation CreateProduct($input: CreateProductInput!) {
     createProduct(input: $input) {
-      productId
+      id
       productName
       description
       price
       category {
-        categoryId
+        id
         categoryName
       }
       createdAt
@@ -72,12 +72,12 @@ export const CREATE_PRODUCT = gql`
 export const UPDATE_PRODUCT = gql`
   mutation UpdateProduct($id: ID!, $input: UpdateProductInput!) {
     updateProduct(id: $id, input: $input) {
-      productId
+      id
       productName
       description
       price
       category {
-        categoryId
+        id
         categoryName
       }
     }
@@ -94,7 +94,7 @@ export const DELETE_PRODUCT = gql`
 export const CREATE_CATEGORY = gql`
   mutation CreateCategory($input: CreateCategoryInput!) {
     createCategory(input: $input) {
-      categoryId
+      id
       categoryName
       description
     }
@@ -104,7 +104,7 @@ export const CREATE_CATEGORY = gql`
 export const UPDATE_CATEGORY = gql`
   mutation UpdateCategory($id: ID!, $input: UpdateCategoryInput!) {
     updateCategory(id: $id, input: $input) {
-      categoryId
+      id
       categoryName
       description
     }
@@ -121,10 +121,10 @@ export const DELETE_CATEGORY = gql`
 export const ADD_TO_CART = gql`
   mutation AddToCart($userId: ID!, $productId: ID!, $quantity: Int!) {
     addToCart(userId: $userId, productId: $productId, quantity: $quantity) {
-      cartItemId
+      id
       quantity
       product {
-        productId
+        id
         productName
         price
       }
@@ -143,10 +143,10 @@ export const REMOVE_FROM_CART = gql`
 export const UPDATE_STOCK = gql`
   mutation UpdateStock($productId: ID!, $quantity: Int!) {
     updateStock(productId: $productId, quantity: $quantity) {
-      inventoryId
+      id
       stockQuantity
       product {
-        productId
+        id
         productName
       }
     }
@@ -156,7 +156,7 @@ export const UPDATE_STOCK = gql`
 export const RESERVE_STOCK = gql`
   mutation ReserveStock($productId: ID!, $quantity: Int!) {
     reserveStock(productId: $productId, quantity: $quantity) {
-      inventoryId
+      id
       stockQuantity
       reservedQuantity
     }
@@ -166,7 +166,7 @@ export const RESERVE_STOCK = gql`
 export const RELEASE_STOCK = gql`
   mutation ReleaseStock($productId: ID!, $quantity: Int!) {
     releaseStock(productId: $productId, quantity: $quantity) {
-      inventoryId
+      id
       stockQuantity
       reservedQuantity
     }

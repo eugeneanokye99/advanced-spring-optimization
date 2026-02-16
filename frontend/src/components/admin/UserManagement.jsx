@@ -55,7 +55,7 @@ const UserManagement = () => {
                             <tr><td colSpan="5" className="px-6 py-12 text-center text-gray-500">No users found</td></tr>
                         ) : (
                             users.map((user) => (
-                                <tr key={user.userId} className="hover:bg-gray-50">
+                                <tr key={user.id} className="hover:bg-gray-50">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center">
                                             <div className="h-10 w-10 flex-shrink-0 bg-primary-100 rounded-full flex items-center justify-center mr-3">
@@ -77,7 +77,7 @@ const UserManagement = () => {
                                     </td>
                                     <td className="px-6 py-4 text-sm text-gray-900">{user.phone || 'N/A'}</td>
                                     <td className="px-6 py-4 text-right">
-                                        <button onClick={() => handleDelete(user.userId)} className="text-red-600 hover:text-red-900">
+                                        <button onClick={() => handleDelete(user.id)} className="text-red-600 hover:text-red-900">
                                             <Trash2 className="w-4 h-4" />
                                         </button>
                                     </td>

@@ -5,7 +5,7 @@ export const GET_DASHBOARD_ANALYTICS = gql`
   query GetDashboardAnalytics {
     users {
       users {
-        userId
+        id
         username
         userType
         createdAt
@@ -16,7 +16,7 @@ export const GET_DASHBOARD_ANALYTICS = gql`
     }
     products {
       products {
-        productId
+        id
         productName
         price
         category {
@@ -30,7 +30,7 @@ export const GET_DASHBOARD_ANALYTICS = gql`
     }
     orders {
       orders {
-        orderId
+        id
         totalAmount
         status
         paymentStatus
@@ -43,7 +43,7 @@ export const GET_DASHBOARD_ANALYTICS = gql`
           lastName
         }
         orderItems {
-          orderItemId
+          id
           productId
           productName
           categoryName
@@ -57,11 +57,11 @@ export const GET_DASHBOARD_ANALYTICS = gql`
       }
     }
     lowStockProducts {
-      inventoryId
+      id
       stockQuantity
       reorderLevel
       product {
-        productId
+        id
         productName
       }
     }
@@ -72,14 +72,14 @@ export const GET_USER_ANALYTICS = gql`
   query GetUserAnalytics($userId: ID) {
     orders(userId: $userId) {
       orders {
-        orderId
+        id
         totalAmount
         status
         orderDate
         shippingAddress
         paymentMethod
         orderItems {
-          orderItemId
+          id
           productId
           productName
           categoryName
@@ -93,10 +93,10 @@ export const GET_USER_ANALYTICS = gql`
       }
     }
     cartItems(userId: $userId) {
-      cartItemId
+      id
       quantity
       product {
-        productId
+        id
         productName
         price
       }
@@ -104,7 +104,7 @@ export const GET_USER_ANALYTICS = gql`
     }
     reviews(userId: $userId) {
       reviews {
-        reviewId
+        id
         rating
         comment
         createdAt
@@ -124,7 +124,7 @@ export const GET_ALL_ORDERS = gql`
   query GetAllOrders($filter: OrderFilterInput, $page: Int, $size: Int, $sortBy: String, $sortDirection: String) {
     orders(filter: $filter, page: $page, size: $size, sortBy: $sortBy, sortDirection: $sortDirection) {
       orders {
-        orderId
+        id
         userId
         totalAmount
         status
@@ -139,7 +139,7 @@ export const GET_ALL_ORDERS = gql`
           email
         }
         orderItems {
-          orderItemId
+          id
           productId
           productName
           quantity
@@ -160,7 +160,7 @@ export const GET_ALL_ORDERS = gql`
 export const GET_ORDER_BY_ID = gql`
   query GetOrderById($id: ID!) {
     order(id: $id) {
-      orderId
+      id
       userId
       totalAmount
       status
@@ -176,7 +176,7 @@ export const GET_ORDER_BY_ID = gql`
         phone
       }
       orderItems {
-        orderItemId
+        id
         productId
         productName
         quantity
@@ -191,7 +191,7 @@ export const GET_USER_ORDERS = gql`
   query GetUserOrders($userId: ID, $filter: OrderFilterInput, $page: Int, $size: Int, $sortBy: String, $sortDirection: String) {
     orders(userId: $userId, filter: $filter, page: $page, size: $size, sortBy: $sortBy, sortDirection: $sortDirection) {
       orders {
-        orderId
+        id
         totalAmount
         status
         paymentStatus
@@ -200,7 +200,7 @@ export const GET_USER_ORDERS = gql`
         paymentMethod
         notes
         orderItems {
-          orderItemId
+          id
           productId
           productName
           quantity
@@ -235,12 +235,12 @@ export const GET_PRODUCTS = gql`
       sortDirection: $sortDirection
     ) {
       products {
-        productId
+        id
         productName
         description
         price
         category {
-          categoryId
+          id
           categoryName
         }
         createdAt
@@ -258,11 +258,11 @@ export const GET_PRODUCTS = gql`
 export const GET_CATEGORIES = gql`
   query GetCategories {
     categories {
-      categoryId
+      id
       categoryName
       description
       products {
-        productId
+        id
         productName
       }
     }
@@ -273,11 +273,11 @@ export const GET_CATEGORIES = gql`
 export const GET_LOW_STOCK_PRODUCTS = gql`
   query GetLowStockProducts {
     lowStockProducts {
-      inventoryId
+      id
       stockQuantity
       reorderLevel
       product {
-        productId
+        id
         productName
         price
       }

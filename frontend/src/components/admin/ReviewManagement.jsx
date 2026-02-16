@@ -75,7 +75,7 @@ const ReviewManagement = () => {
                         </div>
                     ) : (
                         filteredReviews.map((review) => (
-                            <div key={review.reviewId} className="card p-6 hover:shadow-md transition-shadow">
+                            <div key={review.id} className="card p-6 hover:shadow-md transition-shadow">
                                 <div className="flex justify-between items-start">
                                     <div className="flex-1">
                                         <div className="flex items-center gap-4 mb-3">
@@ -109,7 +109,7 @@ const ReviewManagement = () => {
                                     </div>
 
                                     <button
-                                        onClick={() => handleDelete(review.reviewId)}
+                                        onClick={() => handleDelete(review.id)}
                                         className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                         title="Delete Review"
                                     >

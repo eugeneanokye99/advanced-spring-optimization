@@ -32,7 +32,7 @@ const ProductManagement = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [priceRange, setPriceRange] = useState({ min: '', max: '' });
-    const [sortBy, setSortBy] = useState('product_id');
+    const [sortBy, setSortBy] = useState('id');
     const [sortDirection, setSortDirection] = useState('ASC');
     const [statusFilter, setStatusFilter] = useState('all');
     const [totalElements, setTotalElements] = useState(0);
@@ -213,7 +213,7 @@ const ProductManagement = () => {
         setSearchTerm('');
         setSelectedCategory('all');
         setPriceRange({ min: '', max: '' });
-        setSortBy('product_id');
+        setSortBy('id');
         setSortDirection('ASC');
         setStatusFilter('all');
         setCurrentPage(0);
@@ -387,7 +387,7 @@ const ProductManagement = () => {
                                 </tr>
                             ) : (
                                 displayedProducts.map((product) => (
-                                    <tr key={product.productId} className="hover:bg-gray-50">
+                                    <tr key={product.id} className="hover:bg-gray-50">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center">
                                                 <img
@@ -434,7 +434,7 @@ const ProductManagement = () => {
                                                 <Edit className="w-4 h-4" />
                                             </button>
                                             <button
-                                                onClick={() => handleDelete(product.productId)}
+                                                onClick={() => handleDelete(product.id)}
                                                 className="text-red-600 hover:text-red-900"
                                             >
                                                 <Trash2 className="w-4 h-4" />

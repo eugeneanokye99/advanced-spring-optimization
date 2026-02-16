@@ -29,7 +29,7 @@ const CategoryManagement = () => {
         e.preventDefault();
         try {
             if (editingCategory) {
-                await updateCategory(editingCategory.categoryId, formData);
+                await updateCategory(editingCategory.id, formData);
                 showSuccessToast('Category updated successfully');
             } else {
                 await createCategory(formData);
@@ -74,14 +74,14 @@ const CategoryManagement = () => {
                     <div className="col-span-full text-center py-12 text-gray-500">No categories found</div>
                 ) : (
                     categories.map((category) => (
-                        <div key={category.categoryId} className="card p-6">
+                        <div key={category.id} className="card p-6">
                             <h3 className="text-lg font-semibold text-gray-900 mb-2">{category.categoryName}</h3>
                             <p className="text-sm text-gray-600 mb-4">{category.description}</p>
                             <div className="flex gap-2">
                                 <button onClick={() => { setEditingCategory(category); setFormData({ categoryName: category.categoryName, description: category.description }); setShowModal(true); }} className="text-blue-600 hover:text-blue-900">
                                     <Edit className="w-4 h-4" />
                                 </button>
-                                <button onClick={() => handleDelete(category.categoryId)} className="text-red-600 hover:text-red-900">
+                                <button onClick={() => handleDelete(category.id)} className="text-red-600 hover:text-red-900">
                                     <Trash2 className="w-4 h-4" />
                                 </button>
                             </div>

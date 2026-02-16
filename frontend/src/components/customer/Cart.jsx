@@ -116,7 +116,7 @@ const Cart = () => {
                     {/* Cart Items */}
                     <div className="lg:col-span-2 space-y-4">
                         {cartItems.map((item) => (
-                            <div key={item.cartItemId} className="card p-4">
+                            <div key={item.id} className="card p-4">
                                 <div className="flex items-center gap-4">
                                     <div className="w-20 h-20 bg-gray-200 rounded-lg flex-shrink-0"></div>
                                     <div className="flex-1">
@@ -125,14 +125,14 @@ const Cart = () => {
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <button
-                                            onClick={() => handleUpdateQuantity(item.cartItemId, item.quantity - 1)}
+                                            onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
                                             className="p-2 hover:bg-gray-100 rounded-lg"
                                         >
                                             <Minus className="w-4 h-4" />
                                         </button>
                                         <span className="w-12 text-center font-medium">{item.quantity}</span>
                                         <button
-                                            onClick={() => handleUpdateQuantity(item.cartItemId, item.quantity + 1)}
+                                            onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
                                             className="p-2 hover:bg-gray-100 rounded-lg"
                                         >
                                             <Plus className="w-4 h-4" />
@@ -141,7 +141,7 @@ const Cart = () => {
                                     <div className="text-right">
                                         <p className="font-bold text-gray-900">${(item.productPrice * item.quantity).toFixed(2)}</p>
                                         <button
-                                            onClick={() => handleRemove(item.cartItemId)}
+                                            onClick={() => handleRemove(item.id)}
                                             className="text-red-600 hover:text-red-800 mt-2"
                                         >
                                             <Trash2 className="w-4 h-4" />

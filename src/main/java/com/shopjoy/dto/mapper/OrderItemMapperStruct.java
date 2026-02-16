@@ -25,7 +25,7 @@ public interface OrderItemMapperStruct {
      * @param product the product response to include
      * @return the mapped order item response
      */
-    @Mapping(source = "item.id", target = "orderItemId")
+    @Mapping(source = "item.id", target = "id")
     @Mapping(target = "productName", source = "product.productName")
     @Mapping(target = "categoryName", source = "product.categoryName")
     @Mapping(target = "productId", source = "item.product.id")
@@ -38,7 +38,7 @@ public interface OrderItemMapperStruct {
      * @param productName the product name to include
      * @return the mapped order item response
      */
-    @Mapping(source = "item.id", target = "orderItemId")
+    @Mapping(source = "item.id", target = "id")
     @Mapping(target = "productId", source = "item.product.id")
     @Mapping(target = "productName", source = "productName")
     @Mapping(target = "categoryName", source = "item.product.category.categoryName")
@@ -50,7 +50,7 @@ public interface OrderItemMapperStruct {
      * @param item the order item entity
      * @return the mapped order item response
      */
-    @Mapping(source = "item.id", target = "orderItemId")
+    @Mapping(source = "item.id", target = "id")
     @Mapping(target = "productId", source = "item.product.id")
     @Mapping(target = "productName", source = "item.product.productName")
     @Mapping(target = "categoryName", source = "item.product.category.categoryName")

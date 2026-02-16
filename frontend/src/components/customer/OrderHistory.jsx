@@ -91,8 +91,8 @@ const OrderHistory = () => {
             orderItems: (order.orderItems || []).map(item => {
                 const unitPrice = item.unitPrice || item.price || (item.subtotal / item.quantity) || 0;
                 return {
-                    orderItemId: item.orderItemId,
-                    productId: item.id,
+                    orderItemId: item.id,
+                    productId: item.productId,
                     productName: item.productName || 'Unknown Product',
                     quantity: item.quantity || 1,
                     price: unitPrice
@@ -109,7 +109,7 @@ const handleUpdateOrder = async (orderId) => {
             notes: editForm.notes,
             orderItems: editForm.orderItems.map(item => ({
                 orderItemId: item.orderItemId,
-                productId: item.id,
+                productId: item.productId,
                 quantity: item.quantity,
                 price: item.price
             }))

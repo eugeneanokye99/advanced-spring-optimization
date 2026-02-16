@@ -49,7 +49,7 @@ const AddressManagement = () => {
         e.preventDefault();
         try {
             if (editingAddress) {
-                await updateAddress(editingAddress.addressId, formData);
+                await updateAddress(editingAddress.id, formData);
                 showSuccessToast('Address updated successfully');
             } else {
                 await createAddress({ ...formData, userId: user.userId });
@@ -263,7 +263,7 @@ const AddressManagement = () => {
                 ) : (
                     addresses.map((address) => (
                         <div
-                            key={address.addressId}
+                            key={address.id}
                             className={`group relative bg-white p-6 rounded-3xl border transition-all duration-300 hover:shadow-xl ${address.isDefault ? 'border-primary-200 shadow-lg shadow-primary-50/50' : 'border-gray-100 hover:border-gray-300'
                                 }`}
                         >
@@ -276,7 +276,7 @@ const AddressManagement = () => {
                                     <button onClick={() => handleEdit(address)} className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
                                         <Star className="w-4 h-4" />
                                     </button>
-                                    <button onClick={() => handleDelete(address.addressId)} className="p-2 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all">
+                                    <button onClick={() => handleDelete(address.id)} className="p-2 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all">
                                         <Trash2 className="w-4 h-4" />
                                     </button>
                                 </div>
@@ -298,7 +298,7 @@ const AddressManagement = () => {
 
                             {!address.isDefault && (
                                 <button
-                                    onClick={() => handleSetDefault(address.addressId)}
+                                    onClick={() => handleSetDefault(address.id)}
                                     className="mt-6 w-full py-3 text-[10px] font-black uppercase tracking-widest text-primary-600 bg-primary-50/50 rounded-2xl opacity-0 group-hover:opacity-100 transition-all hover:bg-primary-50"
                                 >
                                     Set as Default
