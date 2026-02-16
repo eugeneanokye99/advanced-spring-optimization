@@ -16,6 +16,16 @@ public record CreateProductInput(
         @NotNull(message = "Price is required")
         @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
         BigDecimal price,
+
+        @DecimalMin(value = "0.0", inclusive = false, message = "Cost price must be greater than 0")
+        BigDecimal costPrice,
+
+        @NotBlank(message = "SKU is required")
+        String sku,
+
+        String brand,
+        String imageUrl,
+        Boolean isActive,
         
         @NotNull(message = "Stock quantity is required")
         @Min(value = 0, message = "Stock quantity must be non-negative")

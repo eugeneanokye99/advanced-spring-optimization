@@ -19,15 +19,15 @@ public class PerformanceMetricsCollector {
         metrics.computeIfAbsent(key, _ -> Collections.synchronizedList(new ArrayList<>()))
                .add(executionTime);
         
-        callCounts.merge(key, 1L, Long::sum);
+        callCounts.merge(key, 1L, (a, b) -> a + b);
     }
 
     public void recordCacheHit(String cacheKey) {
-        cacheHits.merge(cacheKey, 1L, Long::sum);
+        cacheHits.merge(cacheKey, 1L, (a, b) -> a + b);
     }
 
     public void recordCacheMiss(String cacheKey) {
-        cacheMisses.merge(cacheKey, 1L, Long::sum);
+        cacheMisses.merge(cacheKey, 1L, (a, b) -> a + b);
     }
 
     public Map<String, Map<String, Object>> getAllMetrics() {

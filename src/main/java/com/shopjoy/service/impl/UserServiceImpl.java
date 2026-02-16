@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapperStruct userMapper;
 
     @Override
-    @Transactional(readOnly = false)
+    @Transactional
     @Auditable(action = "USER_REGISTRATION", description = "Registering new user")
     public UserResponse registerUser(CreateUserRequest request) {
         validateCreateUserRequest(request);
@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = false)
+    @Transactional
     @Auditable(action = "USER_REGISTRATION", description = "Registering new user with specific type")
     public UserResponse registerUser(CreateUserRequest request, UserType userType) {
         validateCreateUserRequest(request);

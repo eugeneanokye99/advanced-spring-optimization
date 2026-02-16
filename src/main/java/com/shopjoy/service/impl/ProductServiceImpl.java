@@ -9,6 +9,7 @@ import com.shopjoy.dto.response.ProductResponse;
 import com.shopjoy.entity.Product;
 import com.shopjoy.exception.ResourceNotFoundException;
 import com.shopjoy.exception.ValidationException;
+import com.shopjoy.repository.CategoryRepository;
 import com.shopjoy.repository.InventoryRepository;
 import com.shopjoy.repository.ProductRepository;
 import com.shopjoy.service.ProductService;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -193,7 +195,7 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
-        product.setPrice(new java.math.BigDecimal(newPrice));
+        product.setPrice(BigDecimal.valueOf(newPrice));
         product.setUpdatedAt(LocalDateTime.now());
 
         Product updatedProduct = productRepository.save(product);
@@ -343,11 +345,11 @@ public class ProductServiceImpl implements ProductService {
             throw new ValidationException("categoryId", "must be a valid category ID");
         }
 
-        if (product.getPrice().compareTo(java.math.BigDecimal.ZERO) < 0) {
+        if (product.getPrice().compareTo(BigDecimal.ZERO) < 0) {
             throw new ValidationException("price", "must not be negative");
         }
 
-        if (product.getCostPrice().compareTo(java.math.BigDecimal.ZERO) < 0) {
+        if (product.getCostPrice().compareTo(BigDecimal.ZERO) < 0) {
             throw new ValidationException("costPrice", "must not be negative");
         }
     }

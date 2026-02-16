@@ -54,6 +54,8 @@ public interface ProductMapperStruct {
     @Mapping(target = "categoryName", source = "product.category.categoryName")
     @Mapping(target = "stockQuantity", source = "inventory.quantityInStock")
     @Mapping(target = "active", source = "product.active")
+    @Mapping(target = "createdAt", source = "product.createdAt")
+    @Mapping(target = "updatedAt", source = "product.updatedAt")
     ProductResponse toProductResponseWithInventory(Product product, com.shopjoy.entity.Inventory inventory);
 
     /**
@@ -67,6 +69,8 @@ public interface ProductMapperStruct {
     @Mapping(target = "categoryName", source = "categoryName")
     @Mapping(target = "stockQuantity", source = "stockQuantity")
     @Mapping(target = "active", source = "product.active")
+    @Mapping(target = "createdAt", source = "product.createdAt")
+    @Mapping(target = "updatedAt", source = "product.updatedAt")
     ProductResponse toProductResponse(Product product, String categoryName, int stockQuantity);
 
     /**

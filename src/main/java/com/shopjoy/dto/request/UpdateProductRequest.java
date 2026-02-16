@@ -44,6 +44,6 @@ public class UpdateProductRequest {
     @Schema(description = "Updated active status", example = "false")
     private Boolean isActive;
 
-  
-
+    @Schema(description = "Updated category ID", example = "1")
+    private Integer categoryId;
 }

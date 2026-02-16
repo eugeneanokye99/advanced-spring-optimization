@@ -24,6 +24,6 @@ public class UpdateCategoryRequest {
     @Size(max = 500, message = "Description cannot exceed 500 characters")
     private String description;
 
-   
-
+    @Schema(description = "Updated parent category ID", example = "1")
+    private Integer parentCategoryId;
 }

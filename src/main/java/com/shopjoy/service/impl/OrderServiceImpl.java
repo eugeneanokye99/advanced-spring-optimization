@@ -24,6 +24,7 @@ import com.shopjoy.service.InventoryService;
 import com.shopjoy.service.OrderService;
 import com.shopjoy.service.ProductService;
 import com.shopjoy.service.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -45,6 +46,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional(readOnly = true)
+@AllArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
@@ -55,36 +57,6 @@ public class OrderServiceImpl implements OrderService {
     private final ProductService productService;
     private final UserService userService;
     private final OrderMapperStruct orderMapper;
-
-    /**
-     * Instantiates a new Order service.
-     *
-     * @param orderRepository     the order repository
-     * @param orderItemRepository the order item repository
-     * @param userRepository      the user repository
-     * @param productRepository   the product repository
-     * @param inventoryService    the inventory service
-     * @param productService      the product service
-     * @param userService         the user service
-     * @param orderMapper         the order mapper
-     */
-    public OrderServiceImpl(OrderRepository orderRepository,
-            OrderItemRepository orderItemRepository,
-            UserRepository userRepository,
-            ProductRepository productRepository,
-            InventoryService inventoryService,
-            ProductService productService,
-            UserService userService,
-            OrderMapperStruct orderMapper) {
-        this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
-        this.userRepository = userRepository;
-        this.productRepository = productRepository;
-        this.inventoryService = inventoryService;
-        this.productService = productService;
-        this.userService = userService;
-        this.orderMapper = orderMapper;
-    }
 
 
     @Override
@@ -190,7 +162,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderResponse> getOrdersByUser(Integer userId) {
-        List<Order> orders = orderRepository.findByUserId(userId);
+        List<Order> orders = orderRepository.findByUser_Id(userId);
         return orders.stream()
                 .map(orderMapper::toOrderResponse)
                 .collect(Collectors.toList());
@@ -198,7 +170,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Page<OrderResponse> getOrdersByUserPaginated(Integer userId, Pageable pageable) {
-        Page<Order> orderPage = orderRepository.findByUserId(userId, pageable);
+        Page<Order> orderPage = orderRepository.findByUser_Id(userId, pageable);
 
         List<OrderResponse> content = orderPage.getContent().stream()
                 .map(orderMapper::toOrderResponse)
@@ -462,9 +434,9 @@ public OrderResponse updateOrder(Integer orderId, UpdateOrderRequest request) {
             throw new InvalidOrderStateException(orderId, order.getStatus().toString(), "delete (can only delete PENDING orders)");
         }
 
-        List<OrderItem> orderItems = orderItemRepository.findByOrderId(orderId);
+        List<OrderItem> orderItems = orderItemRepository.findByOrder_Id(orderId);
         for (OrderItem item : orderItems) {
-            inventoryService.releaseStock(item.getProductId(), item.getQuantity());
+            inventoryService.releaseStock(item.getProduct().getId(), item.getQuantity());
         }
 
         orderRepository.deleteById(orderId);

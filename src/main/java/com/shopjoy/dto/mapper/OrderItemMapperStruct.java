@@ -28,7 +28,7 @@ public interface OrderItemMapperStruct {
     @Mapping(source = "item.id", target = "orderItemId")
     @Mapping(target = "productName", source = "product.productName")
     @Mapping(target = "categoryName", source = "product.categoryName")
-    @Mapping(target = "productId", source = "item.productId")
+    @Mapping(target = "productId", source = "item.product.id")
     OrderItemResponse toOrderItemResponse(OrderItem item, ProductResponse product);
 
     /**
@@ -39,6 +39,7 @@ public interface OrderItemMapperStruct {
      * @return the mapped order item response
      */
     @Mapping(source = "item.id", target = "orderItemId")
+    @Mapping(target = "productId", source = "item.product.id")
     @Mapping(target = "productName", source = "productName")
     @Mapping(target = "categoryName", source = "item.product.category.categoryName")
     OrderItemResponse toOrderItemResponse(OrderItem item, String productName);
@@ -50,6 +51,7 @@ public interface OrderItemMapperStruct {
      * @return the mapped order item response
      */
     @Mapping(source = "item.id", target = "orderItemId")
+    @Mapping(target = "productId", source = "item.product.id")
     @Mapping(target = "productName", source = "item.product.productName")
     @Mapping(target = "categoryName", source = "item.product.category.categoryName")
     OrderItemResponse toOrderItemResponse(OrderItem item);
@@ -65,7 +67,7 @@ public interface OrderItemMapperStruct {
     default void enhanceWithProductInfo(@MappingTarget OrderItemResponse.OrderItemResponseBuilder target, OrderItem source) {
         // This can be enhanced with product service lookup if needed
         if (target.build().getProductName() == null) {
-            target.productName("Product #" + source.getProductId());
+            target.productName("Product #" + source.getProduct().getId());
         }
     }
 }

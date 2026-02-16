@@ -115,10 +115,10 @@ public class ReviewServiceImpl implements ReviewService {
         if (rating < 1 || rating > 5) {
             throw new ValidationException("rating", "must be between 1 and 5");
         }
-        return reviewRepository.findByProductId(productId).stream()
+        return reviewRepository.findByProduct_Id(productId).stream()
                 .filter(review -> review.getRating() == rating)
                 .map(reviewMapper::toReviewResponse)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override

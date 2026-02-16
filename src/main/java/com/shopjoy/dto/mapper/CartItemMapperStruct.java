@@ -20,6 +20,8 @@ public interface CartItemMapperStruct {
      * @return the cart item response
      */
     @Mapping(target = "cartItemId", source = "cartItem.id")
+    @Mapping(target = "userId", source = "cartItem.user.id")
+    @Mapping(target = "productId", source = "cartItem.product.id")
     @Mapping(target = "productName", source = "cartItem.product.productName")
     @Mapping(target = "productPrice", source = "cartItem.product.price")
     CartItemResponse toCartItemResponse(CartItem cartItem);
@@ -28,6 +30,8 @@ public interface CartItemMapperStruct {
      * Convert CartItem entity to CartItemResponse with manual product information.
      */
     @Mapping(target = "cartItemId", source = "cartItem.id")
+    @Mapping(target = "userId", source = "cartItem.user.id")
+    @Mapping(target = "productId", source = "cartItem.product.id")
     @Mapping(target = "productName", source = "productName")
     @Mapping(target = "productPrice", source = "price")
     CartItemResponse toCartItemResponse(CartItem cartItem, String productName, double price);

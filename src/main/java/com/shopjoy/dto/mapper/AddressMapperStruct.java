@@ -60,7 +60,7 @@ public interface AddressMapperStruct {
      * @param address the existing address to update
      */
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "user", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "default", source = "isDefault")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
