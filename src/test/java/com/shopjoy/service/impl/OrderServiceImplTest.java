@@ -7,7 +7,6 @@ import com.shopjoy.dto.response.OrderResponse;
 import com.shopjoy.dto.response.ProductResponse;
 import com.shopjoy.entity.*;
 import com.shopjoy.exception.ResourceNotFoundException;
-import com.shopjoy.exception.ValidationException;
 import com.shopjoy.repository.OrderItemRepository;
 import com.shopjoy.repository.OrderRepository;
 import com.shopjoy.repository.ProductRepository;
@@ -25,7 +24,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;

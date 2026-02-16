@@ -5,8 +5,6 @@ import com.shopjoy.dto.response.ReviewResponse;
 import com.shopjoy.entity.Product;
 import com.shopjoy.entity.Review;
 import com.shopjoy.entity.User;
-import com.shopjoy.exception.BusinessException;
-import com.shopjoy.exception.ResourceNotFoundException;
 import com.shopjoy.repository.OrderRepository;
 import com.shopjoy.repository.ProductRepository;
 import com.shopjoy.repository.ReviewRepository;
@@ -20,13 +18,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 

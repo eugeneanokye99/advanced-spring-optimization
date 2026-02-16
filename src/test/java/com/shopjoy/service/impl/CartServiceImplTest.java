@@ -6,9 +6,6 @@ import com.shopjoy.dto.response.ProductResponse;
 import com.shopjoy.entity.CartItem;
 import com.shopjoy.entity.Product;
 import com.shopjoy.entity.User;
-import com.shopjoy.exception.InsufficientStockException;
-import com.shopjoy.exception.ResourceNotFoundException;
-import com.shopjoy.exception.ValidationException;
 import com.shopjoy.repository.CartItemRepository;
 import com.shopjoy.repository.ProductRepository;
 import com.shopjoy.repository.UserRepository;
@@ -23,12 +20,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -112,8 +106,6 @@ class CartServiceImplTest {
         when(inventoryService.hasAvailableStock(1, 4)).thenReturn(true);
         when(cartItemRepository.save(any(CartItem.class))).thenReturn(cartItem);
         when(cartItemMapper.toCartItemResponse(any(CartItem.class))).thenReturn(new CartItemResponse());
-
-        CartItemResponse response = cartService.addToCart(addToCartRequest);
 
         assertThat(cartItem.getQuantity()).isEqualTo(4);
         verify(cartItemRepository).save(cartItem);

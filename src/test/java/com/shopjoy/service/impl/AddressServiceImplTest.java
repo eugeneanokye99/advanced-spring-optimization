@@ -5,7 +5,6 @@ import com.shopjoy.dto.response.AddressResponse;
 import com.shopjoy.entity.Address;
 import com.shopjoy.entity.AddressType;
 import com.shopjoy.entity.User;
-import com.shopjoy.exception.ResourceNotFoundException;
 import com.shopjoy.repository.AddressRepository;
 import com.shopjoy.repository.UserRepository;
 import com.shopjoy.dto.mapper.AddressMapperStruct;
@@ -17,12 +16,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-import java.util.List;
+
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
