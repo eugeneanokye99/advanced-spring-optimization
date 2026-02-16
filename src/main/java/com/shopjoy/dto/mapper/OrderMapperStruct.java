@@ -14,7 +14,8 @@ import java.util.List;
  * Replaces manual mapping boilerplate with compile-time generated code.
  */
 @Mapper(
-    componentModel = "spring", // Generate Spring component
+    componentModel = "spring",
+    uses = {OrderItemMapperStruct.class},
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
@@ -38,25 +39,17 @@ public interface OrderMapperStruct {
 
     /**
      * Maps Order entity to OrderResponse with additional data.
-     * 
-     * @param order the order entity
-     * @param userName the user name to include
-     * @param orderItems the order items to include
-     * @return the mapped order response
+     */
+    @Mapping(target = "userName", expression = "java(order.getUser() != null ? order.getUser().getFirstName() + \" \" + order.getUser().getLastName() : \"Unknown User\")")
+    @Mapping(target = "orderItems", source = "orderItems")
+    OrderResponse toOrderResponse(Order order);
+
+    /**
+     * Maps Order entity to OrderResponse with explicit additional data.
      */
     @Mapping(target = "userName", source = "userName")
     @Mapping(target = "orderItems", source = "orderItems")
     OrderResponse toOrderResponse(Order order, String userName, List<OrderItemResponse> orderItems);
-
-    /**
-     * Maps Order entity to OrderResponse without additional data.
-     * 
-     * @param order the order entity
-     * @return the mapped order response
-     */
-    @Mapping(target = "userName", ignore = true)
-    @Mapping(target = "orderItems", ignore = true)
-    OrderResponse toOrderResponse(Order order);
 
     /**
      * Updates existing Order entity from CreateOrderRequest.

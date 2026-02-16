@@ -47,7 +47,7 @@ public interface OrderItemMapperStruct {
      * @param item the order item entity
      * @return the mapped order item response
      */
-    @Mapping(target = "productName", ignore = true)
+    @Mapping(target = "productName", source = "product.productName")
     @Mapping(target = "categoryName", source = "product.category.categoryName")
     OrderItemResponse toOrderItemResponse(OrderItem item);
 

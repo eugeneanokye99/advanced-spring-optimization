@@ -36,27 +36,27 @@ ALTER SEQUENCE addresses_address_id_seq RESTART WITH 1;
 -- ============================================
 -- Password for all users: "password123" (hashed with BCrypt)
 INSERT INTO users (username, email, password_hash, first_name, last_name, phone, user_type, created_at, updated_at) VALUES
-('admin', 'admin@shopjoy.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Admin', 'User', '555-0000', 'admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('john_doe', 'john.doe@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'John', 'Doe', '555-0101', 'customer', CURRENT_TIMESTAMP - INTERVAL '6 months', CURRENT_TIMESTAMP),
-('jane_smith', 'jane.smith@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Jane', 'Smith', '555-0102', 'customer', CURRENT_TIMESTAMP - INTERVAL '5 months', CURRENT_TIMESTAMP),
-('bob_wilson', 'bob.wilson@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Bob', 'Wilson', '555-0103', 'customer', CURRENT_TIMESTAMP - INTERVAL '4 months', CURRENT_TIMESTAMP),
-('alice_brown', 'alice.brown@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Alice', 'Brown', '555-0104', 'customer', CURRENT_TIMESTAMP - INTERVAL '3 months', CURRENT_TIMESTAMP),
-('charlie_davis', 'charlie.davis@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Charlie', 'Davis', '555-0105', 'customer', CURRENT_TIMESTAMP - INTERVAL '3 months', CURRENT_TIMESTAMP),
-('emma_johnson', 'emma.johnson@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Emma', 'Johnson', '555-0106', 'customer', CURRENT_TIMESTAMP - INTERVAL '2 months', CURRENT_TIMESTAMP),
-('david_lee', 'david.lee@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'David', 'Lee', '555-0107', 'customer', CURRENT_TIMESTAMP - INTERVAL '2 months', CURRENT_TIMESTAMP),
-('sophia_martinez', 'sophia.martinez@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Sophia', 'Martinez', '555-0108', 'customer', CURRENT_TIMESTAMP - INTERVAL '1 month', CURRENT_TIMESTAMP),
-('michael_garcia', 'michael.garcia@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Michael', 'Garcia', '555-0109', 'customer', CURRENT_TIMESTAMP - INTERVAL '1 month', CURRENT_TIMESTAMP),
-('olivia_rodriguez', 'olivia.rodriguez@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Olivia', 'Rodriguez', '555-0110', 'customer', CURRENT_TIMESTAMP - INTERVAL '3 weeks', CURRENT_TIMESTAMP),
-('james_hernandez', 'james.hernandez@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'James', 'Hernandez', '555-0111', 'customer', CURRENT_TIMESTAMP - INTERVAL '3 weeks', CURRENT_TIMESTAMP),
-('ava_lopez', 'ava.lopez@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Ava', 'Lopez', '555-0112', 'customer', CURRENT_TIMESTAMP - INTERVAL '2 weeks', CURRENT_TIMESTAMP),
-('william_gonzalez', 'william.gonzalez@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'William', 'Gonzalez', '555-0113', 'customer', CURRENT_TIMESTAMP - INTERVAL '2 weeks', CURRENT_TIMESTAMP),
-('isabella_wilson', 'isabella.wilson@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Isabella', 'Wilson', '555-0114', 'customer', CURRENT_TIMESTAMP - INTERVAL '1 week', CURRENT_TIMESTAMP),
-('ethan_anderson', 'ethan.anderson@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Ethan', 'Anderson', '555-0115', 'customer', CURRENT_TIMESTAMP - INTERVAL '1 week', CURRENT_TIMESTAMP),
-('mia_thomas', 'mia.thomas@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Mia', 'Thomas', '555-0116', 'customer', CURRENT_TIMESTAMP - INTERVAL '5 days', CURRENT_TIMESTAMP),
-('alexander_taylor', 'alexander.taylor@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Alexander', 'Taylor', '555-0117', 'customer', CURRENT_TIMESTAMP - INTERVAL '5 days', CURRENT_TIMESTAMP),
-('charlotte_moore', 'charlotte.moore@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Charlotte', 'Moore', '555-0118', 'customer', CURRENT_TIMESTAMP - INTERVAL '3 days', CURRENT_TIMESTAMP),
-('daniel_jackson', 'daniel.jackson@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Daniel', 'Jackson', '555-0119', 'customer', CURRENT_TIMESTAMP - INTERVAL '2 days', CURRENT_TIMESTAMP),
-('amelia_white', 'amelia.white@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Amelia', 'White', '555-0120', 'customer', CURRENT_TIMESTAMP - INTERVAL '1 day', CURRENT_TIMESTAMP);
+('admin', 'admin@shopjoy.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Admin', 'User', '555-0000', 'ADMIN', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('john_doe', 'john.doe@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'John', 'Doe', '555-0101', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '6 months', CURRENT_TIMESTAMP),
+('jane_smith', 'jane.smith@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Jane', 'Smith', '555-0102', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '5 months', CURRENT_TIMESTAMP),
+('bob_wilson', 'bob.wilson@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Bob', 'Wilson', '555-0103', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '4 months', CURRENT_TIMESTAMP),
+('alice_brown', 'alice.brown@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Alice', 'Brown', '555-0104', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '3 months', CURRENT_TIMESTAMP),
+('charlie_davis', 'charlie.davis@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Charlie', 'Davis', '555-0105', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '3 months', CURRENT_TIMESTAMP),
+('emma_johnson', 'emma.johnson@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Emma', 'Johnson', '555-0106', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '2 months', CURRENT_TIMESTAMP),
+('david_lee', 'david.lee@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'David', 'Lee', '555-0107', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '2 months', CURRENT_TIMESTAMP),
+('sophia_martinez', 'sophia.martinez@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Sophia', 'Martinez', '555-0108', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '1 month', CURRENT_TIMESTAMP),
+('michael_garcia', 'michael.garcia@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Michael', 'Garcia', '555-0109', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '1 month', CURRENT_TIMESTAMP),
+('olivia_rodriguez', 'olivia.rodriguez@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Olivia', 'Rodriguez', '555-0110', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '3 weeks', CURRENT_TIMESTAMP),
+('james_hernandez', 'james.hernandez@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'James', 'Hernandez', '555-0111', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '3 weeks', CURRENT_TIMESTAMP),
+('ava_lopez', 'ava.lopez@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Ava', 'Lopez', '555-0112', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '2 weeks', CURRENT_TIMESTAMP),
+('william_gonzalez', 'william.gonzalez@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'William', 'Gonzalez', '555-0113', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '2 weeks', CURRENT_TIMESTAMP),
+('isabella_wilson', 'isabella.wilson@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Isabella', 'Wilson', '555-0114', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '1 week', CURRENT_TIMESTAMP),
+('ethan_anderson', 'ethan.anderson@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Ethan', 'Anderson', '555-0115', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '1 week', CURRENT_TIMESTAMP),
+('mia_thomas', 'mia.thomas@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Mia', 'Thomas', '555-0116', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '5 days', CURRENT_TIMESTAMP),
+('alexander_taylor', 'alexander.taylor@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Alexander', 'Taylor', '555-0117', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '5 days', CURRENT_TIMESTAMP),
+('charlotte_moore', 'charlotte.moore@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Charlotte', 'Moore', '555-0118', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '3 days', CURRENT_TIMESTAMP),
+('daniel_jackson', 'daniel.jackson@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Daniel', 'Jackson', '555-0119', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '2 days', CURRENT_TIMESTAMP),
+('amelia_white', 'amelia.white@email.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Amelia', 'White', '555-0120', 'CUSTOMER', CURRENT_TIMESTAMP - INTERVAL '1 day', CURRENT_TIMESTAMP);
 
 -- ============================================
 -- INSERT CATEGORIES (Hierarchical)

@@ -49,6 +49,7 @@ public class User implements Serializable {
     private String phone;
 
     @Column(name = "user_type", length = 20)
+    @Enumerated(EnumType.STRING)
     private UserType userType;
 
     @Column(name = "created_at")

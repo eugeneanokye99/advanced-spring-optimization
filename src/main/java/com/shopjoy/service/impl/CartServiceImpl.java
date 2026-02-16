@@ -61,7 +61,7 @@ public class CartServiceImpl implements CartService {
 
             cartItem.setQuantity(newQuantity);
             CartItem updatedItem = cartItemRepository.save(cartItem);
-            return convertToResponse(updatedItem);
+            return cartItemMapper.toCartItemResponse(updatedItem);
         } else {
             CartItem cartItem = CartItem.builder()
                     .userId(request.getUserId())
@@ -70,7 +70,7 @@ public class CartServiceImpl implements CartService {
                     .build();
 
             CartItem savedItem = cartItemRepository.save(cartItem);
-            return convertToResponse(savedItem);
+            return cartItemMapper.toCartItemResponse(savedItem);
         }
     }
 
@@ -90,7 +90,7 @@ public class CartServiceImpl implements CartService {
 
         cartItem.setQuantity(newQuantity);
         CartItem updatedItem = cartItemRepository.save(cartItem);
-        return convertToResponse(updatedItem);
+        return cartItemMapper.toCartItemResponse(updatedItem);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class CartServiceImpl implements CartService {
     public List<CartItemResponse> getCartItems(Integer userId) {
         List<CartItem> items = cartItemRepository.findByUserId(userId);
         return items.stream()
-                .map(this::convertToResponse)
+                .map(cartItemMapper::toCartItemResponse)
                 .collect(Collectors.toList());
     }
 
@@ -137,16 +137,4 @@ public class CartServiceImpl implements CartService {
                 .sum();
     }
 
-    private CartItemResponse convertToResponse(CartItem cartItem) {
-        String productName = "Unknown Product";
-        double price = 0.0;
-        try {
-            ProductResponse product = productService.getProductById(cartItem.getProductId());
-            productName = product.getProductName();
-            price = product.getPrice();
-        } catch (Exception e) {
-            // Ignore product fetch errors
-        }
-        return cartItemMapper.toCartItemResponse(cartItem, productName, price);
-    }
 }

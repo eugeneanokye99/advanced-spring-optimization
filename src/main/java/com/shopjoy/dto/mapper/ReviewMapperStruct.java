@@ -29,13 +29,12 @@ public interface ReviewMapperStruct {
 
     /**
      * Convert Review entity to ReviewResponse.
-     * Note: userName and productName will be null and need to be set by service layer.
      *
      * @param review the review entity
      * @return the review response
      */
-    @Mapping(target = "userName", ignore = true) // Set by service layer
-    @Mapping(target = "productName", ignore = true) // Set by service layer
+    @Mapping(target = "userName", expression = "java(review.getUser() != null ? review.getUser().getFirstName() + \" \" + review.getUser().getLastName() : \"Unknown User\")")
+    @Mapping(target = "productName", source = "product.productName")
     ReviewResponse toReviewResponse(Review review);
 
     /**

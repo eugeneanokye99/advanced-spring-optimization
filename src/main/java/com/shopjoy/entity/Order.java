@@ -53,6 +53,7 @@ public class Order implements Serializable {
     private BigDecimal totalAmount;
 
     @Column(name = "status", length = 20)
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
     @Column(name = "shipping_address", nullable = false, columnDefinition = "TEXT")
@@ -62,6 +63,7 @@ public class Order implements Serializable {
     private String paymentMethod;
 
     @Column(name = "payment_status", length = 20)
+    @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
     @Column(name = "notes", columnDefinition = "TEXT")

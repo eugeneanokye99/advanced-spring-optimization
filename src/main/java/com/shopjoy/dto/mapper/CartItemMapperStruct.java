@@ -19,6 +19,13 @@ public interface CartItemMapperStruct {
      * @param price the product price
      * @return the cart item response
      */
+    @Mapping(target = "productName", source = "product.productName")
+    @Mapping(target = "productPrice", source = "product.price")
+    CartItemResponse toCartItemResponse(CartItem cartItem);
+
+    /**
+     * Convert CartItem entity to CartItemResponse with manual product information.
+     */
     @Mapping(target = "productName", source = "productName")
     @Mapping(target = "productPrice", source = "price")
     CartItemResponse toCartItemResponse(CartItem cartItem, String productName, double price);

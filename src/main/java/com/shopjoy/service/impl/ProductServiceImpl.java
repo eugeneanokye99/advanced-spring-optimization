@@ -9,7 +9,6 @@ import com.shopjoy.dto.response.ProductResponse;
 import com.shopjoy.entity.Product;
 import com.shopjoy.exception.ResourceNotFoundException;
 import com.shopjoy.exception.ValidationException;
-import com.shopjoy.repository.CategoryRepository;
 import com.shopjoy.repository.InventoryRepository;
 import com.shopjoy.repository.ProductRepository;
 import com.shopjoy.service.ProductService;
@@ -25,9 +24,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -40,56 +39,10 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final InventoryRepository inventoryRepository;
-    private final CategoryRepository categoryRepository;
     private final ProductMapperStruct productMapper;
 
-    private ProductResponse convertToResponse(Product product) {
-        String categoryName = categoryRepository.findById(product.getCategoryId())
-                .map(com.shopjoy.entity.Category::getCategoryName)
-                .orElse("Unknown");
-        int stock = inventoryRepository.findByProductId(product.getProductId())
-                .map(com.shopjoy.entity.Inventory::getQuantityInStock)
-                .orElse(0);
-        return productMapper.toProductResponse(product, categoryName, stock);
-    }
-
-    /**
-     * Batch converts products to responses, fetching categories and inventories in bulk.
-     */
-    private List<ProductResponse> convertToResponses(List<Product> products) {
-        if (products.isEmpty()) {
-            return new ArrayList<>();
-        }
-        
-        // Fetch all categories in one query
-        List<Integer> categoryIds = products.stream()
-                .map(Product::getCategoryId)
-                .distinct()
-                .collect(Collectors.toList());
-        Map<Integer, String> categoryMap = categoryRepository.findAllById(categoryIds).stream()
-                .collect(Collectors.toMap(
-                        com.shopjoy.entity.Category::getCategoryId,
-                        com.shopjoy.entity.Category::getCategoryName));
-        
-        // Fetch all inventories in one query
-        List<Integer> productIds = products.stream()
-                .map(Product::getProductId)
-                .collect(Collectors.toList());
-        Map<Integer, Integer> inventoryMap = inventoryRepository.findByProductIdIn(productIds).stream()
-                .collect(Collectors.toMap(
-                        com.shopjoy.entity.Inventory::getProductId,
-                        com.shopjoy.entity.Inventory::getQuantityInStock));
-        
-        return products.stream()
-                .map(product -> productMapper.toProductResponse(
-                        product,
-                        categoryMap.getOrDefault(product.getCategoryId(), "Unknown"),
-                        inventoryMap.getOrDefault(product.getProductId(), 0)))
-                .collect(Collectors.toList());
-    }
-
     @Override
-    @Transactional()
+    @Transactional
     @CacheEvict(value = {"products", "activeProducts", "productsByCategory"}, allEntries = true)
     public ProductResponse createProduct(CreateProductRequest request) {
         Product product = productMapper.toProduct(request);
@@ -110,7 +63,7 @@ public class ProductServiceImpl implements ProductService {
         inventory.setUpdatedAt(LocalDateTime.now());
         inventoryRepository.save(inventory);
 
-        return convertToResponse(createdProduct);
+        return productMapper.toProductResponse(createdProduct);
     }
 
     @Override
@@ -118,38 +71,40 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse getProductById(Integer productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
-        return convertToResponse(product);
+        return productMapper.toProductResponse(product);
     }
 
     @Override
     @Cacheable(value = "products")
     public List<ProductResponse> getProductsByIds(List<Integer> productIds) {
         if (productIds == null || productIds.isEmpty()) {
-            return java.util.Collections.emptyList();
+            return Collections.emptyList();
         }
         
         List<Integer> distinctIds = productIds.stream()
                 .distinct()
-                .filter(java.util.Objects::nonNull)
+                .filter(Objects::nonNull)
                 .toList();
         
         List<Product> products = productRepository.findAllById(distinctIds);
-        return convertToResponses(products);
+        return products.stream().map(productMapper::toProductResponse).collect(Collectors.toList());
     }
 
     @Override
     @Cacheable(value = "products")
     public List<ProductResponse> getAllProducts() {
-        return convertToResponses(productRepository.findAll());
+        return productRepository.findAll().stream()
+                .map(productMapper::toProductResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Cacheable(value = "activeProducts")
     public List<ProductResponse> getActiveProducts() {
-        List<Product> activeProducts = productRepository.findAll().stream()
+        return productRepository.findAll().stream()
                 .filter(Product::isActive)
+                .map(productMapper::toProductResponse)
                 .collect(Collectors.toList());
-        return convertToResponses(activeProducts);
     }
 
     @Override
@@ -158,25 +113,30 @@ public class ProductServiceImpl implements ProductService {
         if (categoryId == null) {
             throw new ValidationException("Category ID cannot be null");
         }
-        return convertToResponses(productRepository.findByCategoryId(categoryId));
+        return productRepository.findByCategoryId(categoryId).stream()
+                .map(productMapper::toProductResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Cacheable(value = "productsByCategory")
     public List<ProductResponse> getProductsByCategories(List<Integer> categoryIds) {
         if (categoryIds == null || categoryIds.isEmpty()) {
-            return java.util.Collections.emptyList();
+            return Collections.emptyList();
         }
-        return convertToResponses(productRepository.findByCategoryIdIn(categoryIds));
+        return productRepository.findByCategoryIdIn(categoryIds).stream()
+                .map(productMapper::toProductResponse)
+                .collect(Collectors.toList());
     }
- 
 
     @Override
     public List<ProductResponse> searchProductsByName(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             throw new ValidationException("Search keyword cannot be empty");
         }
-        return convertToResponses(productRepository.findByProductNameContainingIgnoreCase(keyword));
+        return productRepository.findByProductNameContainingIgnoreCase(keyword).stream()
+                .map(productMapper::toProductResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -187,11 +147,13 @@ public class ProductServiceImpl implements ProductService {
         if (maxPrice < minPrice) {
             throw new ValidationException("Maximum price must be greater than or equal to minimum price");
         }
-        return convertToResponses(productRepository.findByPriceBetween(minPrice, maxPrice));
+        return productRepository.findByPriceBetween(minPrice, maxPrice).stream()
+                .map(productMapper::toProductResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
-    @Transactional()
+    @Transactional
     @Caching(evict = {
         @CacheEvict(value = "product", key = "#productId"),
         @CacheEvict(value = {"products", "activeProducts", "productsByCategory"}, allEntries = true)
@@ -207,11 +169,11 @@ public class ProductServiceImpl implements ProductService {
 
         Product updatedProduct = productRepository.save(existingProduct);
 
-        return convertToResponse(updatedProduct);
+        return productMapper.toProductResponse(updatedProduct);
     }
 
     @Override
-    @Transactional()
+    @Transactional
     @Auditable(action = "UPDATE_PRICE", description = "Updating product price")
     @Caching(evict = {
         @CacheEvict(value = "product", key = "#productId"),
@@ -229,11 +191,11 @@ public class ProductServiceImpl implements ProductService {
 
         Product updatedProduct = productRepository.save(product);
 
-        return convertToResponse(updatedProduct);
+        return productMapper.toProductResponse(updatedProduct);
     }
 
     @Override
-    @Transactional()
+    @Transactional
     @Caching(evict = {
         @CacheEvict(value = "product", key = "#productId"),
         @CacheEvict(value = {"products", "activeProducts", "productsByCategory"}, allEntries = true)
@@ -244,11 +206,11 @@ public class ProductServiceImpl implements ProductService {
         product.setActive(true);
         product.setUpdatedAt(LocalDateTime.now());
 
-        return convertToResponse(productRepository.save(product));
+        return productMapper.toProductResponse(productRepository.save(product));
     }
 
     @Override
-    @Transactional()
+    @Transactional
     @Caching(evict = {
         @CacheEvict(value = "product", key = "#productId"),
         @CacheEvict(value = {"products", "activeProducts", "productsByCategory"}, allEntries = true)
@@ -259,11 +221,11 @@ public class ProductServiceImpl implements ProductService {
         product.setActive(false);
         product.setUpdatedAt(LocalDateTime.now());
 
-        return convertToResponse(productRepository.save(product));
+        return productMapper.toProductResponse(productRepository.save(product));
     }
 
     @Override
-    @Transactional()
+    @Transactional
     @Caching(evict = {
         @CacheEvict(value = "product", key = "#productId"),
         @CacheEvict(value = {"products", "activeProducts", "productsByCategory"}, allEntries = true)
@@ -293,7 +255,9 @@ public class ProductServiceImpl implements ProductService {
     public Page<ProductResponse> getProductsPaginated(Pageable pageable, String sortBy, String sortDirection) {
         Page<Product> productPage = productRepository.findAll(pageable);
 
-        List<ProductResponse> responseList = convertToResponses(productPage.getContent());
+        List<ProductResponse> responseList = productPage.getContent().stream()
+                .map(productMapper::toProductResponse)
+                .collect(Collectors.toList());
 
         return new PageImpl<>(responseList, pageable, productPage.getTotalElements());
     }
@@ -306,7 +270,9 @@ public class ProductServiceImpl implements ProductService {
 
         Page<Product> productPage = productRepository.findByProductNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(keyword, keyword, pageable);
 
-        List<ProductResponse> responseList = convertToResponses(productPage.getContent());
+        List<ProductResponse> responseList = productPage.getContent().stream()
+                .map(productMapper::toProductResponse)
+                .collect(Collectors.toList());
 
         return new PageImpl<>(responseList, pageable, productPage.getTotalElements());
     }
@@ -334,7 +300,9 @@ public class ProductServiceImpl implements ProductService {
                 filter.getActive(),
                 pageable);
 
-        List<ProductResponse> responseList = convertToResponses(productPage.getContent());
+        List<ProductResponse> responseList = productPage.getContent().stream()
+                .map(productMapper::toProductResponse)
+                .collect(Collectors.toList());
 
         return new PageImpl<>(responseList, pageable, productPage.getTotalElements());
     }
@@ -346,8 +314,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductResponse> getRecentlyAddedProducts(int limit) {
-
-        return convertToResponses(productRepository.findRecentlyAdded(PageRequest.of(0, limit)));
+        return productRepository.findRecentlyAdded(PageRequest.of(0, limit)).stream()
+                .map(productMapper::toProductResponse)
+                .collect(Collectors.toList());
     }
 
     private void validateProductData(Product product) {
@@ -374,7 +343,6 @@ public class ProductServiceImpl implements ProductService {
         if (product.getCostPrice().compareTo(java.math.BigDecimal.ZERO) < 0) {
             throw new ValidationException("costPrice", "must not be negative");
         }
-
-
     }
 }
+

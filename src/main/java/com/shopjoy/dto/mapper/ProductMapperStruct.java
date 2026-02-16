@@ -33,28 +33,23 @@ public interface ProductMapperStruct {
     Product toProduct(CreateProductRequest request);
 
     /**
-     * Maps Product entity to ProductResponse with additional data.
-     * 
-     * @param product the product entity
-     * @param categoryName the category name to include
-     * @param stockQuantity the stock quantity to include
-     * @return the mapped product response
-     */
-    @Mapping(target = "categoryName", source = "categoryName")
-    @Mapping(target = "stockQuantity", source = "stockQuantity")
-    @Mapping(target = "active", source = "product.active")
-    ProductResponse toProductResponse(Product product, String categoryName, int stockQuantity);
-
-    /**
      * Maps Product entity to ProductResponse without additional data.
      * 
      * @param product the product entity
      * @return the mapped product response
      */
-    @Mapping(target = "categoryName", ignore = true)
-    @Mapping(target = "stockQuantity", ignore = true)
-     @Mapping(target = "active", source = "product.active")
+    @Mapping(target = "categoryName", source = "category.categoryName")
+    @Mapping(target = "stockQuantity", source = "inventory.quantityInStock")
+    @Mapping(target = "active", source = "product.active")
     ProductResponse toProductResponse(Product product);
+
+    /**
+     * Maps Product entity to ProductResponse with explicit additional data.
+     */
+    @Mapping(target = "categoryName", source = "categoryName")
+    @Mapping(target = "stockQuantity", source = "stockQuantity")
+    @Mapping(target = "active", source = "product.active")
+    ProductResponse toProductResponse(Product product, String categoryName, int stockQuantity);
 
     /**
      * Updates existing Product entity from UpdateProductRequest.

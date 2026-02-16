@@ -9,9 +9,7 @@ import com.shopjoy.exception.BusinessException;
 import com.shopjoy.exception.ResourceNotFoundException;
 import com.shopjoy.exception.ValidationException;
 import com.shopjoy.repository.OrderRepository;
-import com.shopjoy.repository.ProductRepository;
 import com.shopjoy.repository.ReviewRepository;
-import com.shopjoy.repository.UserRepository;
 import com.shopjoy.service.ReviewService;
 
 import lombok.AllArgsConstructor;
@@ -32,22 +30,9 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
-    private final ProductRepository productRepository;
     private final ReviewMapperStruct reviewMapper;
 
 
-    private ReviewResponse convertToResponse(Review review) {
-        ReviewResponse response = reviewMapper.toReviewResponse(review);
-
-        userRepository.findById(review.getUserId())
-                .ifPresent(user -> response.setUserName(user.getFirstName() + " " + user.getLastName()));
-
-        productRepository.findById(review.getProductId())
-                .ifPresent(product -> response.setProductName(product.getProductName()));
-
-        return response;
-    }
 
     @Override
     @Transactional()
@@ -71,27 +56,27 @@ public class ReviewServiceImpl implements ReviewService {
 
         Review createdReview = reviewRepository.save(review);
 
-        return convertToResponse(createdReview);
+        return reviewMapper.toReviewResponse(createdReview);
     }
 
     @Override
     public ReviewResponse getReviewById(Integer reviewId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ResourceNotFoundException("Review", "id", reviewId));
-        return convertToResponse(review);
+        return reviewMapper.toReviewResponse(review);
     }
 
     @Override
     public List<ReviewResponse> getReviewsByProduct(Integer productId) {
         return reviewRepository.findByProductId(productId).stream()
-                .map(this::convertToResponse)
+                .map(reviewMapper::toReviewResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<ReviewResponse> getReviewsByUser(Integer userId) {
         return reviewRepository.findByUserId(userId).stream()
-                .map(this::convertToResponse)
+                .map(reviewMapper::toReviewResponse)
                 .collect(Collectors.toList());
     }
 
@@ -105,7 +90,7 @@ public class ReviewServiceImpl implements ReviewService {
         validateReviewData(review);
 
         Review updatedReview = reviewRepository.save(review);
-        return convertToResponse(updatedReview);
+        return reviewMapper.toReviewResponse(updatedReview);
     }
 
     @Override
@@ -125,7 +110,7 @@ public class ReviewServiceImpl implements ReviewService {
         }
         return reviewRepository.findByProductId(productId).stream()
                 .filter(review -> review.getRating() == rating)
-                .map(this::convertToResponse)
+                .map(reviewMapper::toReviewResponse)
                 .toList();
     }
 
@@ -142,13 +127,13 @@ public class ReviewServiceImpl implements ReviewService {
 
         review.setHelpfulCount(review.getHelpfulCount() + 1);
         Review updatedReview = reviewRepository.save(review);
-        return convertToResponse(updatedReview);
+        return reviewMapper.toReviewResponse(updatedReview);
     }
 
     @Override
     public List<ReviewResponse> getAllReviews() {
         return reviewRepository.findAll().stream()
-                .map(this::convertToResponse)
+                .map(reviewMapper::toReviewResponse)
                 .collect(Collectors.toList());
     }
 

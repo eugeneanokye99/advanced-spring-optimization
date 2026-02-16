@@ -2,18 +2,14 @@ package com.shopjoy.service.impl;
 
 import com.shopjoy.dto.filter.OrderFilter;
 import com.shopjoy.dto.mapper.OrderMapperStruct;
-import com.shopjoy.dto.mapper.OrderItemMapperStruct;
 import com.shopjoy.dto.request.CreateOrderItemRequest;
 import com.shopjoy.dto.request.CreateOrderRequest;
 import com.shopjoy.dto.request.UpdateOrderItemRequest;
 import com.shopjoy.dto.request.UpdateOrderRequest;
-import com.shopjoy.dto.response.OrderItemResponse;
 import com.shopjoy.dto.response.OrderResponse;
 import com.shopjoy.dto.response.ProductResponse;
 import com.shopjoy.entity.Order;
 import com.shopjoy.entity.OrderItem;
-import com.shopjoy.entity.Product;
-import com.shopjoy.entity.User;
 import com.shopjoy.entity.OrderStatus;
 import com.shopjoy.entity.PaymentStatus;
 import com.shopjoy.exception.InvalidOrderStateException;
@@ -52,7 +48,6 @@ public class OrderServiceImpl implements OrderService {
     private final ProductService productService;
     private final UserService userService;
     private final OrderMapperStruct orderMapper;
-    private final OrderItemMapperStruct orderItemMapper;
 
     /**
      * Instantiates a new Order service.
@@ -63,22 +58,19 @@ public class OrderServiceImpl implements OrderService {
      * @param productService      the product service
      * @param userService         the user service
      * @param orderMapper         the order mapper
-     * @param orderItemMapper     the order item mapper
      */
     public OrderServiceImpl(OrderRepository orderRepository,
             OrderItemRepository orderItemRepository,
             InventoryService inventoryService,
             ProductService productService,
             UserService userService,
-            OrderMapperStruct orderMapper,
-            OrderItemMapperStruct orderItemMapper) {
+            OrderMapperStruct orderMapper) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.inventoryService = inventoryService;
         this.productService = productService;
         this.userService = userService;
         this.orderMapper = orderMapper;
-        this.orderItemMapper = orderItemMapper;
     }
 
     /**
@@ -182,7 +174,7 @@ public class OrderServiceImpl implements OrderService {
         Page<Order> orderPage = orderRepository.findAll(spec, pageable);
 
         List<OrderResponse> content = orderPage.getContent().stream()
-                .map(this::convertToResponse)
+                .map(orderMapper::toOrderResponse)
                 .collect(Collectors.toList());
 
         return new PageImpl<>(content, pageable, orderPage.getTotalElements());
@@ -192,25 +184,26 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse getOrderById(Integer orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
-        return convertToResponse(order);
+
+        return orderMapper.toOrderResponse(order);
     }
 
     @Override
     public List<OrderResponse> getOrdersByUser(Integer userId) {
         List<Order> orders = orderRepository.findByUserId(userId);
         return orders.stream()
-                .map(this::convertToResponse)
+                .map(orderMapper::toOrderResponse)
                 .collect(Collectors.toList());
     }
 
     @Override
     public Page<OrderResponse> getOrdersByUserPaginated(Integer userId, Pageable pageable) {
         Page<Order> orderPage = orderRepository.findByUserId(userId, pageable);
-        
+
         List<OrderResponse> content = orderPage.getContent().stream()
-                .map(this::convertToResponse)
+                .map(orderMapper::toOrderResponse)
                 .collect(Collectors.toList());
-                
+
         return new PageImpl<>(content, pageable, orderPage.getTotalElements());
     }
 
@@ -221,7 +214,7 @@ public class OrderServiceImpl implements OrderService {
         }
         List<Order> orders = orderRepository.findByStatus(status);
         return orders.stream()
-                .map(this::convertToResponse)
+                .map(orderMapper::toOrderResponse)
                 .collect(Collectors.toList());
     }
 
@@ -231,11 +224,11 @@ public class OrderServiceImpl implements OrderService {
             throw new ValidationException("Order status cannot be null");
         }
         Page<Order> orderPage = orderRepository.findByStatus(status, pageable);
-        
+
         List<OrderResponse> content = orderPage.getContent().stream()
-                .map(this::convertToResponse)
+                .map(orderMapper::toOrderResponse)
                 .collect(Collectors.toList());
-                
+
         return new PageImpl<>(content, pageable, orderPage.getTotalElements());
     }
 
@@ -249,7 +242,7 @@ public class OrderServiceImpl implements OrderService {
         }
         List<Order> orders = orderRepository.findByOrderDateBetween(startDate, endDate);
         return orders.stream()
-                .map(this::convertToResponse)
+                .map(orderMapper::toOrderResponse)
                 .collect(Collectors.toList());
     }
 
@@ -264,7 +257,7 @@ public class OrderServiceImpl implements OrderService {
         Page<Order> orderPage = orderRepository.findByOrderDateBetween(startDate, endDate, pageable);
         
         List<OrderResponse> content = orderPage.getContent().stream()
-                .map(this::convertToResponse)
+                .map(orderMapper::toOrderResponse)
                 .collect(Collectors.toList());
                 
         return new PageImpl<>(content, pageable, orderPage.getTotalElements());
@@ -275,7 +268,7 @@ public class OrderServiceImpl implements OrderService {
         Page<Order> orderPage = orderRepository.findAll(pageable);
         
         List<OrderResponse> content = orderPage.getContent().stream()
-                .map(this::convertToResponse)
+                .map(orderMapper::toOrderResponse)
                 .collect(Collectors.toList());
                 
         return new PageImpl<>(content, pageable, orderPage.getTotalElements());
@@ -302,7 +295,7 @@ public class OrderServiceImpl implements OrderService {
 
         Order updatedOrder = orderRepository.save(order);
 
-        return convertToResponse(updatedOrder);
+        return orderMapper.toOrderResponse(updatedOrder);
     }
 
     @Override
@@ -379,7 +372,7 @@ public class OrderServiceImpl implements OrderService {
 
         Order cancelledOrder = orderRepository.save(order);
 
-        return convertToResponse(cancelledOrder);
+        return orderMapper.toOrderResponse(cancelledOrder);
     }
 
     @Override
@@ -390,7 +383,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderResponse> getAllOrders() {
         return orderRepository.findAll().stream()
-                .map(this::convertToResponse)
+                .map(orderMapper::toOrderResponse)
                 .collect(Collectors.toList());
     }
 
@@ -465,7 +458,7 @@ public OrderResponse updateOrder(Integer orderId, UpdateOrderRequest request) {
     order.setUpdatedAt(LocalDateTime.now());
     Order updatedOrder = orderRepository.save(order);
     
-    return convertToResponse(updatedOrder);
+    return orderMapper.toOrderResponse(updatedOrder);
 }
 
 
@@ -530,33 +523,6 @@ public OrderResponse updateOrder(Integer orderId, UpdateOrderRequest request) {
         }
     }
 
-    private OrderResponse convertToResponse(Order order) {
-        String userName = "Unknown User";
-
-        // Using the JPA relationship with @BatchSize for efficiency
-        // instead of calling userService in a loop (N+1)
-        User user = order.getUser();
-        if (user != null) {
-            userName = user.getFirstName() + " " + user.getLastName();
-        }
-
-
-        // Using order.getOrderItems() instead of repository call
-        // This leverages @BatchSize(size = 20) added to the collection
-        List<OrderItemResponse> itemResponses = order.getOrderItems().stream().map(item -> {
-            try {
-                // Leveraging the lazy-loaded Product association within OrderItem
-                // Hibernate will batch fetch these products too due to @BatchSize on Product class
-                Product product = item.getProduct();
-                String productName = product != null ? product.getProductName() : "Unknown Product";
-                return orderItemMapper.toOrderItemResponse(item, productName);
-            } catch (Exception e) {
-                return orderItemMapper.toOrderItemResponse(item, "Unknown Product");
-            }
-        }).collect(Collectors.toList());
-
-        return orderMapper.toOrderResponse(order, userName, itemResponses);
-    }
 
     /**
      * PAYMENT WORKFLOW DEMONSTRATION

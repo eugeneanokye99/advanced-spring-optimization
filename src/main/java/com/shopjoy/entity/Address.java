@@ -38,6 +38,7 @@ public class Address implements Serializable {
     private User user;
 
     @Column(name = "address_type", length = 20)
+    @Enumerated(EnumType.STRING)
     private AddressType addressType;
 
     @Column(name = "street_address", nullable = false)
