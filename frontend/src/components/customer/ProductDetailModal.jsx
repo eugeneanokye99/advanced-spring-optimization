@@ -44,7 +44,7 @@ const ProductDetailModal = ({ product, onClose }) => {
             setSubmitting(true);
             await createReview({
                 ...newReview,
-                userId: user.userId,
+                userId: user.id,
                 productId: product.id
             });
             setNewReview({ rating: 5, title: '', comment: '' });

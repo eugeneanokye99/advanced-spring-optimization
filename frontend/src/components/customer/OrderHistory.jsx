@@ -24,7 +24,7 @@ const OrderHistory = () => {
     };
 
     const { data, loading, error, refetch } = useUserOrders(
-        user?.userId, 
+        user?.id, 
         filter,
         currentPage, 
         pageSize,

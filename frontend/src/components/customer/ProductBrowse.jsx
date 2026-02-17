@@ -75,7 +75,7 @@ const ProductBrowse = () => {
             return;
         }
         try {
-            await addToCart({ userId: user.userId, productId, quantity: 1 });
+            await addToCart({ userId: user.id, productId, quantity: 1 });
             showSuccessToast('Product added to cart!');
         } catch (error) {
             console.error('Error adding to cart:', error);

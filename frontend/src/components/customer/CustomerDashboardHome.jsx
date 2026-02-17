@@ -17,7 +17,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 
 const CustomerDashboardHome = () => {
     const { user } = useAuth();
-    const { data: rawData, loading, error, refetch } = useUserAnalytics(user?.userId);
+    const { data: rawData, loading, error, refetch } = useUserAnalytics(user?.id);
 
     if (loading) {
         return (

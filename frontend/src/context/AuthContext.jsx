@@ -20,7 +20,21 @@ export const AuthProvider = ({ children }) => {
         // Check if user is logged in on mount
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
-            setUser(JSON.parse(storedUser));
+            const parsedUser = JSON.parse(storedUser);
+            // Handle legacy user object format or clear invalid session
+            if (parsedUser.userId && !parsedUser.id) {
+                console.warn('Migrating legacy user object');
+                parsedUser.id = parsedUser.userId;
+                localStorage.setItem('user', JSON.stringify(parsedUser));
+            }
+            
+            if (parsedUser.id) {
+                setUser(parsedUser);
+            } else {
+                // Invalid user object, clear session
+                localStorage.removeItem('user');
+                setUser(null);
+            }
         }
         setLoading(false);
     }, []);

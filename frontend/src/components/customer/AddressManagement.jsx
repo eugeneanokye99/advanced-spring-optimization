@@ -27,7 +27,7 @@ const AddressManagement = () => {
     const loadAddresses = async () => {
         try {
             setLoading(true);
-            const response = await getAddressesByUser(user.userId);
+            const response = await getAddressesByUser(user.id);
             setAddresses(response.data || []);
         } catch (error) {
             console.error('Error loading addresses:', error);
@@ -52,7 +52,7 @@ const AddressManagement = () => {
                 await updateAddress(editingAddress.id, formData);
                 showSuccessToast('Address updated successfully');
             } else {
-                await createAddress({ ...formData, userId: user.userId });
+                await createAddress({ ...formData, userId: user.id });
                 showSuccessToast('Address added successfully');
             }
             setShowForm(false);

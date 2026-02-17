@@ -198,7 +198,7 @@ const OrderManagement = () => {
                                                 <div className="flex items-center gap-2">
                                                     <span className="text-sm font-black text-gray-900">#{order.id}</span>
                                                     <button
-                                                        onClick={() => setExpandedOrder(expandedOrder === order.orderId ? null : order.orderId)}
+                                                        onClick={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}
                                                         className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
                                                         title="View Details"
                                                     >
@@ -267,13 +267,13 @@ const OrderManagement = () => {
                                                 {order.status && order.status.toUpperCase() === 'PENDING' && (
                                                     <>
                                                         <button
-                                                            onClick={() => handleProcessPayment(order.orderId)}
+                                                            onClick={() => handleProcessPayment(order.id)}
                                                             className="px-3 py-1.5 bg-emerald-600 text-white text-[10px] font-black uppercase tracking-wider rounded-lg hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-100 flex items-center gap-1.5 whitespace-nowrap"
                                                         >
                                                             <DollarSign className="w-3.5 h-3.5" /> Pay
                                                         </button>
                                                         <button
-                                                            onClick={() => handleStatusChange(order.orderId, 'PROCESSING')}
+                                                            onClick={() => handleStatusChange(order.id, 'PROCESSING')}
                                                             className="px-3 py-1.5 bg-blue-600 text-white text-[10px] font-black uppercase tracking-wider rounded-lg hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 whitespace-nowrap"
                                                         >
                                                             Accept
@@ -282,7 +282,7 @@ const OrderManagement = () => {
                                                 )}
                                                 {order.status && order.status.toUpperCase() === 'PROCESSING' && (
                                                     <button
-                                                        onClick={() => handleStatusChange(order.orderId, 'SHIPPED')}
+                                                        onClick={() => handleStatusChange(order.id, 'SHIPPED')}
                                                         className="px-3 py-1.5 bg-indigo-600 text-white text-[10px] font-black uppercase tracking-wider rounded-lg hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 whitespace-nowrap"
                                                     >
                                                         Ship
@@ -290,7 +290,7 @@ const OrderManagement = () => {
                                                 )}
                                                 {order.status && order.status.toUpperCase() === 'SHIPPED' && (
                                                     <button
-                                                        onClick={() => handleStatusChange(order.orderId, 'DELIVERED')}
+                                                        onClick={() => handleStatusChange(order.id, 'DELIVERED')}
                                                         className="px-3 py-1.5 bg-emerald-600 text-white text-[10px] font-black uppercase tracking-wider rounded-lg hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-100 whitespace-nowrap"
                                                     >
                                                         Deliver
@@ -298,7 +298,7 @@ const OrderManagement = () => {
                                                 )}
                                                 {order.status && ['PENDING', 'PROCESSING'].includes(order.status.toUpperCase()) && (
                                                     <button
-                                                        onClick={() => handleStatusChange(order.orderId, 'CANCELLED')}
+                                                        onClick={() => handleStatusChange(order.id, 'CANCELLED')}
                                                         className="px-3 py-1.5 bg-white text-rose-600 border border-rose-100 text-[10px] font-black uppercase tracking-wider rounded-lg hover:bg-rose-50 transition-all whitespace-nowrap"
                                                     >
                                                         Cancel
@@ -307,13 +307,13 @@ const OrderManagement = () => {
                                             </div>
                                         </td>
                                     </tr>
-                                    {expandedOrder === order.orderId && (
+                                    {expandedOrder === order.id && (
                                         <tr className="bg-gray-50/30">
                                             <td colSpan="6" className="px-6 py-4">
                                                 <div className="bg-white rounded-xl p-4 border border-gray-100">
                                                     <h4 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
                                                         <Package className="w-4 h-4" />
-                                                        Order Details - #{order.orderId}
+                                                        Order Details - #{order.id}
                                                     </h4>
                                                     
                                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

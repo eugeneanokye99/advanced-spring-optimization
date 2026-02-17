@@ -13,8 +13,8 @@ const api = axios.create({
 api.interceptors.request.use(
     (config) => {
         const user = JSON.parse(localStorage.getItem('user') || '{}');
-        if (user.userId) {
-            config.headers['X-User-Id'] = user.userId;
+        if (user.id) {
+            config.headers['X-User-Id'] = user.id;
         }
         return config;
     },

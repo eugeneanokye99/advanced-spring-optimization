@@ -28,8 +28,8 @@ const Cart = () => {
         if (!user) return;
         try {
             const [itemsResponse, totalResponse] = await Promise.all([
-                getCartItems(user.userId),
-                getCartTotal(user.userId),
+                getCartItems(user.id),
+                getCartTotal(user.id),
             ]);
             setCartItems(itemsResponse.data || []);
             setTotal(totalResponse.data || 0);
@@ -79,13 +79,13 @@ const Cart = () => {
             }));
 
             await createOrder({
-                userId: user.userId,
+                userId: user.id,
                 orderItems,
                 shippingAddress: "123 Main St, New York, NY 10001", // Placeholder
                 totalAmount: total
             });
 
-            await clearCart(user.userId);
+            await clearCart(user.id);
             showSuccessToast('Order placed successfully!');
             loadCart();
         } catch (error) {
