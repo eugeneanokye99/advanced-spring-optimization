@@ -16,6 +16,7 @@ import com.shopjoy.service.UserService;
 import lombok.AllArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
@@ -169,9 +170,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional()
-    @Caching(evict = {
-        @CacheEvict(value = {"userProfile", "userProfileEmail", "userProfileUsername", "usersByIds"}, allEntries = true)
-    })
+    @Caching(
+        put = { @CachePut(value = "userProfile", key = "#userId") },
+        evict = { @CacheEvict(value = {"userProfileEmail", "userProfileUsername", "usersByIds"}, allEntries = true) }
+    )
     public UserResponse updateUserProfile(Integer userId, UpdateUserRequest request) {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));

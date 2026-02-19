@@ -49,14 +49,12 @@ public interface GraphQLMapperStruct {
      * Convert CreateCategoryInput to CreateCategoryRequest.
      */
     @Mapping(target = "categoryName", source = "name")
-    @Mapping(target = "parentCategoryId", expression = "java(input.parentCategoryId() != null ? input.parentCategoryId().intValue() : null)")
     CreateCategoryRequest toCreateCategoryRequest(CreateCategoryInput input);
 
     /**
      * Convert UpdateCategoryInput to UpdateCategoryRequest.
      */
     @Mapping(target = "categoryName", source = "name")
-    @Mapping(target = "parentCategoryId", expression = "java(input.parentCategoryId() != null ? input.parentCategoryId().intValue() : null)")
     UpdateCategoryRequest toUpdateCategoryRequest(UpdateCategoryInput input);
 
     /**

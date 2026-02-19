@@ -15,31 +15,10 @@ import java.util.stream.Collectors;
 @Controller
 public class CategoryFieldResolver {
 
-    private final CategoryService categoryService;
     private final ProductService productService;
 
-    public CategoryFieldResolver(CategoryService categoryService, ProductService productService) {
-        this.categoryService = categoryService;
+    public CategoryFieldResolver(ProductService productService) {
         this.productService = productService;
-    }
-
-    @BatchMapping(typeName = "Category", field = "parentCategory")
-    public Map<CategoryResponse, CategoryResponse> parentCategory(List<CategoryResponse> categories) {
-        List<Integer> parentIds = categories.stream()
-                .map(CategoryResponse::getParentCategoryId)
-                .filter(java.util.Objects::nonNull)
-                .distinct()
-                .collect(Collectors.toList());
-
-        List<CategoryResponse> parents = categoryService.getCategoriesByIds(parentIds);
-        Map<Integer, CategoryResponse> parentMap = parents.stream()
-                .collect(Collectors.toMap(CategoryResponse::getId, Function.identity()));
-
-        return categories.stream()
-                .collect(Collectors.toMap(
-                        category -> category,
-                        category -> category.getParentCategoryId() != null ? parentMap.get(category.getParentCategoryId()) : null
-                ));
     }
 
     @BatchMapping(typeName = "Category", field = "products")

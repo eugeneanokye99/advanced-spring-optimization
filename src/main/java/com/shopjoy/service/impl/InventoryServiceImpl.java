@@ -13,6 +13,7 @@ import com.shopjoy.service.InventoryService;
 import lombok.AllArgsConstructor;
 
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
@@ -92,13 +93,15 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    @Caching(evict = {
-        @CacheEvict(value = "inventory", allEntries = true),
-        @CacheEvict(value = "inventoryByProduct", key = "#productId"),
-        @CacheEvict(value = "lowStock", allEntries = true),
-        @CacheEvict(value = "outOfStock", allEntries = true),
-        @CacheEvict(value = "products", allEntries = true)
-    })
+    @Caching(
+        put = { @CachePut(value = "inventoryByProduct", key = "#productId", cacheManager = "shortCacheManager") },
+        evict = {
+            @CacheEvict(value = "inventory", allEntries = true),
+            @CacheEvict(value = "lowStock", allEntries = true),
+            @CacheEvict(value = "outOfStock", allEntries = true),
+            @CacheEvict(value = "products", allEntries = true)
+        }
+    )
     public InventoryResponse updateStock(Integer productId, int newQuantity) {
         if (newQuantity < 0) {
             throw new ValidationException("quantityInStock", "cannot be negative");
@@ -116,13 +119,15 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    @Caching(evict = {
-        @CacheEvict(value = "inventory", allEntries = true),
-        @CacheEvict(value = "inventoryByProduct", key = "#productId"),
-        @CacheEvict(value = "lowStock", allEntries = true),
-        @CacheEvict(value = "outOfStock", allEntries = true),
-        @CacheEvict(value = "products", allEntries = true)
-    })
+    @Caching(
+        put = { @CachePut(value = "inventoryByProduct", key = "#productId", cacheManager = "shortCacheManager") },
+        evict = {
+            @CacheEvict(value = "inventory", allEntries = true),
+            @CacheEvict(value = "lowStock", allEntries = true),
+            @CacheEvict(value = "outOfStock", allEntries = true),
+            @CacheEvict(value = "products", allEntries = true)
+        }
+    )
     public InventoryResponse addStock(Integer productId, int quantity) {
         if (quantity <= 0) {
             throw new ValidationException("quantity", "must be positive");
@@ -141,13 +146,15 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    @Caching(evict = {
-        @CacheEvict(value = "inventory", allEntries = true),
-        @CacheEvict(value = "inventoryByProduct", key = "#productId"),
-        @CacheEvict(value = "lowStock", allEntries = true),
-        @CacheEvict(value = "outOfStock", allEntries = true),
-        @CacheEvict(value = "products", allEntries = true)
-    })
+    @Caching(
+        put = { @CachePut(value = "inventoryByProduct", key = "#productId", cacheManager = "shortCacheManager") },
+        evict = {
+            @CacheEvict(value = "inventory", allEntries = true),
+            @CacheEvict(value = "lowStock", allEntries = true),
+            @CacheEvict(value = "outOfStock", allEntries = true),
+            @CacheEvict(value = "products", allEntries = true)
+        }
+    )
     public InventoryResponse removeStock(Integer productId, int quantity) {
         if (quantity <= 0) {
             throw new ValidationException("quantity", "must be positive");
@@ -247,12 +254,14 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    @Caching(evict = {
-        @CacheEvict(value = "inventory", allEntries = true),
-        @CacheEvict(value = "inventoryByProduct", key = "#productId"),
-        @CacheEvict(value = "lowStock", allEntries = true),
-        @CacheEvict(value = "products", allEntries = true)
-    })
+    @Caching(
+        put = { @CachePut(value = "inventoryByProduct", key = "#productId", cacheManager = "shortCacheManager") },
+        evict = {
+            @CacheEvict(value = "inventory", allEntries = true),
+            @CacheEvict(value = "lowStock", allEntries = true),
+            @CacheEvict(value = "products", allEntries = true)
+        }
+    )
     public InventoryResponse updateReorderLevel(Integer productId, int reorderLevel) {
         if (reorderLevel < 0) {
             throw new ValidationException("reorderLevel", "cannot be negative");

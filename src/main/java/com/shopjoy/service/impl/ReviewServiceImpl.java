@@ -16,6 +16,7 @@ import com.shopjoy.service.ReviewService;
 
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
@@ -50,7 +51,7 @@ public class ReviewServiceImpl implements ReviewService {
         @CacheEvict(value = "productRating", key = "#request.productId")
     })
     public ReviewResponse createReview(CreateReviewRequest request) {
-        if (reviewRepository.existsByUserIdAndProductId(request.getUserId(), request.getProductId())) {
+        if (reviewRepository.hasReviewed(request.getUserId(), request.getProductId())) {
             throw new BusinessException("User has already reviewed this product");
         }
 
@@ -101,13 +102,15 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional()
-    @Caching(evict = {
-        @CacheEvict(value = "review", key = "#reviewId"),
-        @CacheEvict(value = "reviews", allEntries = true),
-        @CacheEvict(value = "reviewsByProduct", allEntries = true),
-        @CacheEvict(value = "reviewsByUser", allEntries = true),
-        @CacheEvict(value = "productRating", allEntries = true)
-    })
+    @Caching(
+        put = { @CachePut(value = "review", key = "#reviewId", cacheManager = "mediumCacheManager") },
+        evict = {
+            @CacheEvict(value = "reviews", allEntries = true),
+            @CacheEvict(value = "reviewsByProduct", allEntries = true),
+            @CacheEvict(value = "reviewsByUser", allEntries = true),
+            @CacheEvict(value = "productRating", allEntries = true)
+        }
+    )
     public ReviewResponse updateReview(Integer reviewId, UpdateReviewRequest request) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ResourceNotFoundException("Review", "id", reviewId));
@@ -155,7 +158,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional()
-    @CacheEvict(value = "review", key = "#reviewId")
+    @CachePut(value = "review", key = "#reviewId", cacheManager = "mediumCacheManager")
     public ReviewResponse markReviewAsHelpful(Integer reviewId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ResourceNotFoundException("Review", "id", reviewId));

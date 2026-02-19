@@ -8,8 +8,6 @@ import org.hibernate.annotations.BatchSize;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The type Category.
@@ -37,14 +35,6 @@ public class Category implements Serializable {
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_category_id")
-    private Category parentCategory;
-
-    @OneToMany(mappedBy = "parentCategory", cascade = CascadeType.ALL)
-    @Builder.Default
-    private List<Category> subCategories = new ArrayList<>();
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

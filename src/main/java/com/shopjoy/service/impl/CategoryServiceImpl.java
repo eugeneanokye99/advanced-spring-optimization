@@ -14,6 +14,7 @@ import com.shopjoy.service.ProductService;
 
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
@@ -37,17 +38,11 @@ public class CategoryServiceImpl implements CategoryService {
     
     @Override
     @Transactional()
-    @CacheEvict(value = {"categories", "topLevelCategories"}, allEntries = true)
+    @CacheEvict(value = "categories", allEntries = true)
     public CategoryResponse createCategory(CreateCategoryRequest request) {
         Category category = categoryMapper.toCategory(request);
         
         validateCategoryData(category);
-        
-        if (request.getParentCategoryId() != null) {
-            Category parent = categoryRepository.findById(request.getParentCategoryId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Category", "id", request.getParentCategoryId()));
-            category.setParentCategory(parent);
-        }
         
         category.setCreatedAt(LocalDateTime.now());
         Category createdCategory = categoryRepository.save(category);
@@ -89,60 +84,19 @@ public class CategoryServiceImpl implements CategoryService {
                 .map(categoryMapper::toCategoryResponse)
                 .collect(Collectors.toList());
     }
-
-    @Override
-    @Cacheable(value = "topLevelCategories")
-    public List<CategoryResponse> getTopLevelCategories() {
-        return categoryRepository.findByParentCategoryIsNull().stream()
-                .map(categoryMapper::toCategoryResponse)
-                .collect(Collectors.toList());
-    }
-    
-    @Override
-    @Cacheable(value = "subcategories", key = "#parentCategoryId")
-    public List<CategoryResponse> getSubcategories(Integer parentCategoryId) {
-        if (parentCategoryId == null) {
-            throw new ValidationException("Parent category ID cannot be null");
-        }
-        return categoryRepository.findByParentCategory_Id(parentCategoryId).stream()
-                .map(categoryMapper::toCategoryResponse)
-                .collect(Collectors.toList());
-    }
-    
-    @Override
-    public boolean hasSubcategories(Integer categoryId) {
-        if (categoryId == null) {
-            throw new ValidationException("Category ID cannot be null");
-        }
-        return categoryRepository.existsByParentCategoryId(categoryId);
-    }
     
     @Override
     @Transactional()
-    @Caching(evict = {
-        @CacheEvict(value = "category", key = "#categoryId"),
-        @CacheEvict(value = {"categories", "topLevelCategories", "subcategories"}, allEntries = true)
-    })
+    @Caching(
+        put = { @CachePut(value = "category", key = "#categoryId") },
+        evict = { @CacheEvict(value = "categories", allEntries = true) }
+    )
     public CategoryResponse updateCategory(Integer categoryId, UpdateCategoryRequest request) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
         
         categoryMapper.updateCategoryFromRequest(request, category);
         validateCategoryData(category);
-        
-        if (request.getParentCategoryId() != null) {
-            if (request.getParentCategoryId().equals(category.getId())) {
-                throw new BusinessException("Category cannot be its own parent");
-            }
-            
-            if (wouldCreateCircularReference(category.getId(), request.getParentCategoryId())) {
-                throw new BusinessException("Moving category would create circular reference");
-            }
-
-            Category parent = categoryRepository.findById(request.getParentCategoryId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Category", "id", request.getParentCategoryId()));
-            category.setParentCategory(parent);
-        }
         
         Category updatedCategory = categoryRepository.save(category);
         
@@ -153,15 +107,11 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional()
     @Caching(evict = {
         @CacheEvict(value = "category", key = "#categoryId"),
-        @CacheEvict(value = {"categories", "topLevelCategories", "subcategories"}, allEntries = true)
+        @CacheEvict(value = "categories", allEntries = true)
     })
     public void deleteCategory(Integer categoryId) {
         if (!categoryRepository.existsById(categoryId)) {
             throw new ResourceNotFoundException("Category", "id", categoryId);
-        }
-        
-        if (hasSubcategories(categoryId)) {
-            throw new BusinessException("Cannot delete category with subcategories");
         }
         
         long productCount = productService.getProductCountByCategory(categoryId);
@@ -171,48 +121,6 @@ public class CategoryServiceImpl implements CategoryService {
         }
         
         categoryRepository.deleteById(categoryId);
-    }
-    
-    @Override
-    @Transactional()
-    @Caching(evict = {
-        @CacheEvict(value = "category", key = "#categoryId"),
-        @CacheEvict(value = {"categories", "topLevelCategories", "subcategories"}, allEntries = true)
-    })
-    public CategoryResponse moveCategory(Integer categoryId, Integer newParentId) {
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
-        
-        if (newParentId != null) {
-            if (newParentId.equals(categoryId)) {
-                throw new BusinessException("Category cannot be its own parent");
-            }
-            
-            Category newParent = categoryRepository.findById(newParentId)
-                    .orElseThrow(() -> new ResourceNotFoundException("Category", "id", newParentId));
-            
-            if (wouldCreateCircularReference(categoryId, newParentId)) {
-                throw new BusinessException("Moving category would create circular reference");
-            }
-            category.setParentCategory(newParent);
-        } else {
-            category.setParentCategory(null);
-        }
-        
-        Category updatedCategory = categoryRepository.save(category);
-        return categoryMapper.toCategoryResponse(updatedCategory);
-    }
-    
-    private boolean wouldCreateCircularReference(Integer categoryId, Integer newParentId) {
-        Integer currentId = newParentId;
-        while (currentId != null) {
-            if (currentId.equals(categoryId)) {
-                return true;
-            }
-            Category parent = categoryRepository.findById(currentId).orElse(null);
-            currentId = (parent != null && parent.getParentCategory() != null) ? parent.getParentCategory().getId() : null;
-        }
-        return false;
     }
     
     private void validateCategoryData(Category category) {

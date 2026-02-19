@@ -28,15 +28,7 @@ public interface CategoryService {
     
     List<CategoryResponse> getAllCategories();
     
-    List<CategoryResponse> getTopLevelCategories();
-    
-    List<CategoryResponse> getSubcategories(Integer parentCategoryId);
-    
-    boolean hasSubcategories(Integer categoryId);
-    
     CategoryResponse updateCategory(Integer categoryId, UpdateCategoryRequest request);
     
     void deleteCategory(Integer categoryId);
-    
-    CategoryResponse moveCategory(Integer categoryId, Integer newParentId);
 }

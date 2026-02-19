@@ -87,7 +87,7 @@ class AddressServiceImplTest {
         currentDefault.setDefault(true);
 
         when(addressRepository.findById(1)).thenReturn(Optional.of(address));
-        when(addressRepository.findByUserIdAndIsDefaultTrue(1)).thenReturn(Optional.of(currentDefault));
+        when(addressRepository.findDefaultByUserId(1)).thenReturn(Optional.of(currentDefault));
         when(addressRepository.save(any(Address.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(addressMapper.toAddressResponse(any(Address.class))).thenReturn(new AddressResponse());
 

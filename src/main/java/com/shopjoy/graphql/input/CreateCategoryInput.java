@@ -6,6 +6,5 @@ public record CreateCategoryInput(
         @NotBlank(message = "Category name is required")
         String name,
         
-        String description,
-        Long parentCategoryId
+        String description
 ) {}

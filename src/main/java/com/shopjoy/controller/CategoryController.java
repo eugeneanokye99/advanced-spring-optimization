@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * The type Category controller.
  */
-@Tag(name = "Category Management", description = "APIs for managing product categories including hierarchical structure with parent-child relationships")
+@Tag(name = "Category Management", description = "APIs for managing product categories")
 @RestController
 @RequestMapping("/api/v1/categories")
 public class CategoryController {
@@ -44,7 +44,7 @@ public class CategoryController {
      */
     @Operation(
             summary = "Create a new category",
-            description = "Creates a new product category with optional parent category for hierarchical structure"
+            description = "Creates a new product category"
     )
     @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -130,88 +130,6 @@ public class CategoryController {
     }
 
     /**
-     * Gets top level categories.
-     *
-     * @return the top level categories
-     */
-    @Operation(
-            summary = "Get top-level categories",
-            description = "Retrieves all categories that have no parent (root categories)"
-    )
-    @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "200",
-                    description = "Top level categories retrieved successfully",
-                    content = @Content(mediaType = "application/json")
-            )
-    })
-    @GetMapping("/top-level")
-    public ResponseEntity<ApiResponse<List<CategoryResponse>>> getTopLevelCategories() {
-        List<CategoryResponse> response = categoryService.getTopLevelCategories();
-        return ResponseEntity.ok(ApiResponse.success(response, "Top level categories retrieved successfully"));
-    }
-
-    /**
-     * Gets subcategories.
-     *
-     * @param parentId the parent id
-     * @return the subcategories
-     */
-    @Operation(
-            summary = "Get subcategories",
-            description = "Retrieves all direct child categories of a parent category"
-    )
-    @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "200",
-                    description = "Subcategories retrieved successfully",
-                    content = @Content(mediaType = "application/json")
-            ),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "404",
-                    description = "Parent category not found",
-                    content = @Content(mediaType = "application/json")
-            )
-    })
-    @GetMapping("/{parentId}/subcategories")
-    public ResponseEntity<ApiResponse<List<CategoryResponse>>> getSubcategories(
-            @Parameter(description = "Parent category unique identifier", required = true, example = "1")
-            @PathVariable Integer parentId) {
-        List<CategoryResponse> response = categoryService.getSubcategories(parentId);
-        return ResponseEntity.ok(ApiResponse.success(response, "Subcategories retrieved successfully"));
-    }
-
-    /**
-     * Has subcategories response entity.
-     *
-     * @param id the id
-     * @return the response entity
-     */
-    @Operation(
-            summary = "Check if category has subcategories",
-            description = "Checks whether a category has any child categories"
-    )
-    @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "200",
-                    description = "Subcategories check completed",
-                    content = @Content(mediaType = "application/json")
-            ),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "404",
-                    description = "Category not found",
-                    content = @Content(mediaType = "application/json")
-            )
-    })
-    @GetMapping("/{id}/has-subcategories")
-    public ResponseEntity<ApiResponse<Boolean>> hasSubcategories(
-            @Parameter(description = "Category unique identifier", required = true, example = "1")
-            @PathVariable Integer id) {
-        boolean hasSubcategories = categoryService.hasSubcategories(id);
-        return ResponseEntity.ok(ApiResponse.success(hasSubcategories, "Subcategories check completed"));
-    }
-
-    /**
      * Update category response entity.
      *
      * @param id      the id
@@ -252,47 +170,6 @@ public class CategoryController {
     }
 
     /**
-     * Move category response entity.
-     *
-     * @param id          the id
-     * @param newParentId the new parent id
-     * @return the response entity
-     */
-    @Operation(
-            summary = "Move category",
-            description = "Moves a category to a new parent category or to top level (null parent)"
-    )
-    @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "200",
-                    description = "Category moved successfully",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = CategoryResponse.class)
-                    )
-            ),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "404",
-                    description = "Category not found",
-                    content = @Content(mediaType = "application/json")
-            ),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(
-                    responseCode = "400",
-                    description = "Invalid move operation (e.g., circular reference)",
-                    content = @Content(mediaType = "application/json")
-            )
-    })
-    @PatchMapping("/{id}/move")
-    public ResponseEntity<ApiResponse<CategoryResponse>> moveCategory(
-            @Parameter(description = "Category unique identifier", required = true, example = "1")
-            @PathVariable Integer id,
-            @Parameter(description = "New parent category ID (null for top level)", example = "2")
-            @RequestParam(required = false) Integer newParentId) {
-        CategoryResponse response = categoryService.moveCategory(id, newParentId);
-        return ResponseEntity.ok(ApiResponse.success(response, "Category moved successfully"));
-    }
-
-    /**
      * Delete category response entity.
      *
      * @param id the id
@@ -300,7 +177,7 @@ public class CategoryController {
      */
     @Operation(
             summary = "Delete category",
-            description = "Permanently deletes a category from the system (fails if it has subcategories or products)"
+            description = "Permanently deletes a category from the system (fails if it has products)"
     )
     @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -315,7 +192,7 @@ public class CategoryController {
             ),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
                     responseCode = "400",
-                    description = "Cannot delete category with subcategories or products",
+                    description = "Cannot delete category with products",
                     content = @Content(mediaType = "application/json")
             )
     })

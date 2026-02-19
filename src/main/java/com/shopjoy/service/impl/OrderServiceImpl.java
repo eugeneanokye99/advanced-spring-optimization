@@ -205,13 +205,15 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    @Caching(evict = {
-        @CacheEvict(value = "order", key = "#orderId"),
-        @CacheEvict(value = "orders", allEntries = true),
-        @CacheEvict(value = "ordersByUser", allEntries = true),
-        @CacheEvict(value = "ordersByStatus", allEntries = true),
-        @CacheEvict(value = "pendingOrders", allEntries = true)
-    })
+    @Caching(
+        put = { @CachePut(value = "order", key = "#orderId", cacheManager = "mediumCacheManager") },
+        evict = {
+            @CacheEvict(value = "orders", allEntries = true),
+            @CacheEvict(value = "ordersByUser", allEntries = true),
+            @CacheEvict(value = "ordersByStatus", allEntries = true),
+            @CacheEvict(value = "pendingOrders", allEntries = true)
+        }
+    )
     public OrderResponse updateOrderStatus(Integer orderId, OrderStatus newStatus) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
@@ -269,14 +271,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    @Caching(evict = {
-        @CacheEvict(value = "order", key = "#orderId"),
-        @CacheEvict(value = "orders", allEntries = true),
-        @CacheEvict(value = "ordersByUser", allEntries = true),
-        @CacheEvict(value = "ordersByStatus", allEntries = true),
-        @CacheEvict(value = "pendingOrders", allEntries = true),
-        @CacheEvict(value = "inventory", allEntries = true)
-    })
+    @Caching(
+        put = { @CachePut(value = "order", key = "#orderId", cacheManager = "mediumCacheManager") },
+        evict = {
+            @CacheEvict(value = "orders", allEntries = true),
+            @CacheEvict(value = "ordersByUser", allEntries = true),
+            @CacheEvict(value = "ordersByStatus", allEntries = true),
+            @CacheEvict(value = "pendingOrders", allEntries = true),
+            @CacheEvict(value = "inventory", allEntries = true)
+        }
+    )
     public OrderResponse cancelOrder(Integer orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));

@@ -123,10 +123,6 @@ query GetCategory {
     id
     name
     description
-    parentCategory {
-      id
-      name
-    }
     products {
       id
       name
@@ -143,7 +139,6 @@ query GetCategories {
     id
     name
     description
-    parentCategoryId
   }
 }
 ```
@@ -475,21 +470,16 @@ mutation CreateCategory {
 }
 ```
 
-#### Create Sub-Category
+#### Create Category
 ```graphql
-mutation CreateSubCategory {
+mutation CreateCategory {
   createCategory(input: {
     name: "Laptops"
     description: "Laptop computers"
-    parentCategoryId: 1
   }) {
     id
     name
     description
-    parentCategory {
-      id
-      name
-    }
   }
 }
 ```
@@ -785,10 +775,6 @@ query GetProductFullDetails {
       id
       name
       description
-      parentCategory {
-        id
-        name
-      }
     }
     createdAt
     updatedAt

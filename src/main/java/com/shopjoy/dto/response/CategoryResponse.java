@@ -8,7 +8,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Schema(description = "Category response containing category details and hierarchy information")
+@Schema(description = "Category response containing category details")
 @Setter
 @Getter
 @AllArgsConstructor
@@ -23,9 +23,6 @@ public class CategoryResponse {
     
     @Schema(description = "Category description", example = "Portable computers for personal and business use")
     private String description;
-    
-    @Schema(description = "Parent category ID (null if top-level category)", example = "1")
-    private Integer parentCategoryId;
     
     @Schema(description = "Category creation timestamp", example = "2024-01-20T10:30:00")
     private LocalDateTime createdAt;
