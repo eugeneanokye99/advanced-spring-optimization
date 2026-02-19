@@ -2,6 +2,7 @@ package com.shopjoy.controller;
 
 import com.shopjoy.aspect.PerformanceMetricsCollector;
 import com.shopjoy.dto.response.ApiResponse;
+import com.shopjoy.util.CacheMetricsCollector;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.Map;
 public class PerformanceController {
 
     private final PerformanceMetricsCollector metricsCollector;
+    private final CacheMetricsCollector cacheMetricsCollector;
 
     @Operation(summary = "Get all performance metrics")
     @GetMapping("/metrics")
@@ -30,7 +32,13 @@ public class PerformanceController {
     @Operation(summary = "Get cache statistics")
     @GetMapping("/cache")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getCacheStats() {
-        return ResponseEntity.ok(ApiResponse.success(metricsCollector.getCacheSummary(), "Cache stats retrieved successfully"));
+        return ResponseEntity.ok(ApiResponse.success(cacheMetricsCollector.getCacheSummary(), "Cache stats retrieved successfully"));
+    }
+
+    @Operation(summary = "Get detailed cache statistics")
+    @GetMapping("/cache/details")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> getCacheDetails() {
+        return ResponseEntity.ok(ApiResponse.success(cacheMetricsCollector.getAllCacheStats(), "Detailed cache stats retrieved successfully"));
     }
     
     @Operation(summary = "Get optimization health")
@@ -39,7 +47,7 @@ public class PerformanceController {
         Map<String, Object> health = Map.of(
             "status", "UP",
             "optimizationLevel", "HIGH",
-            "activeCollectors", List.of("PerformanceAspect", "CachingAspect", "LoggingAspect")
+            "activeCollectors", List.of("PerformanceAspect", "LoggingAspect", "CaffeineCacheStats")
         );
         return ResponseEntity.ok(ApiResponse.success(health, "Performance health retrieved successfully"));
     }

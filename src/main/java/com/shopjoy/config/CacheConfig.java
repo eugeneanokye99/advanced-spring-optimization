@@ -32,11 +32,8 @@ public class CacheConfig {
     @Primary
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(
-            // Product caches
             "products", "product", "activeProducts", "productsByCategory", "productsCount",
-            // Category caches  
             "categories", "category", "topLevelCategories", "subcategories",
-            // User caches
             "users", "userProfile", "userProfileEmail", "userProfileUsername", "usersByIds"
         );
         cacheManager.setCaffeine(Caffeine.newBuilder()
@@ -53,11 +50,8 @@ public class CacheConfig {
     @Bean
     public CacheManager mediumCacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(
-            // Order caches
             "orders", "order", "ordersByUser", "ordersByStatus", "pendingOrders",
-            // Review caches
             "reviews", "review", "reviewsByProduct", "reviewsByUser", "productRating",
-            // Address caches
             "addresses", "address", "addressesByUser", "defaultAddress"
         );
         cacheManager.setCaffeine(Caffeine.newBuilder()
@@ -74,10 +68,8 @@ public class CacheConfig {
      */
     @Bean
     public CacheManager shortCacheManager() {
-        CaffeineCacheManager cacheManager = new CaffeineCacheManager(
-            // Inventory caches
+        CaffeineCacheManager cacheManager = new CaffeineCacheManager( 
             "inventory", "inventoryByProduct", "lowStock", "outOfStock",
-            // Cart caches
             "cart", "cartItems", "cartTotal", "cartCount"
         );
         cacheManager.setCaffeine(Caffeine.newBuilder()

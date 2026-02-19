@@ -139,7 +139,7 @@ A comprehensive, enterprise-grade e-commerce platform built with Spring Boot, fe
 - **SecurityAuditAspect**: Audit trail for sensitive operations
 - **TransactionAspect**: Transaction lifecycle monitoring
 - **ValidationAspect**: Business rule validation
-- **CachingAspect**: Result caching with TTL expiration
+- **Caffeine Cache Manager**: Dynamic 3-tier caching strategy (Short/Medium/Long TTL) with native stats collection
 
 #### 3. Algorithm Optimization
 - **Sorting**: QuickSort, MergeSort, HeapSort

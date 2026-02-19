@@ -10,8 +10,6 @@ public class PerformanceMetricsCollector {
     
     private final Map<String, List<Long>> metrics = new ConcurrentHashMap<>();
     private final Map<String, Long> callCounts = new ConcurrentHashMap<>();
-    private final Map<String, Long> cacheHits = new ConcurrentHashMap<>();
-    private final Map<String, Long> cacheMisses = new ConcurrentHashMap<>();
     
     public void recordMetric(String category, String methodKey, long executionTime) {
         String key = category + ":" + methodKey;
@@ -19,15 +17,7 @@ public class PerformanceMetricsCollector {
         metrics.computeIfAbsent(key, _ -> Collections.synchronizedList(new ArrayList<>()))
                .add(executionTime);
         
-        callCounts.merge(key, 1L, (a, b) -> a + b);
-    }
-
-    public void recordCacheHit(String cacheKey) {
-        cacheHits.merge(cacheKey, 1L, (a, b) -> a + b);
-    }
-
-    public void recordCacheMiss(String cacheKey) {
-        cacheMisses.merge(cacheKey, 1L, (a, b) -> a + b);
+        callCounts.merge(key, 1L, (oldValue, newValue) -> oldValue + newValue);
     }
 
     public Map<String, Map<String, Object>> getAllMetrics() {
@@ -42,22 +32,6 @@ public class PerformanceMetricsCollector {
         }
         
         return allMetrics;
-    }
-
-    public Map<String, Object> getCacheSummary() {
-        long totalHits = cacheHits.values().stream().mapToLong(Long::longValue).sum();
-        long totalMisses = cacheMisses.values().stream().mapToLong(Long::longValue).sum();
-        long totalRequests = totalHits + totalMisses;
-        double hitRate = totalRequests > 0 ? (double) totalHits / totalRequests * 100 : 0;
-
-        Map<String, Object> summary = new LinkedHashMap<>();
-        summary.put("totalHits", totalHits);
-        summary.put("totalMisses", totalMisses);
-        summary.put("totalRequests", totalRequests);
-        summary.put("hitRate", String.format("%.2f%%", hitRate));
-        summary.put("details", cacheHits); // Optional: detailed hit counts per key
-        
-        return summary;
     }
 
     private Map<String, Object> calculateStatistics(List<Long> times, Long callCount) {
