@@ -15,7 +15,7 @@ import com.shopjoy.repository.UserRepository;
 import com.shopjoy.service.AuthService;
 import com.shopjoy.util.AuthValidationUtil;
 import lombok.AllArgsConstructor;
-import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +32,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final UserMapperStruct userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -48,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         User user = userMapper.toUser(request, userType);
-        user.setPasswordHash(BCrypt.hashpw(request.getPassword(), BCrypt.gensalt()));
+        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
 
@@ -69,7 +70,7 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userOpt.get();
 
-        if (!BCrypt.checkpw(request.getPassword(), user.getPasswordHash())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new AuthenticationException();
         }
 
@@ -82,14 +83,13 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
-        if (!BCrypt.checkpw(request.getCurrentPassword(), user.getPasswordHash())) {
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
             throw new AuthenticationException("Current password is incorrect");
         }
 
         AuthValidationUtil.validatePassword(request.getNewPassword());
 
-        String hashedNewPassword = BCrypt.hashpw(request.getNewPassword(), BCrypt.gensalt());
-        user.setPasswordHash(hashedNewPassword);
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
     }
