@@ -4,6 +4,7 @@ import com.shopjoy.dto.request.ChangePasswordRequest;
 import com.shopjoy.dto.request.CreateUserRequest;
 import com.shopjoy.dto.request.LoginRequest;
 import com.shopjoy.dto.response.ApiResponse;
+import com.shopjoy.dto.response.LoginResponse;
 import com.shopjoy.dto.response.UserResponse;
 import com.shopjoy.entity.UserType;
 import com.shopjoy.service.AuthService;
@@ -77,14 +78,14 @@ public class AuthController {
     }
 
     /**
-     * Authenticate user and return user details.
+     * Authenticate user and return JWT token with user details.
      *
      * @param request the login request
-     * @return the response entity with authenticated user
+     * @return the response entity with JWT token and user details
      */
     @Operation(
             summary = "User login",
-            description = "Authenticates a user with username and password. Returns user details on successful authentication."
+            description = "Authenticates a user with username and password. Returns JWT token and user details on successful authentication."
     )
     @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -92,7 +93,7 @@ public class AuthController {
                     description = "Login successful",
                     content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = UserResponse.class)
+                            schema = @Schema(implementation = LoginResponse.class)
                     )
             ),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(
@@ -102,9 +103,9 @@ public class AuthController {
             )
     })
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<UserResponse>> login(
+    public ResponseEntity<ApiResponse<LoginResponse>> login(
             @Valid @RequestBody LoginRequest request) {
-        UserResponse response = authService.login(request);
+        LoginResponse response = authService.login(request);
         return ResponseEntity.ok(ApiResponse.success(response, "Login successful"));
     }
 

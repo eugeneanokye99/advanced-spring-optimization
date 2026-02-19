@@ -3,6 +3,7 @@ package com.shopjoy.service;
 import com.shopjoy.dto.request.ChangePasswordRequest;
 import com.shopjoy.dto.request.CreateUserRequest;
 import com.shopjoy.dto.request.LoginRequest;
+import com.shopjoy.dto.response.LoginResponse;
 import com.shopjoy.dto.response.UserResponse;
 import com.shopjoy.entity.UserType;
 import com.shopjoy.exception.AuthenticationException;
@@ -30,13 +31,14 @@ public interface AuthService {
     UserResponse registerUser(CreateUserRequest request, UserType userType);
 
     /**
-     * Authenticates a user with username and plain text password.
+     * Authenticates a user with username and password.
+     * Returns JWT token and user details upon successful authentication.
      *
      * @param request the login request containing username and password
-     * @return the authenticated user response DTO
+     * @return the login response with JWT token and user details
      * @throws AuthenticationException if credentials are invalid
      */
-    UserResponse login(LoginRequest request);
+    LoginResponse login(LoginRequest request);
 
     /**
      * Changes a user's password.

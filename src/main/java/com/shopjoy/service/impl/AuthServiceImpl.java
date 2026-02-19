@@ -5,6 +5,7 @@ import com.shopjoy.dto.mapper.UserMapperStruct;
 import com.shopjoy.dto.request.ChangePasswordRequest;
 import com.shopjoy.dto.request.CreateUserRequest;
 import com.shopjoy.dto.request.LoginRequest;
+import com.shopjoy.dto.response.LoginResponse;
 import com.shopjoy.dto.response.UserResponse;
 import com.shopjoy.entity.User;
 import com.shopjoy.entity.UserType;
@@ -14,13 +15,17 @@ import com.shopjoy.exception.ResourceNotFoundException;
 import com.shopjoy.repository.UserRepository;
 import com.shopjoy.service.AuthService;
 import com.shopjoy.util.AuthValidationUtil;
+import com.shopjoy.util.JwtUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 /**
  * Implementation of AuthService for authentication-related operations.
@@ -33,6 +38,8 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final UserMapperStruct userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
     @Override
     @Transactional
@@ -59,22 +66,31 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public UserResponse login(LoginRequest request) {
+    public LoginResponse login(LoginRequest request) {
         AuthValidationUtil.validateLoginRequest(request);
 
-        Optional<User> userOpt = userRepository.findByUsername(request.getUsername());
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getUsername(),
+                            request.getPassword()
+                    )
+            );
 
-        if (userOpt.isEmpty()) {
-            throw new AuthenticationException();
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+            assert userDetails != null;
+            String jwtToken = jwtUtil.generateToken(userDetails);
+
+            return LoginResponse.builder()
+                    .token(jwtToken)
+                    .tokenType("Bearer")
+                    .expiresIn(jwtUtil.getExpirationTime())
+                    .build();
+
+        } catch (org.springframework.security.core.AuthenticationException e) {
+            throw new AuthenticationException("Invalid username or password");
         }
-
-        User user = userOpt.get();
-
-        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-            throw new AuthenticationException();
-        }
-
-        return userMapper.toUserResponse(user);
     }
 
     @Override
