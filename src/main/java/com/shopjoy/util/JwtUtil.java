@@ -112,24 +112,12 @@ public class JwtUtil {
     }
 
     /**
-     * Validates the JWT token.
-     *
-     * @param token       the JWT token
-     * @param userDetails the user details
-     * @return true if token is valid, false otherwise
-     */
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-    }
-
-    /**
      * Checks if the JWT token is expired.
      *
      * @param token the JWT token
      * @return true if token is expired, false otherwise
      */
-    private Boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
