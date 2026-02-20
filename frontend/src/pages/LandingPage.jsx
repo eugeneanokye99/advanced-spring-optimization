@@ -2,14 +2,13 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getProductsWithFilters } from '../services/productService';
 import { getAllCategories } from '../services/categoryService';
-import { addToCart } from '../services/cartService';
 import { useAuth } from '../context/AuthContext';
 import PublicNavbar from '../components/PublicNavbar';
 import { 
     ShoppingCart, Search, ChevronDown, ChevronLeft, ChevronRight, 
     Star, TrendingUp, Sparkles, ArrowRight 
 } from 'lucide-react';
-import { showErrorAlert, showSuccessToast, showWarningToast, isInsufficientStockError } from '../utils/errorHandler';
+import { showErrorAlert, showWarningToast } from '../utils/errorHandler';
 
 const LandingPage = () => {
     const [products, setProducts] = useState([]);
@@ -25,6 +24,17 @@ const LandingPage = () => {
     const [totalElements, setTotalElements] = useState(0);
     const { user } = useAuth();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user) {
+            const role = (user.userType || user.role || '').toUpperCase();
+            if (role === 'ADMIN') {
+                navigate('/admin/dashboard', { replace: true });
+            } else if (role === 'CUSTOMER') {
+                navigate('/customer/dashboard', { replace: true });
+            }
+        }
+    }, [user, navigate]);
 
     const loadProducts = useCallback(async () => {
         try {
@@ -71,23 +81,8 @@ const LandingPage = () => {
 
     const handleAddToCart = async (e, productId) => {
         e.stopPropagation();
-        
-        if (!user) {
-            showWarningToast('Please sign in to add items to cart');
-            setTimeout(() => navigate('/login'), 1500);
-            return;
-        }
-
-        try {
-            await addToCart({ userId: user.id || user.userId, productId, quantity: 1 });
-            showSuccessToast('Added to cart!');
-        } catch (error) {
-            if (isInsufficientStockError(error)) {
-                showErrorAlert(error, 'Out of stock');
-            } else {
-                showErrorAlert(error, 'Failed to add to cart');
-            }
-        }
+        showWarningToast('Please sign in to add items to cart');
+        setTimeout(() => navigate('/login'), 1500);
     };
 
     const handleSortChange = (value) => {

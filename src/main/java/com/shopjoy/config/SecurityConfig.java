@@ -86,8 +86,12 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/v1/inventory/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/inventory/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/inventory/**").hasRole("ADMIN")
+                
+                .requestMatchers("/api/v1/users").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/api/v1/users/**").hasRole("ADMIN")
+                
+                .requestMatchers("/api/v1/security-audit-logs/**").hasRole("ADMIN")
 
-                // All other requests require authentication
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session

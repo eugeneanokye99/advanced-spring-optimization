@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { authenticateUser } from '../services/userService';
 import { formatErrorMessage, isAuthenticationError } from '../utils/errorHandler';
+import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext(null);
 
@@ -42,14 +43,31 @@ export const AuthProvider = ({ children }) => {
     const login = async (username, password) => {
         try {
             const response = await authenticateUser({ username, password });
-            const userData = response.data || response;
+            const loginResponse = response.data || response;
+            
+            if (!loginResponse.token) {
+                throw new Error('No token received from server');
+            }
+
+            const token = loginResponse.token;
+            const decodedToken = jwtDecode(token);
+            
+            const userData = {
+                id: decodedToken.userId,
+                userId: decodedToken.userId,
+                username: decodedToken.sub,
+                userType: decodedToken.role,
+                role: decodedToken.role
+            };
+
             setUser(userData);
             localStorage.setItem('user', JSON.stringify(userData));
+            localStorage.setItem('token', token);
+            
             return userData;
         } catch (error) {
             console.error('Authentication error:', error);
             
-            // Format error message for better user experience
             const formattedError = new Error();
             
             if (isAuthenticationError(error)) {

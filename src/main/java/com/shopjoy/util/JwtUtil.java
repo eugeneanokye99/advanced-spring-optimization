@@ -1,5 +1,6 @@
 package com.shopjoy.util;
 
+import com.shopjoy.security.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -41,6 +42,17 @@ public class JwtUtil {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
         claims.put("roles", roles);
+        
+        String role = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst()
+                .orElse("")
+                .replace("ROLE_", "");
+        claims.put("role", role);
+        
+        if (userDetails instanceof CustomUserDetails customUserDetails) {
+            claims.put("userId", customUserDetails.getUserId());
+        }
         
         return createToken(claims, userDetails.getUsername());
     }

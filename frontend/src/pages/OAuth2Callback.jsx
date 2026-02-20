@@ -60,24 +60,23 @@ const OAuth2Callback = () => {
                     throw new Error('Authentication token has expired');
                 }
 
-                // Extract user information from token
                 const userId = decodedToken.userId;
-                const username = decodedToken.sub; // JWT subject is username
+                const username = decodedToken.sub;
                 const role = decodedToken.role;
 
                 if (!userId || !username || !role) {
                     throw new Error('Invalid token structure - missing required fields');
                 }
 
-                // Construct user object
                 const user = {
-                    userId,
+                    id: userId,
+                    userId: userId,
                     username,
-                    role,
+                    userType: role,
+                    role: role,
                     oauthProvider: provider || 'google'
                 };
 
-                // Update auth context with OAuth2 user data
                 loginWithOAuth2(user, token);
 
                 // Show success message
