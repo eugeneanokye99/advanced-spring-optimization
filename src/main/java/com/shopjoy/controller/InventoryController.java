@@ -58,6 +58,7 @@ public class InventoryController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("permitAll()")
     @GetMapping("/product/{productId}")
     public ResponseEntity<ApiResponse<InventoryResponse>> getInventory(
             @Parameter(description = "Product unique identifier", required = true, example = "1")
@@ -83,6 +84,7 @@ public class InventoryController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("permitAll()")
     @GetMapping("/products/batch")
     public ResponseEntity<ApiResponse<List<InventoryResponse>>> getInventoryBatch(
             @Parameter(description = "List of product IDs", required = true, example = "1,2,3")
@@ -113,6 +115,7 @@ public class InventoryController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("permitAll()")
     @GetMapping("/product/{productId}/in-stock")
     public ResponseEntity<ApiResponse<Boolean>> isProductInStock(
             @Parameter(description = "Product unique identifier", required = true, example = "1")
@@ -144,6 +147,7 @@ public class InventoryController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("permitAll()")
     @GetMapping("/product/{productId}/available-stock")
     public ResponseEntity<ApiResponse<Boolean>> hasAvailableStock(
             @Parameter(description = "Product unique identifier", required = true, example = "1")

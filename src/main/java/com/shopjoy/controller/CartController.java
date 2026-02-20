@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -65,6 +66,7 @@ public class CartController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     @PostMapping("/items")
     public ResponseEntity<ApiResponse<CartItemResponse>> addToCart(
             @Valid @RequestBody AddToCartRequest request) {
@@ -104,6 +106,7 @@ public class CartController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     @PutMapping("/items/{cartItemId}")
     public ResponseEntity<ApiResponse<CartItemResponse>> updateCartItemQuantity(
             @Parameter(description = "Cart item unique identifier", required = true, example = "1")
@@ -136,6 +139,7 @@ public class CartController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     @DeleteMapping("/items/{cartItemId}")
     public ResponseEntity<ApiResponse<Void>> removeFromCart(
             @Parameter(description = "Cart item unique identifier", required = true, example = "1")
@@ -166,6 +170,7 @@ public class CartController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<List<CartItemResponse>>> getCartItems(
             @Parameter(description = "User unique identifier", required = true, example = "1")
@@ -196,6 +201,7 @@ public class CartController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     @DeleteMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<Void>> clearCart(
             @Parameter(description = "User unique identifier", required = true, example = "1")
@@ -226,6 +232,7 @@ public class CartController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     @GetMapping("/user/{userId}/total")
     public ResponseEntity<ApiResponse<Double>> getCartTotal(
             @Parameter(description = "User unique identifier", required = true, example = "1")
@@ -256,6 +263,7 @@ public class CartController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     @GetMapping("/user/{userId}/count")
     public ResponseEntity<ApiResponse<Integer>> getCartItemCount(
             @Parameter(description = "User unique identifier", required = true, example = "1")

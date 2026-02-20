@@ -84,6 +84,7 @@ public class ProductController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Product not found", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid product ID format", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("permitAll()")
         @GetMapping("/{id}")
         public ResponseEntity<ApiResponse<ProductResponse>> getProductById(
                         @Parameter(description = "Product unique identifier", required = true, example = "1") @PathVariable @Positive(message = "Product ID must be positive") Integer id) {
@@ -97,6 +98,7 @@ public class ProductController {
          * @return the all products
          */
         @Operation(summary = "Get all products", description = "Retrieves a complete list of all products in the system")
+        @PreAuthorize("permitAll()")
         @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Products retrieved successfully", content = @Content(mediaType = "application/json"))
         })
@@ -115,6 +117,7 @@ public class ProductController {
         @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Active products retrieved successfully", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("permitAll()")
         @GetMapping("/active")
         public ResponseEntity<ApiResponse<List<ProductResponse>>> getActiveProducts() {
                 List<ProductResponse> response = productService.getActiveProducts();
@@ -132,6 +135,7 @@ public class ProductController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Products by category retrieved successfully", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("permitAll()")
         @GetMapping("/category/{categoryId}")
         public ResponseEntity<ApiResponse<List<ProductResponse>>> getProductsByCategory(
                         @Parameter(description = "Category unique identifier", required = true, example = "1") @PathVariable Integer categoryId) {
@@ -149,6 +153,7 @@ public class ProductController {
         @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Products search completed successfully", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("permitAll()")
         @GetMapping("/search")
         public ResponseEntity<ApiResponse<List<ProductResponse>>> searchProductsByName(
                         @Parameter(description = "Product name keyword to search for", required = true, example = "Laptop") @RequestParam String name) {
@@ -168,6 +173,7 @@ public class ProductController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Products by price range retrieved successfully", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid price range", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("permitAll()")
         @GetMapping("/price-range")
         public ResponseEntity<ApiResponse<List<ProductResponse>>> getProductsByPriceRange(
                         @Parameter(description = "Minimum price", required = true, example = "100.00") @RequestParam @Min(value = 0, message = "Minimum price cannot be negative") Double minPrice,
@@ -286,6 +292,7 @@ public class ProductController {
         @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Total product count retrieved successfully", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("permitAll()")
         @GetMapping("/count")
         public ResponseEntity<ApiResponse<Long>> getTotalProductCount() {
                 long count = productService.getTotalProductCount();
@@ -303,6 +310,7 @@ public class ProductController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Product count by category retrieved successfully", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Category not found", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("permitAll()")
         @GetMapping("/count/category/{categoryId}")
         public ResponseEntity<ApiResponse<Long>> getProductCountByCategory(
                         @Parameter(description = "Category unique identifier", required = true, example = "1") @PathVariable Integer categoryId) {
@@ -325,6 +333,7 @@ public class ProductController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Products retrieved with pagination", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid pagination parameters", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("permitAll()")
         @GetMapping("/paginated")
         public ResponseEntity<ApiResponse<Page<ProductResponse>>> getProductsPaginated(
                         @Parameter(description = "Page number (0-indexed)", example = "0") @RequestParam(defaultValue = "0") @Min(value = 0, message = "Page number cannot be negative") int page,
@@ -350,6 +359,7 @@ public class ProductController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Product search completed with pagination", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid search parameters", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("permitAll()")
         @GetMapping("/search/paginated")
         public ResponseEntity<ApiResponse<Page<ProductResponse>>> searchProductsPaginated(
                         @Parameter(description = "Search term for product name", required = true, example = "Laptop") @RequestParam String term,
@@ -382,6 +392,7 @@ public class ProductController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Filtered products retrieved successfully", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid filter parameters", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("permitAll()")
         @GetMapping("/filter")
         public ResponseEntity<ApiResponse<Page<ProductResponse>>> getProductsWithFilters(
                         @Parameter(description = "Minimum price filter", example = "100.00") @RequestParam(required = false) Double minPrice,
@@ -416,6 +427,7 @@ public class ProductController {
         }
 
         @Operation(summary = "Get recently added products", description = "Retrieves a list of newest products added to the catalog")
+        @PreAuthorize("permitAll()")
         @GetMapping("/new-arrivals")
         public ResponseEntity<ApiResponse<List<ProductResponse>>> getNewArrivals(
                         @RequestParam(defaultValue = "10") int limit) {

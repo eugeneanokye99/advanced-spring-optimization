@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -66,6 +67,7 @@ public class AddressController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     @PostMapping
     public ResponseEntity<ApiResponse<AddressResponse>> createAddress(
             @Valid @RequestBody CreateAddressRequest request) {
@@ -99,6 +101,7 @@ public class AddressController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<AddressResponse>> getAddressById(
             @Parameter(description = "Address unique identifier", required = true, example = "1")
@@ -129,6 +132,7 @@ public class AddressController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<List<AddressResponse>>> getAddressesByUser(
             @Parameter(description = "User unique identifier", required = true, example = "1")
@@ -162,6 +166,7 @@ public class AddressController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     @GetMapping("/user/{userId}/default")
     public ResponseEntity<ApiResponse<AddressResponse>> getDefaultAddress(
             @Parameter(description = "User unique identifier", required = true, example = "1")
@@ -195,6 +200,7 @@ public class AddressController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     @PatchMapping("/{id}/set-default")
     public ResponseEntity<ApiResponse<AddressResponse>> setDefaultAddress(
             @Parameter(description = "Address unique identifier", required = true, example = "1")
@@ -234,6 +240,7 @@ public class AddressController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<AddressResponse>> updateAddress(
             @Parameter(description = "Address unique identifier", required = true, example = "1")
@@ -265,6 +272,7 @@ public class AddressController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteAddress(
             @Parameter(description = "Address unique identifier", required = true, example = "1")

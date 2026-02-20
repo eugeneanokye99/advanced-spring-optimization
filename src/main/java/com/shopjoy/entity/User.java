@@ -53,6 +53,12 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     private UserType userType;
 
+    @Column(name = "oauth_provider", length = 20)
+    private String oauthProvider;
+
+    @Column(name = "oauth_provider_id", length = 100)
+    private String oauthProviderId;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
