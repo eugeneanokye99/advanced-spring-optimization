@@ -1,6 +1,6 @@
 # ShopJoy E-Commerce System
 
-A comprehensive, enterprise-grade e-commerce platform built with Spring Boot, featuring dual API paradigms (REST and GraphQL), advanced aspect-oriented programming, algorithmic optimization, and comprehensive performance monitoring.
+A comprehensive, enterprise-grade e-commerce platform built with Spring Boot, featuring dual API paradigms (REST and GraphQL), advanced Spring Security implementation with JWT and OAuth2, role-based authorization, multi-tier caching, and comprehensive performance monitoring with AOP.
 
 ## Table of Contents
 
@@ -39,13 +39,33 @@ A comprehensive, enterprise-grade e-commerce platform built with Spring Boot, fe
 └───────────────────────────────────────────────────────────────────┘
                              │
 ┌────────────────────────────┼─────────────────────────────────────┐
+│                    Spring Security Layer                          │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  JWT Authentication Filter                               │   │
+│  │  • Token validation & blacklist checking                 │   │
+│  │  • SecurityContext population                            │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  OAuth2 Login (Google)                                   │   │
+│  │  • Social authentication with automatic user creation    │   │
+│  │  • JWT token generation after OAuth2 success             │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  Authorization & Access Control                          │   │
+│  │  • Role-based (@PreAuthorize)                            │   │
+│  │  • Ownership validation (users access own data)          │   │
+│  │  • Rate limiting (5 attempts/15 min)                     │   │
+│  └──────────────────────────────────────────────────────────┘   │
+└───────────────────────────────────────────────────────────────────┘
+                             │
+┌────────────────────────────┼─────────────────────────────────────┐
 │                      AOP Layer (Cross-Cutting Concerns)           │
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐           │
 │  │ Logging  │ │Performance│ │ Security │ │Transaction│           │
 │  │  Aspect  │ │  Aspect   │ │  Aspect  │ │  Aspect   │           │
 │  └──────────┘ └──────────┘ └──────────┘ └──────────┘           │
 │  ┌──────────┐ ┌──────────┐ ┌──────────┐                         │
-│  │Validation│ │ Caching  │ │  Metrics │                         │
+│  │Validation│ │RateLimit │ │  Metrics │                         │
 │  │  Aspect  │ │  Aspect  │ │Collector │                         │
 │  └──────────┘ └──────────┘ └──────────┘                         │
 └───────────────────────────────────────────────────────────────────┘
@@ -53,14 +73,14 @@ A comprehensive, enterprise-grade e-commerce platform built with Spring Boot, fe
 ┌────────────────────────────┼─────────────────────────────────────┐
 │                      Service Layer                                │
 │  ┌────────────────────────────────────────────────────┐          │
-│  │  Business Logic & Algorithm Optimization           │          │
+│  │  Business Logic & Multi-Tier Caching               │          │
 │  │  ┌─────────────┐  ┌─────────────┐  ┌────────────┐ │          │
 │  │  │   Product   │  │    User     │  │   Order    │ │          │
 │  │  │   Service   │  │   Service   │  │  Service   │ │          │
 │  │  └─────────────┘  └─────────────┘  └────────────┘ │          │
 │  │  ┌─────────────┐  ┌─────────────┐  ┌────────────┐ │          │
-│  │  │   Sorting   │  │   Search    │  │Performance │ │          │
-│  │  │ Algorithms  │  │ Algorithms  │  │  Analysis  │ │          │
+│  │  │  Inventory  │  │   Review    │  │  Security  │ │          │
+│  │  │   Service   │  │   Service   │  │   Audit    │ │          │
 │  │  └─────────────┘  └─────────────┘  └────────────┘ │          │
 │  └────────────────────────────────────────────────────┘          │
 └───────────────────────────────────────────────────────────────────┘
@@ -68,7 +88,7 @@ A comprehensive, enterprise-grade e-commerce platform built with Spring Boot, fe
 ┌────────────────────────────┼─────────────────────────────────────┐
 │                    Data Access Layer                              │
 │  ┌────────────────────────────────────────────────────┐          │
-│  │  Spring Data JDBC Repositories                     │          │
+│  │  Spring Data JPA Repositories                      │          │
 │  │  ┌──────────┐  ┌──────────┐  ┌──────────┐         │          │
 │  │  │ Product  │  │   User   │  │  Order   │         │          │
 │  │  │   Repo   │  │   Repo   │  │   Repo   │         │          │
@@ -86,6 +106,9 @@ A comprehensive, enterprise-grade e-commerce platform built with Spring Boot, fe
 │  │  ┌──────────┐  ┌──────────┐  ┌──────────┐         │          │
 │  │  │categories│  │ addresses│  │ reviews  │         │          │
 │  │  └──────────┘  └──────────┘  └──────────┘         │          │
+│  │  ┌──────────────────────────────┐                  │          │
+│  │  │  security_audit_logs         │                  │          │
+│  │  └──────────────────────────────┘                  │          │
 │  └────────────────────────────────────────────────────┘          │
 └───────────────────────────────────────────────────────────────────┘
 ```
@@ -103,11 +126,12 @@ A comprehensive, enterprise-grade e-commerce platform built with Spring Boot, fe
 
 **Database:**
 - PostgreSQL 14+
-- Spring Data JDBC
+- Spring Data JPA
 - HikariCP Connection Pool
 
 **Cross-Cutting Concerns:**
 - Spring AOP (AspectJ)
+- Spring Security (JWT + OAuth2)
 - Logback for logging
 - Custom performance metrics
 
@@ -119,7 +143,6 @@ A comprehensive, enterprise-grade e-commerce platform built with Spring Boot, fe
 - JUnit 5
 - MockMvc
 - AssertJ
-- JMeter
 - Postman
 
 **Build Tools:**
@@ -139,20 +162,24 @@ A comprehensive, enterprise-grade e-commerce platform built with Spring Boot, fe
 - **SecurityAuditAspect**: Audit trail for sensitive operations
 - **TransactionAspect**: Transaction lifecycle monitoring
 - **ValidationAspect**: Business rule validation
-- **Caffeine Cache Manager**: Dynamic 3-tier caching strategy (Short/Medium/Long TTL) with native stats collection
+- **RateLimitAspect**: Authentication rate limiting (5 attempts/15 min)
+- **Multi-tier Caching**: 3-tier caching strategy (Short/Medium/Long TTL)
 
-#### 3. Algorithm Optimization
-- **Sorting**: QuickSort, MergeSort, HeapSort
-- **Searching**: Binary, Linear, Jump, Interpolation, Exponential
-- **Benchmarking**: Performance comparison across dataset sizes
-- **Recommendations**: Intelligent algorithm selection
+#### 3. Security Features
+- **JWT Authentication**: Stateless token-based auth with HS256 signing
+- **OAuth2 Social Login**: Google integration with auto user creation
+- **Token Blacklist**: Logout mechanism with scheduled cleanup
+- **Rate Limiting**: Login attempt throttling with IP + username tracking
+- **Security Audit Logging**: Comprehensive event logging to database
+- **CORS & CSRF Protection**: Dual security strategy for different endpoints
+- **Role-Based Authorization**: ADMIN and CUSTOMER roles with @PreAuthorize
 
 #### 4. Performance Monitoring
 - Real-time metrics collection
 - Query optimization analysis
 - Connection pool monitoring
 - REST vs GraphQL performance comparison
-- Automated performance report generation (Markdown, HTML, CSV)
+- Multi-tier caching with hit/miss tracking
 
 ## Quick Start
 
@@ -437,17 +464,8 @@ Content-Type: application/json
 # Update product
 PUT /api/v1/products/{id}
 
-# Delete product
+# Delete product (ADMIN only)
 DELETE /api/v1/products/{id}
-
-# Sort products with algorithm
-GET /api/v1/products/sorted/QUICKSORT?sortBy=price&sortDirection=ASC
-
-# Compare sorting algorithms
-GET /api/v1/products/algorithms/sort-comparison?datasetSize=1000
-
-# Get algorithm recommendations
-GET /api/v1/products/algorithms/recommendations?datasetSize=5000
 ```
 
 #### Users
@@ -1576,7 +1594,7 @@ mvn test -Dtest=RestVsGraphQLPerformanceTest
 #### Unit Tests
 - Service layer tests
 - Utility class tests
-- Algorithm validation
+- Security component tests
 
 #### Integration Tests
 - Database integration (ProductServiceIntegrationTest)
@@ -1587,18 +1605,6 @@ mvn test -Dtest=RestVsGraphQLPerformanceTest
 - Query optimization (QueryOptimizationTest)
 - Connection pool (ConnectionPoolTest)
 - REST vs GraphQL comparison (RestVsGraphQLPerformanceTest)
-- Algorithm benchmarking (AlgorithmPerformanceTest)
-
-### Caching and Performance Validation
-
-To verify the effectiveness of the caching and transaction monitoring:
-
-1.  **Monitor Logs**: Run the application and observe `application.log`. Look for `CACHE HIT` and `CACHE STORED` messages.
-2.  **Verify Invalidation**: 
-    - Perform a `get` request (e.g., fetch a product).
-    - Update the product via a `PUT` or `PATCH` request.
-    - Re-fetch the product and verify the logs show a `CACHE MISS` followed by a `CACHE STORED` (indicating invalidation worked).
-3.  **Stress Testing**: Use JMeter with the provided `jmeter/load-test.jmx` to see the performance gains with caching enabled vs. disabled.
 
 ### Postman Collection
 
@@ -1609,19 +1615,6 @@ Import the Postman collection for manual testing:
 3. Import environment: `postman/environment-dev.json`
 4. Set active environment to "E-Commerce Dev Environment"
 5. Run collection or individual requests
-
-### JMeter Load Testing
-
-```bash
-# Install JMeter
-https://jmeter.apache.org/download_jmeter.cgi
-
-# Run load test
-jmeter -n -t jmeter/load-test.jmx -l results.jtl -e -o reports/
-
-# View results
-open reports/index.html
-```
 
 ## Performance Monitoring
 
@@ -1636,15 +1629,18 @@ The application collects performance metrics across multiple layers:
 
 ### Caching Strategy
 
-The system implements an automated, AOP-based caching layer for high-performance data retrieval.
+The system implements a multi-tier caching layer for high-performance data retrieval.
 
 - **Configuration**:
-    - **Back-end**: `ConcurrentHashMap` with time-based expiration.
-    - **TTL**: 5 minutes (300,000ms).
-    - **Pointcuts**: Automatically caches all `find*` and `get*` methods in the service layer.
-- **Invalidation rules**:
-    - Cache entries for a class are automatically cleared when any write operation (`update*`, `delete*`, `save*`, `create*`, `add*`, `remove*`, `clear*`, `process*`, `cancel*`, `place*`) is performed within that class.
-- **Monitoring**: Cache hit/miss rates are tracked in real-time and visible via the [Performance Dashboard](http://localhost:5173/admin/dashboard?tab=performance).
+    - **Implementation**: Spring Caffeine Cache with 3 tiers
+    - **Short TTL**: 5 minutes (volatile data)
+    - **Medium TTL**: 15 minutes (standard data)
+    - **Long TTL**: 1 hour (stable data)
+    - **Automatic Cache Management**: @Cacheable, @CacheEvict, @CachePut annotations
+- **Invalidation**:
+    - Cache entries automatically cleared on write operations
+    - Targeted eviction based on data relationships
+- **Monitoring**: Cache hit/miss rates tracked via PerformanceAspect
 
 ### Logging
 
