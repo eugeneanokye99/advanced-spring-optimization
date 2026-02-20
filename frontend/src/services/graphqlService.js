@@ -8,7 +8,8 @@ import {
 import {
   UPDATE_ORDER_STATUS,
   UPDATE_ORDER,
-  DELETE_ORDER
+  DELETE_ORDER,
+  CANCEL_ORDER
 } from './mutations';
 
 // Custom hooks for queries
@@ -62,6 +63,13 @@ export const useUpdateOrder = () => {
 
 export const useDeleteOrder = () => {
   return useMutation(DELETE_ORDER, {
+    refetchQueries: [{ query: GET_ALL_ORDERS }, { query: GET_USER_ORDERS }],
+    awaitRefetchQueries: true
+  });
+};
+
+export const useCancelOrder = () => {
+  return useMutation(CANCEL_ORDER, {
     refetchQueries: [{ query: GET_ALL_ORDERS }, { query: GET_USER_ORDERS }],
     awaitRefetchQueries: true
   });

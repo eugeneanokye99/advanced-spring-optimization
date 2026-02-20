@@ -39,6 +39,18 @@ export const DELETE_ORDER = gql`
   }
 `;
 
+export const CANCEL_ORDER = gql`
+  mutation CancelOrder($id: ID!) {
+    cancelOrder(id: $id) {
+      id
+      status
+      orderDate
+      totalAmount
+      paymentStatus
+    }
+  }
+`;
+
 export const CREATE_ORDER = gql`
   mutation CreateOrder($input: CreateOrderInput!) {
     createOrder(input: $input) {

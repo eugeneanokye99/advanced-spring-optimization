@@ -16207,3 +16207,242 @@ com.shopjoy.exception.ValidationException: Insufficient stock for product: Ralph
 2026-02-20 16:55:24.075 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2026-02-20 16:55:24.079 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2026-02-20 16:55:24.092 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-02-20 16:56:43.630 [main] INFO  c.s.ShopjoyEcommerceSystemApplication - Starting ShopjoyEcommerceSystemApplication using Java 25.0.1 with PID 38300 (C:\Users\EugeneDokyeAnokye\IdeaProjects\spring-data-ecommerce\target\classes started by EugeneDokyeAnokye in C:\Users\EugeneDokyeAnokye\IdeaProjects\spring-data-ecommerce)
+2026-02-20 16:56:43.639 [main] DEBUG c.s.ShopjoyEcommerceSystemApplication - Running with Spring Boot v4.0.2, Spring v7.0.3
+2026-02-20 16:56:43.640 [main] INFO  c.s.ShopjoyEcommerceSystemApplication - The following 1 profile is active: "dev"
+2026-02-20 16:56:44.903 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.0.1.Final
+2026-02-20 16:56:49.586 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-02-20 16:56:50.283 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 674 ms. Found 10 JPA repository interfaces.
+2026-02-20 16:56:56.230 [main] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-02-20 16:56:56.288 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-02-20 16:56:56.296 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-02-20 16:56:56.297 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.15]
+2026-02-20 16:56:56.965 [main] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 13129 ms
+2026-02-20 16:56:59.745 [main] INFO  org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-02-20 16:56:59.920 [main] INFO  org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.1.Final
+2026-02-20 16:57:01.509 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-02-20 16:57:01.619 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-02-20 16:57:02.144 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@71739267
+2026-02-20 16:57:02.148 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-02-20 16:57:02.375 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/shopjoy_db]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.1
+	Default catalog/schema: shopjoy_db/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-02-20 16:57:06.519 [main] INFO  org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-02-20 16:57:06.691 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-02-20 16:57:08.115 [main] INFO  o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-02-20 16:57:13.598 [main] DEBUG c.s.config.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2026-02-20 16:57:14.585 [main] INFO  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-02-20 16:57:28.979 [main] INFO  o.s.g.e.DefaultSchemaResourceGraphQlSourceBuilder - Loaded 1 resource(s) in the GraphQL schema.
+2026-02-20 16:57:29.472 [main] INFO  o.s.b.g.a.GraphQlAutoConfiguration - GraphQL schema inspection:
+	Unmapped fields: {Inventory=[reservedQuantity]}
+	Unmapped registrations: {Review.user=@BatchMapping ReviewFieldResolver#user[1 args]}
+	Unmapped arguments: {}
+	Field nullness errors: {}
+	Argument nullness errors: {}
+	Skipped types: []
+2026-02-20 16:57:29.558 [main] INFO  o.s.b.g.a.s.GraphQlWebMvcAutoConfiguration - GraphQL endpoint HTTP POST /graphql
+2026-02-20 16:57:32.257 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
+2026-02-20 16:57:32.567 [main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-02-20 16:57:32.595 [main] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-02-20 16:57:32.644 [main] INFO  c.s.ShopjoyEcommerceSystemApplication - Started ShopjoyEcommerceSystemApplication in 52.143 seconds (process running for 57.005)
+2026-02-20 16:57:32.696 [scheduling-1] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:57:32.696] ENTERING: TokenBlacklistServiceImpl.removeExpiredTokens with arguments: []
+2026-02-20 16:57:32.697 [scheduling-1] DEBUG c.s.s.impl.TokenBlacklistServiceImpl - Blacklist cleanup: No expired tokens found. Current size: 0
+2026-02-20 16:57:32.700 [scheduling-1] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:57:32.700] EXITING: TokenBlacklistServiceImpl.removeExpiredTokens returned: void
+2026-02-20 16:57:32.711 [scheduling-1] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:57:32.711] ENTERING: RateLimitServiceImpl.removeExpiredEntries with arguments: []
+2026-02-20 16:57:32.712 [scheduling-1] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:57:32.712] EXITING: RateLimitServiceImpl.removeExpiredEntries returned: void
+2026-02-20 16:57:32.885 [main] INFO  c.s.config.AdminUserInitializer - Checking for existing admin user with username: admin
+2026-02-20 16:57:32.910 [main] DEBUG o.s.jdbc.datasource.DataSourceUtils - Setting JDBC Connection [HikariProxyConnection@97747625 wrapping org.postgresql.jdbc.PgConnection@71739267] read-only
+2026-02-20 16:57:32.915 [main] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:57:32.915] ENTERING: AuthServiceImpl.isUsernameTaken with arguments: [admin]
+2026-02-20 16:57:32.926 [main] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:57:32.926] TRANSACTION START: AuthServiceImpl.isUsernameTaken(String)
+2026-02-20 16:57:33.115 [main] DEBUG org.hibernate.SQL - select u1_0.user_id from users u1_0 where u1_0.username=? fetch first ? rows only
+2026-02-20 16:57:33.152 [main] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:57:33.152] TRANSACTION COMMIT: AuthServiceImpl.isUsernameTaken(String)
+2026-02-20 16:57:33.153 [main] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:57:33.153] EXITING: AuthServiceImpl.isUsernameTaken returned: Boolean
+2026-02-20 16:57:33.159 [main] DEBUG o.s.jdbc.datasource.DataSourceUtils - Resetting read-only flag of JDBC Connection [HikariProxyConnection@97747625 wrapping org.postgresql.jdbc.PgConnection@71739267]
+2026-02-20 16:57:33.160 [main] INFO  c.s.config.AdminUserInitializer - Admin user 'admin' already exists, skipping creation
+2026-02-20 16:57:33.161 [main] WARN  o.s.c.events.SpringDocAppInitializer - SpringDoc /api-docs endpoint is enabled by default. To disable it in production, set the property 'springdoc.api-docs.enabled=false'
+2026-02-20 16:57:57.571 [http-nio-8080-exec-3] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-20 16:57:57.572 [http-nio-8080-exec-3] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-02-20 16:57:57.575 [http-nio-8080-exec-3] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2026-02-20 16:57:57.709 [http-nio-8080-exec-3] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:57:57.709] ENTERING: TokenBlacklistServiceImpl.isBlacklisted with arguments: [eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiQ1VTVE9NRVIiLCJyb2xlcyI6IlJPTEVfQ1VTVE9NRVIiLCJ1c2VySWQiOjI0LCJzdWIiOiJldWdlbmVfNjE3NyIsImlhdCI6MTc3MTYwNjMxNywiZXhwIjoxNzcxNjkyNzE3fQ.gVGOfxoYBsD3x306oI2QYohjGyTRU0qnEi7v0PgHW5o81cedhfd5yfkhAdbnudOsl8B0RG4hYSgzswrivgfcww]
+2026-02-20 16:57:57.711 [http-nio-8080-exec-3] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:57:57.710] EXITING: TokenBlacklistServiceImpl.isBlacklisted returned: Boolean
+2026-02-20 16:57:57.980 [http-nio-8080-exec-3] DEBUG o.s.jdbc.datasource.DataSourceUtils - Setting JDBC Connection [HikariProxyConnection@1785725357 wrapping org.postgresql.jdbc.PgConnection@71739267] read-only
+2026-02-20 16:57:57.982 [http-nio-8080-exec-3] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:57:57.982] ENTERING: CustomUserDetailsService.loadUserByUsername with arguments: [eugene_6177]
+2026-02-20 16:57:57.984 [http-nio-8080-exec-3] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:57:57.984] TRANSACTION START: CustomUserDetailsService.loadUserByUsername(String)
+2026-02-20 16:57:57.998 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - select u1_0.user_id,u1_0.created_at,u1_0.email,u1_0.first_name,u1_0.last_name,u1_0.oauth_provider,u1_0.oauth_provider_id,u1_0.password_hash,u1_0.phone,u1_0.updated_at,u1_0.user_type,u1_0.username from users u1_0 where u1_0.username=?
+2026-02-20 16:57:58.051 [http-nio-8080-exec-3] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:57:58.051] TRANSACTION COMMIT: CustomUserDetailsService.loadUserByUsername(String)
+2026-02-20 16:57:58.051 [http-nio-8080-exec-3] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:57:58.051] EXITING: CustomUserDetailsService.loadUserByUsername returned: CustomUserDetails
+2026-02-20 16:57:58.052 [http-nio-8080-exec-3] DEBUG o.s.jdbc.datasource.DataSourceUtils - Resetting read-only flag of JDBC Connection [HikariProxyConnection@1785725357 wrapping org.postgresql.jdbc.PgConnection@71739267]
+2026-02-20 16:57:58.060 [http-nio-8080-exec-3] DEBUG c.s.config.JwtAuthenticationFilter - JWT authentication successful for user: eugene_6177
+2026-02-20 16:59:46.788 [http-nio-8080-exec-7] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:46.788] ENTERING: TokenBlacklistServiceImpl.isBlacklisted with arguments: [eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiQ1VTVE9NRVIiLCJyb2xlcyI6IlJPTEVfQ1VTVE9NRVIiLCJ1c2VySWQiOjI0LCJzdWIiOiJldWdlbmVfNjE3NyIsImlhdCI6MTc3MTYwNjMxNywiZXhwIjoxNzcxNjkyNzE3fQ.gVGOfxoYBsD3x306oI2QYohjGyTRU0qnEi7v0PgHW5o81cedhfd5yfkhAdbnudOsl8B0RG4hYSgzswrivgfcww]
+2026-02-20 16:59:46.788 [http-nio-8080-exec-7] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:46.788] EXITING: TokenBlacklistServiceImpl.isBlacklisted returned: Boolean
+2026-02-20 16:59:46.788 [http-nio-8080-exec-8] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:46.788] ENTERING: TokenBlacklistServiceImpl.isBlacklisted with arguments: [eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiQ1VTVE9NRVIiLCJyb2xlcyI6IlJPTEVfQ1VTVE9NRVIiLCJ1c2VySWQiOjI0LCJzdWIiOiJldWdlbmVfNjE3NyIsImlhdCI6MTc3MTYwNjMxNywiZXhwIjoxNzcxNjkyNzE3fQ.gVGOfxoYBsD3x306oI2QYohjGyTRU0qnEi7v0PgHW5o81cedhfd5yfkhAdbnudOsl8B0RG4hYSgzswrivgfcww]
+2026-02-20 16:59:46.789 [http-nio-8080-exec-8] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:46.789] EXITING: TokenBlacklistServiceImpl.isBlacklisted returned: Boolean
+2026-02-20 16:59:46.792 [http-nio-8080-exec-8] DEBUG o.s.jdbc.datasource.DataSourceUtils - Setting JDBC Connection [HikariProxyConnection@133759821 wrapping org.postgresql.jdbc.PgConnection@71739267] read-only
+2026-02-20 16:59:46.792 [http-nio-8080-exec-7] DEBUG o.s.jdbc.datasource.DataSourceUtils - Setting JDBC Connection [HikariProxyConnection@1270184947 wrapping org.postgresql.jdbc.PgConnection@4f8af65d] read-only
+2026-02-20 16:59:46.792 [http-nio-8080-exec-8] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:46.792] ENTERING: CustomUserDetailsService.loadUserByUsername with arguments: [eugene_6177]
+2026-02-20 16:59:46.792 [http-nio-8080-exec-7] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:46.792] ENTERING: CustomUserDetailsService.loadUserByUsername with arguments: [eugene_6177]
+2026-02-20 16:59:46.794 [http-nio-8080-exec-8] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:46.793] TRANSACTION START: CustomUserDetailsService.loadUserByUsername(String)
+2026-02-20 16:59:46.793 [http-nio-8080-exec-7] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:46.792] TRANSACTION START: CustomUserDetailsService.loadUserByUsername(String)
+2026-02-20 16:59:46.797 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - select u1_0.user_id,u1_0.created_at,u1_0.email,u1_0.first_name,u1_0.last_name,u1_0.oauth_provider,u1_0.oauth_provider_id,u1_0.password_hash,u1_0.phone,u1_0.updated_at,u1_0.user_type,u1_0.username from users u1_0 where u1_0.username=?
+2026-02-20 16:59:46.797 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - select u1_0.user_id,u1_0.created_at,u1_0.email,u1_0.first_name,u1_0.last_name,u1_0.oauth_provider,u1_0.oauth_provider_id,u1_0.password_hash,u1_0.phone,u1_0.updated_at,u1_0.user_type,u1_0.username from users u1_0 where u1_0.username=?
+2026-02-20 16:59:46.803 [http-nio-8080-exec-8] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:46.803] TRANSACTION COMMIT: CustomUserDetailsService.loadUserByUsername(String)
+2026-02-20 16:59:46.803 [http-nio-8080-exec-8] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:46.803] EXITING: CustomUserDetailsService.loadUserByUsername returned: CustomUserDetails
+2026-02-20 16:59:46.805 [http-nio-8080-exec-8] DEBUG o.s.jdbc.datasource.DataSourceUtils - Resetting read-only flag of JDBC Connection [HikariProxyConnection@133759821 wrapping org.postgresql.jdbc.PgConnection@71739267]
+2026-02-20 16:59:46.809 [http-nio-8080-exec-8] DEBUG c.s.config.JwtAuthenticationFilter - JWT authentication successful for user: eugene_6177
+2026-02-20 16:59:46.814 [http-nio-8080-exec-7] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:46.814] TRANSACTION COMMIT: CustomUserDetailsService.loadUserByUsername(String)
+2026-02-20 16:59:46.815 [http-nio-8080-exec-7] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:46.815] EXITING: CustomUserDetailsService.loadUserByUsername returned: CustomUserDetails
+2026-02-20 16:59:46.817 [http-nio-8080-exec-7] DEBUG o.s.jdbc.datasource.DataSourceUtils - Resetting read-only flag of JDBC Connection [HikariProxyConnection@1270184947 wrapping org.postgresql.jdbc.PgConnection@4f8af65d]
+2026-02-20 16:59:46.820 [http-nio-8080-exec-7] DEBUG c.s.config.JwtAuthenticationFilter - JWT authentication successful for user: eugene_6177
+2026-02-20 16:59:46.862 [http-nio-8080-exec-7] INFO  com.shopjoy.aspect.LoggingAspect - API ENDPOINT CALLED: CartController.getCartItems with arguments: [24]
+2026-02-20 16:59:46.862 [http-nio-8080-exec-8] INFO  com.shopjoy.aspect.LoggingAspect - API ENDPOINT CALLED: CartController.getCartTotal with arguments: [24]
+2026-02-20 16:59:46.885 [http-nio-8080-exec-7] DEBUG o.s.jdbc.datasource.DataSourceUtils - Setting JDBC Connection [HikariProxyConnection@775009445 wrapping org.postgresql.jdbc.PgConnection@4f8af65d] read-only
+2026-02-20 16:59:46.887 [http-nio-8080-exec-8] DEBUG o.s.jdbc.datasource.DataSourceUtils - Setting JDBC Connection [HikariProxyConnection@1667988619 wrapping org.postgresql.jdbc.PgConnection@71739267] read-only
+2026-02-20 16:59:46.887 [http-nio-8080-exec-7] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:46.887] ENTERING: CartServiceImpl.getCartItems with arguments: [24]
+2026-02-20 16:59:46.888 [http-nio-8080-exec-8] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:46.887] ENTERING: CartServiceImpl.getCartTotal with arguments: [24]
+2026-02-20 16:59:46.891 [http-nio-8080-exec-7] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:46.891] TRANSACTION START: CartServiceImpl.getCartItems(Integer)
+2026-02-20 16:59:46.891 [http-nio-8080-exec-8] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:46.891] TRANSACTION START: CartServiceImpl.getCartTotal(Integer)
+2026-02-20 16:59:46.902 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - select ci1_0.cart_item_id,ci1_0.added_at,ci1_0.product_id,ci1_0.quantity,ci1_0.user_id from cart_items ci1_0 where ci1_0.user_id=?
+2026-02-20 16:59:46.902 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - select ci1_0.cart_item_id,ci1_0.added_at,ci1_0.product_id,ci1_0.quantity,ci1_0.user_id from cart_items ci1_0 where ci1_0.user_id=?
+2026-02-20 16:59:46.925 [http-nio-8080-exec-8] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:46.925] TRANSACTION COMMIT: CartServiceImpl.getCartTotal(Integer)
+2026-02-20 16:59:46.925 [http-nio-8080-exec-7] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:46.925] TRANSACTION COMMIT: CartServiceImpl.getCartItems(Integer)
+2026-02-20 16:59:46.926 [http-nio-8080-exec-7] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:46.926] EXITING: CartServiceImpl.getCartItems returned: ArrayList
+2026-02-20 16:59:46.926 [http-nio-8080-exec-8] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:46.926] EXITING: CartServiceImpl.getCartTotal returned: Double
+2026-02-20 16:59:46.929 [http-nio-8080-exec-8] DEBUG o.s.jdbc.datasource.DataSourceUtils - Resetting read-only flag of JDBC Connection [HikariProxyConnection@1667988619 wrapping org.postgresql.jdbc.PgConnection@71739267]
+2026-02-20 16:59:46.929 [http-nio-8080-exec-7] DEBUG o.s.jdbc.datasource.DataSourceUtils - Resetting read-only flag of JDBC Connection [HikariProxyConnection@775009445 wrapping org.postgresql.jdbc.PgConnection@4f8af65d]
+2026-02-20 16:59:46.937 [http-nio-8080-exec-7] INFO  c.shopjoy.aspect.PerformanceAspect - API endpoint CartController.getCartItems responded in 74ms
+2026-02-20 16:59:46.938 [http-nio-8080-exec-7] INFO  com.shopjoy.aspect.LoggingAspect - API ENDPOINT COMPLETED: CartController.getCartItems returned: ResponseEntity
+2026-02-20 16:59:46.943 [http-nio-8080-exec-8] INFO  c.shopjoy.aspect.PerformanceAspect - API endpoint CartController.getCartTotal responded in 80ms
+2026-02-20 16:59:46.945 [http-nio-8080-exec-8] INFO  com.shopjoy.aspect.LoggingAspect - API ENDPOINT COMPLETED: CartController.getCartTotal returned: ResponseEntity
+2026-02-20 16:59:47.367 [http-nio-8080-exec-1] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.367] ENTERING: TokenBlacklistServiceImpl.isBlacklisted with arguments: [eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiQ1VTVE9NRVIiLCJyb2xlcyI6IlJPTEVfQ1VTVE9NRVIiLCJ1c2VySWQiOjI0LCJzdWIiOiJldWdlbmVfNjE3NyIsImlhdCI6MTc3MTYwNjMxNywiZXhwIjoxNzcxNjkyNzE3fQ.gVGOfxoYBsD3x306oI2QYohjGyTRU0qnEi7v0PgHW5o81cedhfd5yfkhAdbnudOsl8B0RG4hYSgzswrivgfcww]
+2026-02-20 16:59:47.368 [http-nio-8080-exec-1] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.367] EXITING: TokenBlacklistServiceImpl.isBlacklisted returned: Boolean
+2026-02-20 16:59:47.369 [http-nio-8080-exec-1] DEBUG o.s.jdbc.datasource.DataSourceUtils - Setting JDBC Connection [HikariProxyConnection@953206013 wrapping org.postgresql.jdbc.PgConnection@71739267] read-only
+2026-02-20 16:59:47.369 [http-nio-8080-exec-1] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.369] ENTERING: CustomUserDetailsService.loadUserByUsername with arguments: [eugene_6177]
+2026-02-20 16:59:47.370 [http-nio-8080-exec-1] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:47.370] TRANSACTION START: CustomUserDetailsService.loadUserByUsername(String)
+2026-02-20 16:59:47.372 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - select u1_0.user_id,u1_0.created_at,u1_0.email,u1_0.first_name,u1_0.last_name,u1_0.oauth_provider,u1_0.oauth_provider_id,u1_0.password_hash,u1_0.phone,u1_0.updated_at,u1_0.user_type,u1_0.username from users u1_0 where u1_0.username=?
+2026-02-20 16:59:47.375 [http-nio-8080-exec-1] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:47.375] TRANSACTION COMMIT: CustomUserDetailsService.loadUserByUsername(String)
+2026-02-20 16:59:47.375 [http-nio-8080-exec-1] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.375] EXITING: CustomUserDetailsService.loadUserByUsername returned: CustomUserDetails
+2026-02-20 16:59:47.377 [http-nio-8080-exec-1] DEBUG o.s.jdbc.datasource.DataSourceUtils - Resetting read-only flag of JDBC Connection [HikariProxyConnection@953206013 wrapping org.postgresql.jdbc.PgConnection@71739267]
+2026-02-20 16:59:47.380 [http-nio-8080-exec-1] DEBUG c.s.config.JwtAuthenticationFilter - JWT authentication successful for user: eugene_6177
+2026-02-20 16:59:47.384 [http-nio-8080-exec-2] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.384] ENTERING: TokenBlacklistServiceImpl.isBlacklisted with arguments: [eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiQ1VTVE9NRVIiLCJyb2xlcyI6IlJPTEVfQ1VTVE9NRVIiLCJ1c2VySWQiOjI0LCJzdWIiOiJldWdlbmVfNjE3NyIsImlhdCI6MTc3MTYwNjMxNywiZXhwIjoxNzcxNjkyNzE3fQ.gVGOfxoYBsD3x306oI2QYohjGyTRU0qnEi7v0PgHW5o81cedhfd5yfkhAdbnudOsl8B0RG4hYSgzswrivgfcww]
+2026-02-20 16:59:47.386 [http-nio-8080-exec-2] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.386] EXITING: TokenBlacklistServiceImpl.isBlacklisted returned: Boolean
+2026-02-20 16:59:47.387 [http-nio-8080-exec-1] INFO  com.shopjoy.aspect.LoggingAspect - API ENDPOINT CALLED: CartController.getCartTotal with arguments: [24]
+2026-02-20 16:59:47.388 [http-nio-8080-exec-2] DEBUG o.s.jdbc.datasource.DataSourceUtils - Setting JDBC Connection [HikariProxyConnection@1952922461 wrapping org.postgresql.jdbc.PgConnection@71739267] read-only
+2026-02-20 16:59:47.388 [http-nio-8080-exec-2] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.388] ENTERING: CustomUserDetailsService.loadUserByUsername with arguments: [eugene_6177]
+2026-02-20 16:59:47.388 [http-nio-8080-exec-2] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:47.388] TRANSACTION START: CustomUserDetailsService.loadUserByUsername(String)
+2026-02-20 16:59:47.389 [http-nio-8080-exec-1] INFO  c.shopjoy.aspect.PerformanceAspect - API endpoint CartController.getCartTotal responded in 1ms
+2026-02-20 16:59:47.389 [http-nio-8080-exec-1] INFO  com.shopjoy.aspect.LoggingAspect - API ENDPOINT COMPLETED: CartController.getCartTotal returned: ResponseEntity
+2026-02-20 16:59:47.389 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - select u1_0.user_id,u1_0.created_at,u1_0.email,u1_0.first_name,u1_0.last_name,u1_0.oauth_provider,u1_0.oauth_provider_id,u1_0.password_hash,u1_0.phone,u1_0.updated_at,u1_0.user_type,u1_0.username from users u1_0 where u1_0.username=?
+2026-02-20 16:59:47.391 [http-nio-8080-exec-2] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:47.391] TRANSACTION COMMIT: CustomUserDetailsService.loadUserByUsername(String)
+2026-02-20 16:59:47.393 [http-nio-8080-exec-2] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.392] EXITING: CustomUserDetailsService.loadUserByUsername returned: CustomUserDetails
+2026-02-20 16:59:47.394 [http-nio-8080-exec-2] DEBUG o.s.jdbc.datasource.DataSourceUtils - Resetting read-only flag of JDBC Connection [HikariProxyConnection@1952922461 wrapping org.postgresql.jdbc.PgConnection@71739267]
+2026-02-20 16:59:47.398 [http-nio-8080-exec-2] DEBUG c.s.config.JwtAuthenticationFilter - JWT authentication successful for user: eugene_6177
+2026-02-20 16:59:47.403 [http-nio-8080-exec-2] INFO  com.shopjoy.aspect.LoggingAspect - API ENDPOINT CALLED: CartController.getCartItems with arguments: [24]
+2026-02-20 16:59:47.404 [http-nio-8080-exec-2] INFO  c.shopjoy.aspect.PerformanceAspect - API endpoint CartController.getCartItems responded in 0ms
+2026-02-20 16:59:47.404 [http-nio-8080-exec-2] INFO  com.shopjoy.aspect.LoggingAspect - API ENDPOINT COMPLETED: CartController.getCartItems returned: ResponseEntity
+2026-02-20 16:59:47.537 [http-nio-8080-exec-6] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.537] ENTERING: TokenBlacklistServiceImpl.isBlacklisted with arguments: [eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiQ1VTVE9NRVIiLCJyb2xlcyI6IlJPTEVfQ1VTVE9NRVIiLCJ1c2VySWQiOjI0LCJzdWIiOiJldWdlbmVfNjE3NyIsImlhdCI6MTc3MTYwNjMxNywiZXhwIjoxNzcxNjkyNzE3fQ.gVGOfxoYBsD3x306oI2QYohjGyTRU0qnEi7v0PgHW5o81cedhfd5yfkhAdbnudOsl8B0RG4hYSgzswrivgfcww]
+2026-02-20 16:59:47.537 [http-nio-8080-exec-6] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.537] EXITING: TokenBlacklistServiceImpl.isBlacklisted returned: Boolean
+2026-02-20 16:59:47.541 [http-nio-8080-exec-5] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.541] ENTERING: TokenBlacklistServiceImpl.isBlacklisted with arguments: [eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiQ1VTVE9NRVIiLCJyb2xlcyI6IlJPTEVfQ1VTVE9NRVIiLCJ1c2VySWQiOjI0LCJzdWIiOiJldWdlbmVfNjE3NyIsImlhdCI6MTc3MTYwNjMxNywiZXhwIjoxNzcxNjkyNzE3fQ.gVGOfxoYBsD3x306oI2QYohjGyTRU0qnEi7v0PgHW5o81cedhfd5yfkhAdbnudOsl8B0RG4hYSgzswrivgfcww]
+2026-02-20 16:59:47.543 [http-nio-8080-exec-5] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.543] EXITING: TokenBlacklistServiceImpl.isBlacklisted returned: Boolean
+2026-02-20 16:59:47.544 [http-nio-8080-exec-6] DEBUG o.s.jdbc.datasource.DataSourceUtils - Setting JDBC Connection [HikariProxyConnection@1737342488 wrapping org.postgresql.jdbc.PgConnection@71739267] read-only
+2026-02-20 16:59:47.547 [http-nio-8080-exec-6] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.547] ENTERING: CustomUserDetailsService.loadUserByUsername with arguments: [eugene_6177]
+2026-02-20 16:59:47.549 [http-nio-8080-exec-6] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:47.548] TRANSACTION START: CustomUserDetailsService.loadUserByUsername(String)
+2026-02-20 16:59:47.550 [http-nio-8080-exec-5] DEBUG o.s.jdbc.datasource.DataSourceUtils - Setting JDBC Connection [HikariProxyConnection@1782163828 wrapping org.postgresql.jdbc.PgConnection@4f8af65d] read-only
+2026-02-20 16:59:47.552 [http-nio-8080-exec-5] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.552] ENTERING: CustomUserDetailsService.loadUserByUsername with arguments: [eugene_6177]
+2026-02-20 16:59:47.553 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - select u1_0.user_id,u1_0.created_at,u1_0.email,u1_0.first_name,u1_0.last_name,u1_0.oauth_provider,u1_0.oauth_provider_id,u1_0.password_hash,u1_0.phone,u1_0.updated_at,u1_0.user_type,u1_0.username from users u1_0 where u1_0.username=?
+2026-02-20 16:59:47.553 [http-nio-8080-exec-5] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:47.553] TRANSACTION START: CustomUserDetailsService.loadUserByUsername(String)
+2026-02-20 16:59:47.555 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select u1_0.user_id,u1_0.created_at,u1_0.email,u1_0.first_name,u1_0.last_name,u1_0.oauth_provider,u1_0.oauth_provider_id,u1_0.password_hash,u1_0.phone,u1_0.updated_at,u1_0.user_type,u1_0.username from users u1_0 where u1_0.username=?
+2026-02-20 16:59:47.557 [http-nio-8080-exec-6] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:47.556] TRANSACTION COMMIT: CustomUserDetailsService.loadUserByUsername(String)
+2026-02-20 16:59:47.557 [http-nio-8080-exec-6] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.557] EXITING: CustomUserDetailsService.loadUserByUsername returned: CustomUserDetails
+2026-02-20 16:59:47.558 [http-nio-8080-exec-5] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:47.558] TRANSACTION COMMIT: CustomUserDetailsService.loadUserByUsername(String)
+2026-02-20 16:59:47.561 [http-nio-8080-exec-5] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.561] EXITING: CustomUserDetailsService.loadUserByUsername returned: CustomUserDetails
+2026-02-20 16:59:47.563 [http-nio-8080-exec-6] DEBUG o.s.jdbc.datasource.DataSourceUtils - Resetting read-only flag of JDBC Connection [HikariProxyConnection@1737342488 wrapping org.postgresql.jdbc.PgConnection@71739267]
+2026-02-20 16:59:47.564 [http-nio-8080-exec-5] DEBUG o.s.jdbc.datasource.DataSourceUtils - Resetting read-only flag of JDBC Connection [HikariProxyConnection@1782163828 wrapping org.postgresql.jdbc.PgConnection@4f8af65d]
+2026-02-20 16:59:47.567 [http-nio-8080-exec-5] DEBUG c.s.config.JwtAuthenticationFilter - JWT authentication successful for user: eugene_6177
+2026-02-20 16:59:47.569 [http-nio-8080-exec-6] DEBUG c.s.config.JwtAuthenticationFilter - JWT authentication successful for user: eugene_6177
+2026-02-20 16:59:47.584 [http-nio-8080-exec-6] INFO  com.shopjoy.aspect.LoggingAspect - API ENDPOINT CALLED: CategoryController.getAllCategories with arguments: []
+2026-02-20 16:59:47.586 [http-nio-8080-exec-6] DEBUG o.s.jdbc.datasource.DataSourceUtils - Setting JDBC Connection [HikariProxyConnection@51934081 wrapping org.postgresql.jdbc.PgConnection@71739267] read-only
+2026-02-20 16:59:47.586 [http-nio-8080-exec-6] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.586] ENTERING: CategoryServiceImpl.getAllCategories with arguments: []
+2026-02-20 16:59:47.592 [http-nio-8080-exec-6] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:47.592] TRANSACTION START: CategoryServiceImpl.getAllCategories()
+2026-02-20 16:59:47.606 [http-nio-8080-exec-5] INFO  com.shopjoy.aspect.LoggingAspect - API ENDPOINT CALLED: ProductController.getProductsWithFilters with arguments: [null, null, null, null, null, null, null, true, 0, 8, productName, ASC]
+2026-02-20 16:59:47.799 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - select c1_0.category_id,c1_0.category_name,c1_0.created_at,c1_0.description from categories c1_0
+2026-02-20 16:59:47.818 [http-nio-8080-exec-6] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:47.818] TRANSACTION COMMIT: CategoryServiceImpl.getAllCategories()
+2026-02-20 16:59:47.818 [http-nio-8080-exec-6] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.818] EXITING: CategoryServiceImpl.getAllCategories returned: ArrayList
+2026-02-20 16:59:47.819 [http-nio-8080-exec-6] DEBUG o.s.jdbc.datasource.DataSourceUtils - Resetting read-only flag of JDBC Connection [HikariProxyConnection@51934081 wrapping org.postgresql.jdbc.PgConnection@71739267]
+2026-02-20 16:59:47.820 [http-nio-8080-exec-6] INFO  c.shopjoy.aspect.PerformanceAspect - API endpoint CategoryController.getAllCategories responded in 236ms
+2026-02-20 16:59:47.820 [http-nio-8080-exec-6] INFO  com.shopjoy.aspect.LoggingAspect - API ENDPOINT COMPLETED: CategoryController.getAllCategories returned: ResponseEntity
+2026-02-20 16:59:47.838 [http-nio-8080-exec-9] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.838] ENTERING: TokenBlacklistServiceImpl.isBlacklisted with arguments: [eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiQ1VTVE9NRVIiLCJyb2xlcyI6IlJPTEVfQ1VTVE9NRVIiLCJ1c2VySWQiOjI0LCJzdWIiOiJldWdlbmVfNjE3NyIsImlhdCI6MTc3MTYwNjMxNywiZXhwIjoxNzcxNjkyNzE3fQ.gVGOfxoYBsD3x306oI2QYohjGyTRU0qnEi7v0PgHW5o81cedhfd5yfkhAdbnudOsl8B0RG4hYSgzswrivgfcww]
+2026-02-20 16:59:47.839 [http-nio-8080-exec-9] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.839] EXITING: TokenBlacklistServiceImpl.isBlacklisted returned: Boolean
+2026-02-20 16:59:47.841 [http-nio-8080-exec-9] DEBUG o.s.jdbc.datasource.DataSourceUtils - Setting JDBC Connection [HikariProxyConnection@306213114 wrapping org.postgresql.jdbc.PgConnection@71739267] read-only
+2026-02-20 16:59:47.850 [http-nio-8080-exec-9] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.850] ENTERING: CustomUserDetailsService.loadUserByUsername with arguments: [eugene_6177]
+2026-02-20 16:59:47.852 [http-nio-8080-exec-9] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:47.851] TRANSACTION START: CustomUserDetailsService.loadUserByUsername(String)
+2026-02-20 16:59:47.855 [http-nio-8080-exec-9] DEBUG org.hibernate.SQL - select u1_0.user_id,u1_0.created_at,u1_0.email,u1_0.first_name,u1_0.last_name,u1_0.oauth_provider,u1_0.oauth_provider_id,u1_0.password_hash,u1_0.phone,u1_0.updated_at,u1_0.user_type,u1_0.username from users u1_0 where u1_0.username=?
+2026-02-20 16:59:47.866 [http-nio-8080-exec-9] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:47.866] TRANSACTION COMMIT: CustomUserDetailsService.loadUserByUsername(String)
+2026-02-20 16:59:47.867 [http-nio-8080-exec-9] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:47.867] EXITING: CustomUserDetailsService.loadUserByUsername returned: CustomUserDetails
+2026-02-20 16:59:47.905 [http-nio-8080-exec-9] DEBUG o.s.jdbc.datasource.DataSourceUtils - Resetting read-only flag of JDBC Connection [HikariProxyConnection@306213114 wrapping org.postgresql.jdbc.PgConnection@71739267]
+2026-02-20 16:59:47.907 [http-nio-8080-exec-9] DEBUG c.s.config.JwtAuthenticationFilter - JWT authentication successful for user: eugene_6177
+2026-02-20 16:59:47.912 [http-nio-8080-exec-9] INFO  com.shopjoy.aspect.LoggingAspect - API ENDPOINT CALLED: CategoryController.getAllCategories with arguments: []
+2026-02-20 16:59:47.913 [http-nio-8080-exec-9] INFO  c.shopjoy.aspect.PerformanceAspect - API endpoint CategoryController.getAllCategories responded in 1ms
+2026-02-20 16:59:47.913 [http-nio-8080-exec-9] INFO  com.shopjoy.aspect.LoggingAspect - API ENDPOINT COMPLETED: CategoryController.getAllCategories returned: ResponseEntity
+2026-02-20 16:59:48.057 [http-nio-8080-exec-5] DEBUG o.s.jdbc.datasource.DataSourceUtils - Setting JDBC Connection [HikariProxyConnection@1184343755 wrapping org.postgresql.jdbc.PgConnection@4f8af65d] read-only
+2026-02-20 16:59:48.120 [http-nio-8080-exec-5] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:48.120] ENTERING: ProductServiceImpl.getProductsWithFilters with arguments: [com.shopjoy.dto.filter.ProductFilter@55a4d824, Page request [number: 0, size 8, sort: productName: ASC], productName, ASC]
+2026-02-20 16:59:48.352 [http-nio-8080-exec-5] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:48.352] TRANSACTION START: ProductServiceImpl.getProductsWithFilters(ProductFilter, Pageable, String, String)
+2026-02-20 16:59:48.821 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select p1_0.product_id,p1_0.is_active,p1_0.brand,p1_0.category_id,p1_0.cost_price,p1_0.created_at,p1_0.description,p1_0.image_url,p1_0.price,p1_0.product_name,p1_0.sku,p1_0.updated_at from products p1_0 where (coalesce(?,'')='' or lower(p1_0.product_name) like lower(('%'||coalesce(?,'')||'%')) escape '' or lower(p1_0.description) like lower(('%'||coalesce(?,'')||'%')) escape '') and (? is null or p1_0.category_id=?) and (? is null or p1_0.price>=?) and (? is null or p1_0.price<=?) and (? is null or p1_0.brand=?) and (? is null or p1_0.is_active=?) order by p1_0.product_name fetch first ? rows only
+2026-02-20 16:59:48.871 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select i1_0.inventory_id,i1_0.last_restocked,i1_0.product_id,i1_0.quantity_in_stock,i1_0.reorder_level,i1_0.updated_at,i1_0.warehouse_location from inventory i1_0 where i1_0.product_id=?
+2026-02-20 16:59:48.898 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select i1_0.inventory_id,i1_0.last_restocked,i1_0.product_id,i1_0.quantity_in_stock,i1_0.reorder_level,i1_0.updated_at,i1_0.warehouse_location from inventory i1_0 where i1_0.product_id=?
+2026-02-20 16:59:48.903 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select i1_0.inventory_id,i1_0.last_restocked,i1_0.product_id,i1_0.quantity_in_stock,i1_0.reorder_level,i1_0.updated_at,i1_0.warehouse_location from inventory i1_0 where i1_0.product_id=?
+2026-02-20 16:59:48.905 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select i1_0.inventory_id,i1_0.last_restocked,i1_0.product_id,i1_0.quantity_in_stock,i1_0.reorder_level,i1_0.updated_at,i1_0.warehouse_location from inventory i1_0 where i1_0.product_id=?
+2026-02-20 16:59:48.910 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select i1_0.inventory_id,i1_0.last_restocked,i1_0.product_id,i1_0.quantity_in_stock,i1_0.reorder_level,i1_0.updated_at,i1_0.warehouse_location from inventory i1_0 where i1_0.product_id=?
+2026-02-20 16:59:48.914 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select i1_0.inventory_id,i1_0.last_restocked,i1_0.product_id,i1_0.quantity_in_stock,i1_0.reorder_level,i1_0.updated_at,i1_0.warehouse_location from inventory i1_0 where i1_0.product_id=?
+2026-02-20 16:59:48.918 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select i1_0.inventory_id,i1_0.last_restocked,i1_0.product_id,i1_0.quantity_in_stock,i1_0.reorder_level,i1_0.updated_at,i1_0.warehouse_location from inventory i1_0 where i1_0.product_id=?
+2026-02-20 16:59:48.922 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select i1_0.inventory_id,i1_0.last_restocked,i1_0.product_id,i1_0.quantity_in_stock,i1_0.reorder_level,i1_0.updated_at,i1_0.warehouse_location from inventory i1_0 where i1_0.product_id=?
+2026-02-20 16:59:48.948 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select count(*) from products p1_0 where (coalesce(?,'')='' or lower(p1_0.product_name) like lower(('%'||coalesce(?,'')||'%')) escape '' or lower(p1_0.description) like lower(('%'||coalesce(?,'')||'%')) escape '') and (? is null or p1_0.category_id=?) and (? is null or p1_0.price>=?) and (? is null or p1_0.price<=?) and (? is null or p1_0.brand=?) and (? is null or p1_0.is_active=?)
+2026-02-20 16:59:48.954 [http-nio-8080-exec-5] WARN  c.shopjoy.aspect.PerformanceAspect - SLOW DATABASE QUERY: $Proxy213.findWithFilters took 598ms
+2026-02-20 16:59:48.963 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - select c1_0.category_id,c1_0.category_name,c1_0.created_at,c1_0.description from categories c1_0 where c1_0.category_id = any (?)
+2026-02-20 16:59:49.041 [http-nio-8080-exec-5] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:49.041] TRANSACTION COMMIT: ProductServiceImpl.getProductsWithFilters(ProductFilter, Pageable, String, String)
+2026-02-20 16:59:49.042 [http-nio-8080-exec-5] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:49.042] EXITING: ProductServiceImpl.getProductsWithFilters returned: PageImpl
+2026-02-20 16:59:49.044 [http-nio-8080-exec-5] DEBUG o.s.jdbc.datasource.DataSourceUtils - Resetting read-only flag of JDBC Connection [HikariProxyConnection@1184343755 wrapping org.postgresql.jdbc.PgConnection@4f8af65d]
+2026-02-20 16:59:49.047 [http-nio-8080-exec-5] INFO  c.shopjoy.aspect.PerformanceAspect - API endpoint ProductController.getProductsWithFilters responded in 1.44s
+2026-02-20 16:59:49.047 [http-nio-8080-exec-5] INFO  com.shopjoy.aspect.LoggingAspect - API ENDPOINT COMPLETED: ProductController.getProductsWithFilters returned: ResponseEntity
+2026-02-20 16:59:49.065 [http-nio-8080-exec-5] WARN  o.s.d.w.c.SpringDataJackson3Configuration$PageModule$WarningLoggingModifier - Serializing PageImpl instances as-is is not supported, meaning that there is no guarantee about the stability of the resulting JSON structure!
+	For a stable JSON structure, please use Spring Data's PagedModel (globally via @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO))
+	or Spring HATEOAS and Spring Data's PagedResourcesAssembler as documented in https://docs.spring.io/spring-data/commons/reference/repositories/core-extensions.html#core.web.pageables.
+
+2026-02-20 16:59:49.226 [http-nio-8080-exec-10] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:49.226] ENTERING: TokenBlacklistServiceImpl.isBlacklisted with arguments: [eyJhbGciOiJIUzUxMiJ9.eyJyb2xlIjoiQ1VTVE9NRVIiLCJyb2xlcyI6IlJPTEVfQ1VTVE9NRVIiLCJ1c2VySWQiOjI0LCJzdWIiOiJldWdlbmVfNjE3NyIsImlhdCI6MTc3MTYwNjMxNywiZXhwIjoxNzcxNjkyNzE3fQ.gVGOfxoYBsD3x306oI2QYohjGyTRU0qnEi7v0PgHW5o81cedhfd5yfkhAdbnudOsl8B0RG4hYSgzswrivgfcww]
+2026-02-20 16:59:49.228 [http-nio-8080-exec-10] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:49.228] EXITING: TokenBlacklistServiceImpl.isBlacklisted returned: Boolean
+2026-02-20 16:59:49.230 [http-nio-8080-exec-10] DEBUG o.s.jdbc.datasource.DataSourceUtils - Setting JDBC Connection [HikariProxyConnection@1094088092 wrapping org.postgresql.jdbc.PgConnection@71739267] read-only
+2026-02-20 16:59:49.230 [http-nio-8080-exec-10] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:49.230] ENTERING: CustomUserDetailsService.loadUserByUsername with arguments: [eugene_6177]
+2026-02-20 16:59:49.231 [http-nio-8080-exec-10] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:49.231] TRANSACTION START: CustomUserDetailsService.loadUserByUsername(String)
+2026-02-20 16:59:49.232 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select u1_0.user_id,u1_0.created_at,u1_0.email,u1_0.first_name,u1_0.last_name,u1_0.oauth_provider,u1_0.oauth_provider_id,u1_0.password_hash,u1_0.phone,u1_0.updated_at,u1_0.user_type,u1_0.username from users u1_0 where u1_0.username=?
+2026-02-20 16:59:49.235 [http-nio-8080-exec-10] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:49.235] TRANSACTION COMMIT: CustomUserDetailsService.loadUserByUsername(String)
+2026-02-20 16:59:49.236 [http-nio-8080-exec-10] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:49.236] EXITING: CustomUserDetailsService.loadUserByUsername returned: CustomUserDetails
+2026-02-20 16:59:49.236 [http-nio-8080-exec-10] DEBUG o.s.jdbc.datasource.DataSourceUtils - Resetting read-only flag of JDBC Connection [HikariProxyConnection@1094088092 wrapping org.postgresql.jdbc.PgConnection@71739267]
+2026-02-20 16:59:49.239 [http-nio-8080-exec-10] DEBUG c.s.config.JwtAuthenticationFilter - JWT authentication successful for user: eugene_6177
+2026-02-20 16:59:49.245 [http-nio-8080-exec-10] INFO  com.shopjoy.aspect.LoggingAspect - API ENDPOINT CALLED: ProductController.getProductsWithFilters with arguments: [null, null, null, null, null, null, null, true, 0, 8, productName, ASC]
+2026-02-20 16:59:49.247 [http-nio-8080-exec-10] DEBUG o.s.jdbc.datasource.DataSourceUtils - Setting JDBC Connection [HikariProxyConnection@1877470438 wrapping org.postgresql.jdbc.PgConnection@71739267] read-only
+2026-02-20 16:59:49.248 [http-nio-8080-exec-10] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:49.248] ENTERING: ProductServiceImpl.getProductsWithFilters with arguments: [com.shopjoy.dto.filter.ProductFilter@52c5351b, Page request [number: 0, size 8, sort: productName: ASC], productName, ASC]
+2026-02-20 16:59:49.248 [http-nio-8080-exec-10] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:49.248] TRANSACTION START: ProductServiceImpl.getProductsWithFilters(ProductFilter, Pageable, String, String)
+2026-02-20 16:59:49.250 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select p1_0.product_id,p1_0.is_active,p1_0.brand,p1_0.category_id,p1_0.cost_price,p1_0.created_at,p1_0.description,p1_0.image_url,p1_0.price,p1_0.product_name,p1_0.sku,p1_0.updated_at from products p1_0 where (coalesce(?,'')='' or lower(p1_0.product_name) like lower(('%'||coalesce(?,'')||'%')) escape '' or lower(p1_0.description) like lower(('%'||coalesce(?,'')||'%')) escape '') and (? is null or p1_0.category_id=?) and (? is null or p1_0.price>=?) and (? is null or p1_0.price<=?) and (? is null or p1_0.brand=?) and (? is null or p1_0.is_active=?) order by p1_0.product_name fetch first ? rows only
+2026-02-20 16:59:49.264 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select i1_0.inventory_id,i1_0.last_restocked,i1_0.product_id,i1_0.quantity_in_stock,i1_0.reorder_level,i1_0.updated_at,i1_0.warehouse_location from inventory i1_0 where i1_0.product_id=?
+2026-02-20 16:59:49.274 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select i1_0.inventory_id,i1_0.last_restocked,i1_0.product_id,i1_0.quantity_in_stock,i1_0.reorder_level,i1_0.updated_at,i1_0.warehouse_location from inventory i1_0 where i1_0.product_id=?
+2026-02-20 16:59:49.278 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select i1_0.inventory_id,i1_0.last_restocked,i1_0.product_id,i1_0.quantity_in_stock,i1_0.reorder_level,i1_0.updated_at,i1_0.warehouse_location from inventory i1_0 where i1_0.product_id=?
+2026-02-20 16:59:49.301 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select i1_0.inventory_id,i1_0.last_restocked,i1_0.product_id,i1_0.quantity_in_stock,i1_0.reorder_level,i1_0.updated_at,i1_0.warehouse_location from inventory i1_0 where i1_0.product_id=?
+2026-02-20 16:59:49.305 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select i1_0.inventory_id,i1_0.last_restocked,i1_0.product_id,i1_0.quantity_in_stock,i1_0.reorder_level,i1_0.updated_at,i1_0.warehouse_location from inventory i1_0 where i1_0.product_id=?
+2026-02-20 16:59:49.311 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select i1_0.inventory_id,i1_0.last_restocked,i1_0.product_id,i1_0.quantity_in_stock,i1_0.reorder_level,i1_0.updated_at,i1_0.warehouse_location from inventory i1_0 where i1_0.product_id=?
+2026-02-20 16:59:49.317 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select i1_0.inventory_id,i1_0.last_restocked,i1_0.product_id,i1_0.quantity_in_stock,i1_0.reorder_level,i1_0.updated_at,i1_0.warehouse_location from inventory i1_0 where i1_0.product_id=?
+2026-02-20 16:59:49.330 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select i1_0.inventory_id,i1_0.last_restocked,i1_0.product_id,i1_0.quantity_in_stock,i1_0.reorder_level,i1_0.updated_at,i1_0.warehouse_location from inventory i1_0 where i1_0.product_id=?
+2026-02-20 16:59:49.356 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select count(*) from products p1_0 where (coalesce(?,'')='' or lower(p1_0.product_name) like lower(('%'||coalesce(?,'')||'%')) escape '' or lower(p1_0.description) like lower(('%'||coalesce(?,'')||'%')) escape '') and (? is null or p1_0.category_id=?) and (? is null or p1_0.price>=?) and (? is null or p1_0.price<=?) and (? is null or p1_0.brand=?) and (? is null or p1_0.is_active=?)
+2026-02-20 16:59:49.361 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - select c1_0.category_id,c1_0.category_name,c1_0.created_at,c1_0.description from categories c1_0 where c1_0.category_id = any (?)
+2026-02-20 16:59:49.365 [http-nio-8080-exec-10] INFO  c.shopjoy.aspect.TransactionAspect - [2026-02-20 16:59:49.364] TRANSACTION COMMIT: ProductServiceImpl.getProductsWithFilters(ProductFilter, Pageable, String, String)
+2026-02-20 16:59:49.365 [http-nio-8080-exec-10] INFO  com.shopjoy.aspect.LoggingAspect - [2026-02-20 16:59:49.365] EXITING: ProductServiceImpl.getProductsWithFilters returned: PageImpl
+2026-02-20 16:59:49.367 [http-nio-8080-exec-10] DEBUG o.s.jdbc.datasource.DataSourceUtils - Resetting read-only flag of JDBC Connection [HikariProxyConnection@1877470438 wrapping org.postgresql.jdbc.PgConnection@71739267]
+2026-02-20 16:59:49.367 [http-nio-8080-exec-10] INFO  c.shopjoy.aspect.PerformanceAspect - API endpoint ProductController.getProductsWithFilters responded in 120ms
+2026-02-20 16:59:49.367 [http-nio-8080-exec-10] INFO  com.shopjoy.aspect.LoggingAspect - API ENDPOINT COMPLETED: ProductController.getProductsWithFilters returned: ResponseEntity

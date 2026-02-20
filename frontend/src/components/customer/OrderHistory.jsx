@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useUserOrders, useUpdateOrderStatus, useUpdateOrder, useDeleteOrder } from '../../services/graphqlService';
+import { useUserOrders, useCancelOrder, useUpdateOrder, useDeleteOrder } from '../../services/graphqlService';
 import { useAuth } from '../../context/AuthContext';
 import { Package, Clock, Truck, CheckCircle, XCircle, Trash2, X, Edit, Plus, Minus, ChevronLeft, ChevronRight, Search, Filter, ArrowUpDown } from 'lucide-react';
 import { showErrorAlert, showSuccessToast, showWarningToast } from '../../utils/errorHandler';
@@ -42,7 +42,8 @@ const OrderHistory = () => {
     useEffect(() => {
         setCurrentPage(0);
     }, [searchTerm, statusFilter, paymentStatusFilter, sortBy, sortDirection]);
-    const [updateOrderStatusMutation] = useUpdateOrderStatus();
+    
+    const [cancelOrderMutation] = useCancelOrder();
     const [updateOrderMutation] = useUpdateOrder();
     const [deleteOrderMutation] = useDeleteOrder();
 
@@ -52,14 +53,12 @@ const OrderHistory = () => {
     const handleCancelOrder = async (orderId) => {
         if (!window.confirm('Are you sure you want to cancel this order?')) return;
         try {
-            await updateOrderStatusMutation({
+            await cancelOrderMutation({
                 variables: { 
-                    id: orderId.toString(), 
-                    status: 'CANCELLED' 
+                    id: orderId.toString()
                 }
             });
             showSuccessToast('Order cancelled successfully');
-            // Refetch data to show updated status
             refetch();
         } catch (error) {
             const errorMessage = error?.graphQLErrors?.[0]?.message || error.message || 'Failed to cancel order';
