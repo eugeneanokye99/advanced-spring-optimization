@@ -542,6 +542,207 @@ mutation {
 }
 ```
 
+### Security: CORS and CSRF Protection
+
+This application implements **dual security strategies** for different endpoint types:
+
+#### 🔒 Security Configuration Overview
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      Security Architecture                       │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  JWT-Based API Endpoints (/api/**)                              │
+│  ┌────────────────────────────────────────┐                         │
+│  │ ✅ CORS Enabled                     │                         │
+│  │ ❌ CSRF Disabled                    │                         │
+│  │ 🔑 JWT in Authorization Header     │                         │
+│  │                                    │                         │
+│  │ Why? JWTs not automatically sent   │                         │
+│  │ by browser → immune to CSRF        │                         │
+│  └────────────────────────────────────┘                         │
+│                                                                  │
+│  Form-Based Endpoints (/demo/**)                                │
+│  ┌────────────────────────────────────────┐                         │
+│  │ ✅ CORS Enabled                     │                         │
+│  │ ✅ CSRF Enabled                     │                         │
+│  │ 🍪 Session Cookies                 │                         │
+│  │                                    │                         │
+│  │ Why? Cookies automatically sent    │                         │
+│  │ → vulnerable to CSRF attacks       │                         │
+│  └────────────────────────────────────┘                         │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### 📖 CORS (Cross-Origin Resource Sharing)
+
+**Purpose**: Controls which external websites can make requests to your API.
+
+**When Required**:
+- Frontend runs on `http://localhost:5173` (React/Vite)
+- Backend API runs on `http://localhost:8080` (Spring Boot)
+- Different origins → CORS needed
+
+**Configuration** (in `CorsConfig.java`):
+```java
+allowedOrigins: http://localhost:5173, http://localhost:3000
+allowedMethods: GET, POST, PUT, DELETE, PATCH
+allowCredentials: true
+```
+
+**Testing CORS**:
+```bash
+# From React app (http://localhost:5173)
+fetch('http://localhost:8080/api/v1/products')
+  .then(res => res.json())  # ✅ ALLOWED (Origin in whitelist)
+
+# From unknown site (http://evil.com)
+fetch('http://localhost:8080/api/v1/products')
+  .then(res => res.json())  # ❌ BLOCKED (Origin not whitelisted)
+```
+
+#### 🛡️ CSRF (Cross-Site Request Forgery)
+
+**Purpose**: Prevents attackers from tricking authenticated users into executing unwanted actions.
+
+**Why JWT APIs Don't Need CSRF**:
+1. JWT stored in `localStorage` (not cookies)
+2. Browser doesn't automatically attach `Authorization` header
+3. Attacker cannot force victim's browser to send JWT
+4. CSRF relies on automatic credential submission
+5. Therefore, JWT APIs are inherently immune to CSRF
+
+**Why Form Endpoints Do Need CSRF**:
+1. Session cookies automatically sent by browser
+2. Attacker can trick user into submitting malicious form
+3. Browser will send session cookie, authenticating the request
+4. CSRF token prevents this attack
+
+#### 🧪 CSRF Demo Endpoints
+
+The application includes demo endpoints to demonstrate CSRF protection:
+
+##### 1. Get CSRF Token
+
+```bash
+curl -X GET http://localhost:8080/demo/csrf-token \
+  -c cookies.txt \
+  -v
+
+# Response:
+{
+  "token": "abc123-random-token-here",
+  "headerName": "X-CSRF-TOKEN",
+  "parameterName": "_csrf",
+  "message": "Include this token in your form submissions"
+}
+```
+
+##### 2. Submit Form WITH CSRF Token (Success)
+
+```bash
+curl -X POST http://localhost:8080/demo/form-submit \
+  -H "Content-Type: application/json" \
+  -H "X-CSRF-TOKEN: abc123-random-token-here" \
+  -b cookies.txt \
+  -d '{
+    "name": "John Doe",
+    "message": "Test submission"
+  }'
+
+# Response: 200 OK ✅
+{
+  "success": true,
+  "data": {
+    "status": "Form submitted successfully!",
+    "name": "John Doe",
+    "message": "Test submission",
+    "csrfStatus": "CSRF token was validated successfully"
+  }
+}
+```
+
+##### 3. Submit Form WITHOUT CSRF Token (Blocked)
+
+```bash
+curl -X POST http://localhost:8080/demo/form-submit \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Attacker",
+    "message": "Malicious request"
+  }'
+
+# Response: 403 Forbidden ❌
+{
+  "error": "Invalid CSRF token"
+}
+```
+
+##### 4. JWT Endpoint (No CSRF Required)
+
+```bash
+curl -X GET http://localhost:8080/api/v1/products \
+  -H "Authorization: Bearer your-jwt-token"
+
+# Response: 200 OK ✅
+# No CSRF token needed for JWT-based APIs!
+```
+
+#### 📋 CSRF Protection Summary
+
+| Endpoint Type | Auth Method | CSRF Token Required | Reason |
+|--------------|-------------|---------------------|---------|
+| `/demo/form-submit` | Session Cookie | ✅ **Yes** | Cookies sent automatically |
+| `/demo/resource/{id}` (DELETE) | Session Cookie | ✅ **Yes** | Dangerous operation + cookies |
+| `/api/v1/products` | JWT Header | ❌ **No** | JWT not automatically sent |
+| `/graphql` | JWT Header | ❌ **No** | JWT not automatically sent |
+| `/demo/data` (GET) | None | ❌ **No** | Read-only, no state change |
+
+#### 🎯 Quick Decision Tree: Do I Need CSRF?
+
+```
+Is authentication stored in cookies?
+│
+├─ YES (Session cookie, Auth cookie)
+│  │
+│  └─ ✅ Enable CSRF Protection
+│     - Validate CSRF tokens
+│     - Use CookieCsrfTokenRepository
+│     - Configure SameSite attribute
+│
+└─ NO (JWT in Authorization header, API Key)
+   │
+   └─ ❌ CSRF Protection Not Needed
+      - JWT stored in localStorage
+      - Not automatically sent by browser
+      - Inherently immune to CSRF
+```
+
+#### 📚 Comprehensive Documentation
+
+For detailed explanation of CORS vs CSRF, including:
+- Attack scenarios and how they're prevented
+- Real-world examples
+- Security best practices
+- Common misconceptions
+- Testing strategies
+
+See: [**docs/CORS_VS_CSRF.md**](docs/CORS_VS_CSRF.md)
+
+#### 🔐 Security Best Practices
+
+1. **Use HTTPS in production** - Prevents token interception
+2. **Set secure cookie flags**:
+   ```java
+   Set-Cookie: session=xyz; Secure; HttpOnly; SameSite=Strict
+   ```
+3. **Whitelist specific origins** - Never use `allowedOrigins("*")` with credentials
+4. **Validate tokens server-side** - Never trust client-side validation
+5. **Store JWTs in localStorage** - Not in cookies (unless necessary)
+6. **Implement token expiration** - Short-lived JWTs reduce attack window
+7. **Use strong CSRF tokens** - Cryptographically random, per-session
+
 ## Testing
 
 ### Running Tests
