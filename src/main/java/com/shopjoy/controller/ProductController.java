@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,6 +63,7 @@ public class ProductController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "409", description = "Product with the same name already exists", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("hasRole('ADMIN')")
         @PostMapping
         public ResponseEntity<ApiResponse<ProductResponse>> createProduct(
                         @Valid @RequestBody CreateProductRequest request) {
@@ -188,6 +190,7 @@ public class ProductController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Product not found", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("hasRole('ADMIN')")
         @PutMapping("/{id}")
         public ResponseEntity<ApiResponse<ProductResponse>> updateProduct(
                         @Parameter(description = "Product unique identifier", required = true, example = "1") @PathVariable @Positive(message = "Product ID must be positive") Integer id,
@@ -208,6 +211,7 @@ public class ProductController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Product price updated successfully", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Product not found", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("hasRole('ADMIN')")
         @PatchMapping("/{id}/price")
         public ResponseEntity<ApiResponse<ProductResponse>> updateProductPrice(
                         @Parameter(description = "Product unique identifier", required = true, example = "1") @PathVariable Integer id,
@@ -227,6 +231,7 @@ public class ProductController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Product activated successfully", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Product not found", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("hasRole('ADMIN')")
         @PatchMapping("/{id}/activate")
         public ResponseEntity<ApiResponse<ProductResponse>> activateProduct(
                         @Parameter(description = "Product unique identifier", required = true, example = "1") @PathVariable Integer id) {
@@ -245,6 +250,7 @@ public class ProductController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Product deactivated successfully", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Product not found", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("hasRole('ADMIN')")
         @PatchMapping("/{id}/deactivate")
         public ResponseEntity<ApiResponse<ProductResponse>> deactivateProduct(
                         @Parameter(description = "Product unique identifier", required = true, example = "1") @PathVariable Integer id) {
@@ -263,6 +269,7 @@ public class ProductController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Product deleted successfully", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Product not found", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("hasRole('ADMIN')")
         @DeleteMapping("/{id}")
         public ResponseEntity<ApiResponse<Void>> deleteProduct(
                         @Parameter(description = "Product unique identifier", required = true, example = "1") @PathVariable Integer id) {

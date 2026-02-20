@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -47,6 +48,7 @@ public class OrderController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid order data or insufficient stock", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "User or product not found", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
         @PostMapping
         public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@Valid @RequestBody CreateOrderRequest request) {
                 OrderResponse response = orderService.createOrder(request);
@@ -67,6 +69,7 @@ public class OrderController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Order not found", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Payment processing failed", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
         @PatchMapping("/{id}/payment")
         public ResponseEntity<ApiResponse<OrderResponse>> processPayment(
                         @Parameter(description = "Order unique identifier", required = true, example = "1") @PathVariable Integer id,

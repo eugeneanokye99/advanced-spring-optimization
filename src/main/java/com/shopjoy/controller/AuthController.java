@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -142,6 +143,7 @@ public class AuthController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasRole('ADMIN') or #userId == principal.userId")
     @PutMapping("/{userId}/change-password")
     public ResponseEntity<ApiResponse<Void>> changePassword(
             @Parameter(description = "User unique identifier", required = true, example = "1")

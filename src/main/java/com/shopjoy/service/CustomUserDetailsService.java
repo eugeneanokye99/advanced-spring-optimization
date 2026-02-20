@@ -2,6 +2,7 @@ package com.shopjoy.service;
 
 import com.shopjoy.entity.User;
 import com.shopjoy.repository.UserRepository;
+import com.shopjoy.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.GrantedAuthority;
@@ -39,15 +40,16 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(
                         "User not found with username: " + username));
 
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getUsername())
-                .password(user.getPasswordHash())
-                .authorities(getAuthorities(user))
-                .accountExpired(false)
-                .accountLocked(false)
-                .credentialsExpired(false)
-                .disabled(false)
-                .build();
+        return new CustomUserDetails(
+                user.getId(),
+                user.getUsername(),
+                user.getPasswordHash(),
+                true,
+                true,
+                true,
+                true,
+                getAuthorities(user)
+        );
     }
 
     /**

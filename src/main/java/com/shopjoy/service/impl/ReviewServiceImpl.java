@@ -14,11 +14,13 @@ import com.shopjoy.repository.ReviewRepository;
 import com.shopjoy.repository.UserRepository;
 import com.shopjoy.service.ReviewService;
 
+import com.shopjoy.util.SecurityUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -112,6 +114,15 @@ public class ReviewServiceImpl implements ReviewService {
         }
     )
     public ReviewResponse updateReview(Integer reviewId, UpdateReviewRequest request) {
+        Integer reviewOwnerId = reviewRepository.findUserIdByReviewId(reviewId);
+        if (reviewOwnerId == null) {
+            throw new ResourceNotFoundException("Review", "id", reviewId);
+        }
+        
+        if (!SecurityUtil.isAdmin() && !SecurityUtil.isCurrentUser(reviewOwnerId)) {
+            throw new AccessDeniedException("You do not have permission to update this review");
+        }
+
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new ResourceNotFoundException("Review", "id", reviewId));
 
@@ -132,8 +143,13 @@ public class ReviewServiceImpl implements ReviewService {
         @CacheEvict(value = "productRating", allEntries = true)
     })
     public void deleteReview(Integer reviewId) {
-        if (!reviewRepository.existsById(reviewId)) {
+        Integer reviewOwnerId = reviewRepository.findUserIdByReviewId(reviewId);
+        if (reviewOwnerId == null) {
             throw new ResourceNotFoundException("Review", "id", reviewId);
+        }
+
+        if (!SecurityUtil.isAdmin() && !SecurityUtil.isCurrentUser(reviewOwnerId)) {
+            throw new AccessDeniedException("You do not have permission to delete this review");
         }
 
         reviewRepository.deleteById(reviewId);

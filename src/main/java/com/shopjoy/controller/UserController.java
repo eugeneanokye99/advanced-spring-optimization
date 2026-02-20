@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -59,6 +60,7 @@ public class UserController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.userId")
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<UserResponse>> getUserById(
             @Parameter(description = "User unique identifier", required = true, example = "1")
@@ -83,6 +85,7 @@ public class UserController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
         List<UserResponse> response = userService.getAllUsers();
@@ -120,6 +123,7 @@ public class UserController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.userId")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<UserResponse>> updateUserProfile(
             @Parameter(description = "User unique identifier", required = true, example = "1")
@@ -151,6 +155,7 @@ public class UserController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteUser(
             @Parameter(description = "User unique identifier", required = true, example = "1")

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -179,6 +180,7 @@ public class InventoryController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/product/{productId}")
     public ResponseEntity<ApiResponse<InventoryResponse>> updateStock(
             @Parameter(description = "Product unique identifier", required = true, example = "1")
@@ -215,6 +217,7 @@ public class InventoryController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/product/{productId}/add")
     public ResponseEntity<ApiResponse<InventoryResponse>> addStock(
             @Parameter(description = "Product unique identifier", required = true, example = "1")
@@ -256,6 +259,7 @@ public class InventoryController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/product/{productId}/remove")
     public ResponseEntity<ApiResponse<InventoryResponse>> removeStock(
             @Parameter(description = "Product unique identifier", required = true, example = "1")
@@ -294,6 +298,7 @@ public class InventoryController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/product/{productId}/reserve")
     public ResponseEntity<ApiResponse<Void>> reserveStock(
             @Parameter(description = "Product unique identifier", required = true, example = "1")
@@ -327,6 +332,7 @@ public class InventoryController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/product/{productId}/release")
     public ResponseEntity<ApiResponse<Void>> releaseStock(
             @Parameter(description = "Product unique identifier", required = true, example = "1")
@@ -353,6 +359,7 @@ public class InventoryController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/low-stock")
     public ResponseEntity<ApiResponse<List<InventoryResponse>>> getLowStockProducts() {
         List<InventoryResponse> response = inventoryService.getLowStockProducts();
@@ -375,6 +382,7 @@ public class InventoryController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/out-of-stock")
     public ResponseEntity<ApiResponse<List<InventoryResponse>>> getOutOfStockProducts() {
         List<InventoryResponse> response = inventoryService.getOutOfStockProducts();
@@ -407,6 +415,7 @@ public class InventoryController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/product/{productId}/reorder-level")
     public ResponseEntity<ApiResponse<InventoryResponse>> updateReorderLevel(
             @Parameter(description = "Product unique identifier", required = true, example = "1")

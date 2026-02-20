@@ -14,11 +14,13 @@ import com.shopjoy.repository.ProductRepository;
 import com.shopjoy.service.CartService;
 import com.shopjoy.service.InventoryService;
 import com.shopjoy.service.ProductService;
+import com.shopjoy.util.SecurityUtil;
 import lombok.AllArgsConstructor;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -97,6 +99,15 @@ public class CartServiceImpl implements CartService {
         if (newQuantity <= 0) {
             throw new ValidationException("quantity", "must be positive");
         }
+        
+        Integer cartItemOwnerId = cartItemRepository.findUserIdByCartItemId(cartItemId);
+        if (cartItemOwnerId == null) {
+            throw new ResourceNotFoundException("CartItem", "id", cartItemId);
+        }
+        
+        if (!SecurityUtil.isAdmin() && !SecurityUtil.isCurrentUser(cartItemOwnerId)) {
+            throw new AccessDeniedException("You do not have permission to update this cart item");
+        }
 
         CartItem cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new ResourceNotFoundException("CartItem", "id", cartItemId));
@@ -118,8 +129,13 @@ public class CartServiceImpl implements CartService {
         @CacheEvict(value = "cartCount", allEntries = true)
     })
     public void removeFromCart(Integer cartItemId) {
-        if (!cartItemRepository.existsById(cartItemId)) {
+        Integer cartItemOwnerId = cartItemRepository.findUserIdByCartItemId(cartItemId);
+        if (cartItemOwnerId == null) {
             throw new ResourceNotFoundException("CartItem", "id", cartItemId);
+        }
+        
+        if (!SecurityUtil.isAdmin() && !SecurityUtil.isCurrentUser(cartItemOwnerId)) {
+            throw new AccessDeniedException("You do not have permission to remove this cart item");
         }
 
         cartItemRepository.deleteById(cartItemId);

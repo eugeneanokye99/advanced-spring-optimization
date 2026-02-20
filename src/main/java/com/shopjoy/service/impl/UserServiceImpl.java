@@ -10,11 +10,13 @@ import com.shopjoy.exception.ResourceNotFoundException;
 import com.shopjoy.exception.ValidationException;
 import com.shopjoy.repository.UserRepository;
 import com.shopjoy.service.UserService;
+import com.shopjoy.util.SecurityUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +39,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Cacheable(value = "userProfile", key = "#userId", unless = "#result == null")
     public UserResponse getUserById(Integer userId) {
+        if (!SecurityUtil.canAccessUser(userId)) {
+            throw new AccessDeniedException("You do not have permission to access this user profile");
+        }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
         return userMapper.toUserResponse(user);
@@ -98,6 +103,9 @@ public class UserServiceImpl implements UserService {
         evict = { @CacheEvict(value = {"userProfileEmail", "userProfileUsername", "usersByIds"}, allEntries = true) }
     )
     public UserResponse updateUserProfile(Integer userId, UpdateUserRequest request) {
+        if (!SecurityUtil.canAccessUser(userId)) {
+            throw new AccessDeniedException("You do not have permission to update this user profile");
+        }
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 

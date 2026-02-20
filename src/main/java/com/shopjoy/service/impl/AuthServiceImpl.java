@@ -16,7 +16,9 @@ import com.shopjoy.repository.UserRepository;
 import com.shopjoy.service.AuthService;
 import com.shopjoy.util.AuthValidationUtil;
 import com.shopjoy.util.JwtUtil;
+import com.shopjoy.util.SecurityUtil;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -96,6 +98,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public void changePassword(Integer userId, ChangePasswordRequest request) {
+        if (!SecurityUtil.canAccessUser(userId)) {
+            throw new AccessDeniedException("You do not have permission to change this user's password");
+        }
+        
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 

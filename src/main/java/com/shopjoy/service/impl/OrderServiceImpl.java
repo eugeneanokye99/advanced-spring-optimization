@@ -24,6 +24,7 @@ import com.shopjoy.service.InventoryService;
 import com.shopjoy.service.OrderService;
 import com.shopjoy.service.ProductService;
 import com.shopjoy.service.UserService;
+import com.shopjoy.util.SecurityUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -33,6 +34,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -101,6 +103,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Cacheable(value = "order", key = "#orderId", unless = "#result == null", cacheManager = "mediumCacheManager")
     public OrderResponse getOrderById(Integer orderId) {
+        Integer orderOwnerId = orderRepository.findUserIdByOrderId(orderId);
+        if (orderOwnerId == null) {
+            throw new ResourceNotFoundException("Order", "id", orderId);
+        }
+        
+        if (!SecurityUtil.isAdmin() && !SecurityUtil.isCurrentUser(orderOwnerId)) {
+            throw new AccessDeniedException("You do not have permission to access this order");
+        }
+
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
 
@@ -216,6 +227,10 @@ public class OrderServiceImpl implements OrderService {
         }
     )
     public OrderResponse updateOrderStatus(Integer orderId, OrderStatus newStatus) {
+        if (!SecurityUtil.isAdmin()) {
+            throw new AccessDeniedException("Only admins can update order status");
+        }
+        
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
         OrderStatus currentStatus = order.getStatus();
@@ -233,6 +248,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public OrderResponse confirmOrder(Integer orderId) {
+        if (!SecurityUtil.isAdmin()) {
+            throw new AccessDeniedException("Only admins can confirm orders");
+        }
+        
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
 
@@ -246,6 +265,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public OrderResponse shipOrder(Integer orderId) {
+        if (!SecurityUtil.isAdmin()) {
+            throw new AccessDeniedException("Only admins can ship orders");
+        }
+        
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
 
@@ -259,6 +282,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public OrderResponse completeOrder(Integer orderId) {
+        if (!SecurityUtil.isAdmin()) {
+            throw new AccessDeniedException("Only admins can complete orders");
+        }
+        
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
 
@@ -283,6 +310,15 @@ public class OrderServiceImpl implements OrderService {
         }
     )
     public OrderResponse cancelOrder(Integer orderId) {
+        Integer orderOwnerId = orderRepository.findUserIdByOrderId(orderId);
+        if (orderOwnerId == null) {
+            throw new ResourceNotFoundException("Order", "id", orderId);
+        }
+        
+        if (!SecurityUtil.isAdmin() && !SecurityUtil.isCurrentUser(orderOwnerId)) {
+            throw new AccessDeniedException("You do not have permission to cancel this order");
+        }
+        
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
 

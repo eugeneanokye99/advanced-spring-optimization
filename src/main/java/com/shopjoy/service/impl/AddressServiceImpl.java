@@ -9,6 +9,7 @@ import com.shopjoy.exception.ResourceNotFoundException;
 import com.shopjoy.repository.AddressRepository;
 import com.shopjoy.repository.UserRepository;
 import com.shopjoy.service.AddressService;
+import com.shopjoy.util.SecurityUtil;
 
 import lombok.AllArgsConstructor;
 
@@ -16,6 +17,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,6 +54,15 @@ public class AddressServiceImpl implements AddressService {
     @Override
     @Cacheable(value = "addresses", key = "#addressId", cacheManager = "mediumCacheManager")
     public AddressResponse getAddressById(Integer addressId) {
+        Integer addressOwnerId = addressRepository.findUserIdByAddressId(addressId);
+        if (addressOwnerId == null) {
+            throw new ResourceNotFoundException("Address", "id", addressId);
+        }
+        
+        if (!SecurityUtil.isAdmin() && !SecurityUtil.isCurrentUser(addressOwnerId)) {
+            throw new AccessDeniedException("You do not have permission to access this address");
+        }
+        
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "id", addressId));
         return addressMapper.toAddressResponse(address);
@@ -77,6 +88,15 @@ public class AddressServiceImpl implements AddressService {
         }
     )
     public AddressResponse updateAddress(Integer addressId, UpdateAddressRequest request) {
+        Integer addressOwnerId = addressRepository.findUserIdByAddressId(addressId);
+        if (addressOwnerId == null) {
+            throw new ResourceNotFoundException("Address", "id", addressId);
+        }
+        
+        if (!SecurityUtil.isAdmin() && !SecurityUtil.isCurrentUser(addressOwnerId)) {
+            throw new AccessDeniedException("You do not have permission to update this address");
+        }
+        
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "id", addressId));
         
@@ -93,8 +113,13 @@ public class AddressServiceImpl implements AddressService {
         @CacheEvict(value = "defaultAddress", allEntries = true)
     })
     public void deleteAddress(Integer addressId) {
-        if (!addressRepository.existsById(addressId)) {
+        Integer addressOwnerId = addressRepository.findUserIdByAddressId(addressId);
+        if (addressOwnerId == null) {
             throw new ResourceNotFoundException("Address", "id", addressId);
+        }
+        
+        if (!SecurityUtil.isAdmin() && !SecurityUtil.isCurrentUser(addressOwnerId)) {
+            throw new AccessDeniedException("You do not have permission to delete this address");
         }
         
         addressRepository.deleteById(addressId);
@@ -110,6 +135,15 @@ public class AddressServiceImpl implements AddressService {
         }
     )
     public AddressResponse setDefaultAddress(Integer addressId) {
+        Integer addressOwnerId = addressRepository.findUserIdByAddressId(addressId);
+        if (addressOwnerId == null) {
+            throw new ResourceNotFoundException("Address", "id", addressId);
+        }
+        
+        if (!SecurityUtil.isAdmin() && !SecurityUtil.isCurrentUser(addressOwnerId)) {
+            throw new AccessDeniedException("You do not have permission to set this address as default");
+        }
+        
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "id", addressId));
         

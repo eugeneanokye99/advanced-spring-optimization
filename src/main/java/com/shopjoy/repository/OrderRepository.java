@@ -28,4 +28,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer>, JpaSpeci
     @Query("SELECT CASE WHEN COUNT(oi) > 0 THEN true ELSE false END FROM OrderItem oi " +
            "JOIN oi.order o WHERE o.user.id = :userId AND oi.product.id = :productId AND o.status <> 'CANCELLED'")
     boolean hasUserPurchasedProduct(@Param("userId") int userId, @Param("productId") int productId);
+    
+    @Query("SELECT o.user.id FROM Order o WHERE o.id = :orderId")
+    Integer findUserIdByOrderId(@Param("orderId") Integer orderId);
 }

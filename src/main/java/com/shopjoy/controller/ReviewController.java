@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,6 +49,7 @@ public class ReviewController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid review data", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Product or user not found", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
         @PostMapping
         public ResponseEntity<ApiResponse<ReviewResponse>> createReview(
                         @Valid @RequestBody CreateReviewRequest request) {
@@ -161,6 +163,7 @@ public class ReviewController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Review not found", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid review data", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
         @PutMapping("/{id}")
         public ResponseEntity<ApiResponse<ReviewResponse>> updateReview(
                         @Parameter(description = "Review unique identifier", required = true, example = "1") @PathVariable Integer id,
@@ -180,6 +183,7 @@ public class ReviewController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Review marked as helpful successfully", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Review not found", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("isAuthenticated()")
         @PatchMapping("/{id}/helpful")
         public ResponseEntity<ApiResponse<Void>> markReviewAsHelpful(
                         @Parameter(description = "Review unique identifier", required = true, example = "1") @PathVariable Integer id) {
@@ -198,6 +202,7 @@ public class ReviewController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Review deleted successfully", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Review not found", content = @Content(mediaType = "application/json"))
         })
+        @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
         @DeleteMapping("/{id}")
         public ResponseEntity<ApiResponse<Void>> deleteReview(
                         @Parameter(description = "Review unique identifier", required = true, example = "1") @PathVariable Integer id) {
