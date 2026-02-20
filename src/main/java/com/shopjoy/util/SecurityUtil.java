@@ -10,26 +10,16 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Utility class for Spring Security operations.
- * <p>
- * This class provides static methods to access current user information
- * from the SecurityContext. All methods are thread-safe as they access
- * Spring Security's SecurityContextHolder which uses ThreadLocal storage.
- * <p>
- * Note: This class uses static methods for convenient access across the
- * application. For testing, mock the SecurityContextHolder's Authentication.
+ * Spring Security utility for current user access.
  */
 public final class SecurityUtil {
 
-    // Private constructor to prevent instantiation
     private SecurityUtil() {
         throw new UnsupportedOperationException("Utility class cannot be instantiated");
     }
 
     /**
-     * Gets the username of the currently authenticated user.
-     *
-     * @return Optional containing username if authenticated, empty otherwise
+     * Gets current username.
      */
     public static Optional<String> getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -50,12 +40,7 @@ public final class SecurityUtil {
     }
 
     /**
-     * Gets the ID of the currently authenticated user.
-     * <p>
-     * This method extracts the userId directly from CustomUserDetails,
-     * avoiding database queries for optimal performance.
-     *
-     * @return User ID if authenticated with CustomUserDetails, null otherwise
+     * Gets current user ID.
      */
     public static Integer getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

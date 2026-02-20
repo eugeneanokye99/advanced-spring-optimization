@@ -5,19 +5,16 @@ import com.shopjoy.dto.request.LoginRequest;
 import com.shopjoy.exception.ValidationException;
 
 /**
- * Utility class for authentication-related validations.
+ * Utility class for authentication validations.
  */
 public final class AuthValidationUtil {
 
     private AuthValidationUtil() {
-        // Prevent instantiation
+        throw new UnsupportedOperationException("Utility class cannot be instantiated");
     }
 
     /**
-     * Validates a user registration request.
-     *
-     * @param request the registration request to validate
-     * @throws ValidationException if validation fails
+     * Validates user registration request.
      */
     public static void validateCreateUserRequest(CreateUserRequest request) {
         if (request == null) {

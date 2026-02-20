@@ -7,11 +7,10 @@ import org.mapstruct.*;
 import org.springframework.stereotype.Component;
 
 /**
- * MapStruct mapper for OrderItem entity and DTOs providing type-safe bean mapping.
- * Replaces manual mapping boilerplate with compile-time generated code.
+ * MapStruct mapper for OrderItem entity and DTOs.
  */
 @Mapper(
-    componentModel = "spring", // Generate Spring component
+    componentModel = "spring",
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
@@ -19,11 +18,7 @@ import org.springframework.stereotype.Component;
 public interface OrderItemMapperStruct {
 
     /**
-     * Maps OrderItem entity to OrderItemResponse with product info.
-     * 
-     * @param item the order item entity
-     * @param product the product response to include
-     * @return the mapped order item response
+     * Maps OrderItem to OrderItemResponse with product info.
      */
     @Mapping(source = "item.id", target = "id")
     @Mapping(target = "productName", source = "product.productName")
@@ -32,11 +27,7 @@ public interface OrderItemMapperStruct {
     OrderItemResponse toOrderItemResponse(OrderItem item, ProductResponse product);
 
     /**
-     * Maps OrderItem entity to OrderItemResponse with product name.
-     * 
-     * @param item the order item entity
-     * @param productName the product name to include
-     * @return the mapped order item response
+     * Maps OrderItem to OrderItemResponse with product name.
      */
     @Mapping(source = "item.id", target = "id")
     @Mapping(target = "productId", source = "item.product.id")
@@ -45,10 +36,7 @@ public interface OrderItemMapperStruct {
     OrderItemResponse toOrderItemResponse(OrderItem item, String productName);
 
     /**
-     * Maps OrderItem entity to OrderItemResponse without product name.
-     * 
-     * @param item the order item entity
-     * @return the mapped order item response
+     * Maps OrderItem to OrderItemResponse without product name.
      */
     @Mapping(source = "item.id", target = "id")
     @Mapping(target = "productId", source = "item.product.id")
@@ -57,15 +45,10 @@ public interface OrderItemMapperStruct {
     OrderItemResponse toOrderItemResponse(OrderItem item);
 
     /**
-     * Maps OrderItem entity to OrderItemResponse and calculates product name from productId.
-     * Custom method for when product name needs to be derived.
-     * 
-     * @param item the order item entity
-     * @return the mapped order item response with derived product name
+     * Enhances OrderItemResponse with product info from source OrderItem.
      */
     @AfterMapping
     default void enhanceWithProductInfo(@MappingTarget OrderItemResponse.OrderItemResponseBuilder target, OrderItem source) {
-        // This can be enhanced with product service lookup if needed
         if (target.build().getProductName() == null) {
             target.productName("Product #" + source.getProduct().getId());
         }

@@ -8,6 +8,9 @@ import org.springframework.graphql.execution.DataFetcherExceptionResolverAdapter
 import org.springframework.graphql.execution.ErrorType;
 import org.springframework.stereotype.Component;
 
+/**
+ * GraphQL exception handler for GraphQL error responses.
+ */
 @Component
 public class GraphQLExceptionHandler extends DataFetcherExceptionResolverAdapter {
 
@@ -40,7 +43,6 @@ public class GraphQLExceptionHandler extends DataFetcherExceptionResolverAdapter
                     .location(env.getField().getSourceLocation())
                     .build();
             default -> {
-                // Log the actual error for debugging but don't expose it to users
                 System.err.println("GraphQL Internal Error: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
                 ex.printStackTrace();
                 yield GraphqlErrorBuilder.newError()

@@ -32,7 +32,6 @@ public class ProductQueryResolver {
         String sort = sortBy != null ? sortBy : "id";
         String direction = sortDirection != null ? sortDirection : "ASC";
 
-        // Create Pageable object and call correct service method
         Sort sortObj = Sort.by(Sort.Direction.fromString(direction), sort);
         Pageable pageable = PageRequest.of(pageNum, pageSize, sortObj);
         

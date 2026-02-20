@@ -14,9 +14,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Implementation of TokenBlacklistService for managing blacklisted JWT tokens.
- * Uses ConcurrentHashMap for thread-safe operations.
- * Automatically removes expired tokens every hour to prevent memory leaks.
+ * Token blacklist service with ConcurrentHashMap and scheduled cleanup.
  */
 @Slf4j
 @Service
@@ -25,10 +23,8 @@ public class TokenBlacklistServiceImpl implements TokenBlacklistService {
 
     private final JwtUtil jwtUtil;
     
-    // Thread-safe map: token -> expiration time
     private final Map<String, LocalDateTime> blacklistedTokens = new ConcurrentHashMap<>();
     
-    // Maximum blacklist size to prevent memory issues (configurable)
     private static final int MAX_BLACKLIST_SIZE = 10000;
 
     @Override
@@ -50,7 +46,6 @@ public class TokenBlacklistServiceImpl implements TokenBlacklistService {
             
         } catch (Exception e) {
             log.error("Failed to blacklist token: {}", e.getMessage());
-            // Still add with a default expiration to ensure security
             blacklistedTokens.put(token, LocalDateTime.now().plusDays(1));
         }
     }
@@ -61,11 +56,9 @@ public class TokenBlacklistServiceImpl implements TokenBlacklistService {
     }
 
     /**
-     * Removes expired tokens from the blacklist.
-     * Runs every hour via scheduled task.
-     * This prevents memory leaks from accumulating expired tokens.
+     * Removes expired tokens. Runs hourly.
      */
-    @Scheduled(fixedRate = 3600000) // Every hour (3600000 ms)
+    @Scheduled(fixedRate = 3600000)
     @Override
     public void removeExpiredTokens() {
         LocalDateTime now = LocalDateTime.now();

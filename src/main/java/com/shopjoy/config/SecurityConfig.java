@@ -20,8 +20,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.http.HttpMethod;
 
 /**
- * Configuration for Spring Security with JWT and OAuth2 support.
- *
+ * Spring Security configuration with JWT and OAuth2.
  */
 @Configuration
 @EnableWebSecurity
@@ -34,10 +33,7 @@ public class SecurityConfig {
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     /**
-     * Configures the AuthenticationManager for processing authentication requests.
-     *
-     * @param authenticationConfiguration Spring's authentication configuration
-     * @return configured AuthenticationManager
+     * Configures AuthenticationManager.
      */
     @Bean
     public AuthenticationManager authenticationManager(
@@ -46,14 +42,11 @@ public class SecurityConfig {
     }
 
     /**
-     * Security filter chain for form-based demo endpoints with CSRF protection.
-     * 
-     * @param http HttpSecurity configuration
-     * @return configured SecurityFilterChain with CSRF enabled
+     * Form-based filter chain with CSRF protection for demo endpoints.
      */
     @Bean
     @Order(1)
-    public SecurityFilterChain formSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain formSecurityFilterChain(HttpSecurity http) {
         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
         requestHandler.setCsrfRequestAttributeName("_csrf");
         
@@ -76,14 +69,11 @@ public class SecurityConfig {
     }
 
     /**
-     * Security filter chain for OAuth2 social login endpoints.
-     *
-     * @param http HttpSecurity configuration
-     * @return configured SecurityFilterChain for OAuth2
+     * OAuth2 social login filter chain.
      */
     @Bean
     @Order(2)
-    public SecurityFilterChain oauth2SecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain oauth2SecurityFilterChain(HttpSecurity http) {
         http
             .securityMatcher("/oauth2/**", "/login/oauth2/**")
             .csrf(AbstractHttpConfigurer::disable)
@@ -100,42 +90,29 @@ public class SecurityConfig {
     }
 
     /**
-     * Security filter chain for JWT-based API endpoints WITHOUT CSRF protection.
-     *
-     * @param http HttpSecurity configuration
-     * @return configured SecurityFilterChain with CSRF disabled
+     * JWT-based API filter chain without CSRF protection.
      */
     @Bean
     @Order(3)
-    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource))
             .authorizeHttpRequests(auth -> auth
-                // Authentication endpoints
                 .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/auth/logout").permitAll()
-                
-                // GraphQL endpoints - require authentication
                 .requestMatchers("/graphql", "/graphiql").authenticated()
-                
-                // Public GET endpoints for browsing (read-only)
                 .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/reviews/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/inventory/**").permitAll()
-                
-                // Admin-only write operations for products, categories, reviews, inventory
                 .requestMatchers(HttpMethod.POST, "/api/v1/products/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/products/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/products/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/products/**").hasRole("ADMIN")
-                
                 .requestMatchers(HttpMethod.POST, "/api/v1/categories/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/v1/categories/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/categories/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/categories/**").hasRole("ADMIN")
-                
-                // Review operations - authenticated users can create, only admins can update/delete
                 .requestMatchers(HttpMethod.POST, "/api/v1/reviews/**").authenticated()
                 .requestMatchers(HttpMethod.PUT, "/api/v1/reviews/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/reviews/**").hasRole("ADMIN")

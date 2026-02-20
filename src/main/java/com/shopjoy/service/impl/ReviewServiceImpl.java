@@ -66,10 +66,6 @@ public class ReviewServiceImpl implements ReviewService {
         boolean hasPurchased = orderRepository.hasUserPurchasedProduct(
                 request.getUserId(), request.getProductId());
 
-        if (!hasPurchased) {
-            // User reviewing without purchase - allowed but noted
-        }
-
         review.setCreatedAt(LocalDateTime.now());
         review.setHelpfulCount(0);
 

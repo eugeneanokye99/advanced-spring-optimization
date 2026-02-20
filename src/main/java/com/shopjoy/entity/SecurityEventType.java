@@ -15,7 +15,6 @@ public enum SecurityEventType {
     OAUTH2_LOGIN_SUCCESS,
     OAUTH2_LOGIN_FAILURE,
     
-    // Business events
     ORDER_CREATED,
     ORDER_UPDATED,
     ORDER_CANCELLED,

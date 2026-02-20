@@ -36,7 +36,6 @@ public class PerformanceAspect {
             
             metricsCollector.recordMetric("service", methodKey, executionTime);
             
-            // Explicitly track sorting performance if Sort/Pageable is present
             for (Object arg : joinPoint.getArgs()) {
                 if (arg instanceof Pageable p && p.getSort().isSorted()) {
                     metricsCollector.recordMetric("sorting", methodKey + "[" + p.getSort().toString() + "]", executionTime);

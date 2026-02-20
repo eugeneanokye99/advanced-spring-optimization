@@ -455,7 +455,6 @@ public class OrderServiceImpl implements OrderService {
 
         switch (newStatus) {
             case PENDING:
-                // PENDING is the initial state, no validation needed
                 break;
             case PROCESSING:
                 if (currentStatus != OrderStatus.PENDING) {

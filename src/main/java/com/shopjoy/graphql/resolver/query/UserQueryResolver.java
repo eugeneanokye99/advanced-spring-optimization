@@ -34,7 +34,6 @@ public class UserQueryResolver {
         int pageSize = size != null ? size : 20;
         Pageable pageable = PageRequest.of(pageNum, pageSize);
 
-        // Service doesn't support pagination, so get all and paginate manually
         List<UserResponse> allUsers = userService.getAllUsers();
         
         int start = (int) pageable.getOffset();

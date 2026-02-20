@@ -20,14 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Global exception handler that catches all exceptions thrown in the application
- * and converts them to consistent API responses with appropriate HTTP status codes.
- * This class ensures:
- * - Consistent error response format across the entire API
- * - Appropriate HTTP status codes for different error types
- * - Detailed validation error information
- * - Proper logging for debugging
- * - Security by not exposing internal details in production
+ * Global exception handler for consistent API error responses.
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -36,9 +29,7 @@ public class GlobalExceptionHandler {
 
 
     /**
-     * Handles missing static resources (favicon, browser dev tools requests, etc.).
-     * Suppresses logging for common browser-generated requests.
-     * Returns 404 Not Found without logging noise.
+     * Handles missing static resources. Returns 404 without logging for common browser requests.
      */
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<Void> handleNoResourceFound(
@@ -47,23 +38,19 @@ public class GlobalExceptionHandler {
 
         String path = request.getRequestURI();
 
-        // Suppress common browser requests that aren't actual errors
         if (path.contains("favicon.ico") ||
                 path.contains(".well-known") ||
                 path.contains("graphiql")) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        // Log actual missing resources
         logger.warn("Resource not found: {}", path);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
 
     /**
-     * Handles validation errors from @Valid annotation on request DTOs.
-     * Returns 400 Bad Request with detailed field-level error information.
-     * Example: When CreateProductRequest has @NotBlank on productName but client sends null
+     * Handles validation errors from @Valid annotation. Returns 400 with field-level errors.
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Object>> handleValidationErrors(MethodArgumentNotValidException ex) {
@@ -91,9 +78,7 @@ public class GlobalExceptionHandler {
     
 
     /**
-     * Handles ResourceNotFoundException - when entity not found by ID.
-     * Returns 404 Not Found.
-     * Example: GET /api/v1/products/999 when product 999 doesn't exist
+     * Handles ResourceNotFoundException. Returns 404.
      */
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Object>> handleResourceNotFound(ResourceNotFoundException ex) {
@@ -112,9 +97,7 @@ public class GlobalExceptionHandler {
     }
     
     /**
-     * Handles DuplicateResourceException - when trying to create a resource that already exists.
-     * Returns 409 Conflict.
-     * Example: Creating user with email that already exists
+     * Handles DuplicateResourceException. Returns 409 Conflict.
      */
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ApiResponse<Object>> handleDuplicateResource(DuplicateResourceException ex) {
@@ -312,7 +295,6 @@ public class GlobalExceptionHandler {
         String field = null;
         HttpStatus status = HttpStatus.CONFLICT;
         
-        // Try to provide more specific message based on constraint violation
         if (ex.getMessage() != null) {
             String errorMsg = ex.getMessage().toLowerCase();
             
@@ -321,11 +303,9 @@ public class GlobalExceptionHandler {
                 errorCode = "DUPLICATE_VALUE";
                 
             } else if (errorMsg.contains("check constraint") || errorMsg.contains("violates check")) {
-                // Handle CHECK constraint violations - these are validation errors
                 status = HttpStatus.BAD_REQUEST;
                 errorCode = "INVALID_VALUE";
                 
-                // Extract constraint name and provide specific messages
                 if (errorMsg.contains("address_type_check") || errorMsg.contains("addresses_address_type")) {
                     message = "Invalid address type. Please select a valid address type (Home, Work, Shipping, Billing, or Other).";
                     field = "addressType";
@@ -355,12 +335,10 @@ public class GlobalExceptionHandler {
                     field = "quantity";
                     errorCode = "INVALID_QUANTITY";
                 } else {
-                    // Generic check constraint message
                     message = "The provided value is not valid. Please check your input and try again.";
                 }
                 
             } else if (errorMsg.contains("foreign key") && errorMsg.contains("restrict")) {
-                // Handle foreign key RESTRICT violations (cannot delete because referenced)
                 if (errorMsg.contains("order_items") && errorMsg.contains("product")) {
                     message = "Cannot delete this product because it is part of existing customer orders. " +
                              "Products that have been ordered cannot be removed for order history integrity.";

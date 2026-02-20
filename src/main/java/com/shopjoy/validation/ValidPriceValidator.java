@@ -6,12 +6,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import java.math.BigDecimal;
 
 /**
- * Validator implementation for @ValidPrice annotation.
- * 
- * Validates that:
- * - Value is not null (unless allowNull is true)
- * - Value is positive (greater than 0)
- * - Value has at most 2 decimal places
+ * Validator for @ValidPrice annotation.
  */
 public class ValidPriceValidator implements ConstraintValidator<ValidPrice, Number> {
     
@@ -24,14 +19,12 @@ public class ValidPriceValidator implements ConstraintValidator<ValidPrice, Numb
     
     @Override
     public boolean isValid(Number value, ConstraintValidatorContext context) {
-        // Null check
         if (value == null) {
             return allowNull;
         }
         
         double price = value.doubleValue();
         
-        // Must be positive
         if (price <= 0) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("Price must be greater than 0")
@@ -39,7 +32,6 @@ public class ValidPriceValidator implements ConstraintValidator<ValidPrice, Numb
             return false;
         }
         
-        // Check decimal places (at most 2)
         BigDecimal bd = BigDecimal.valueOf(price);
         int decimalPlaces = bd.scale();
         
