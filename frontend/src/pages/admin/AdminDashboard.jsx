@@ -15,6 +15,7 @@ import {
     MessageSquare,
     Zap,
     Shield,
+    Lock,
 } from 'lucide-react';
 import ProductManagement from '../../components/admin/ProductManagement';
 import OrderManagement from '../../components/admin/OrderManagement';
@@ -25,6 +26,7 @@ import ReviewManagement from '../../components/admin/ReviewManagement';
 import Dashboard from '../../components/admin/Dashboard';
 import OptimizationMetrics from '../../components/admin/OptimizationMetrics';
 import SecurityAuditLogManagement from '../../components/admin/SecurityAuditLogManagement';
+import ChangePassword from '../../components/customer/ChangePassword';
 
 const AdminDashboard = () => {
     const { user, logout } = useAuth();
@@ -54,6 +56,7 @@ const AdminDashboard = () => {
         { id: 'reviews', label: 'Reviews', icon: MessageSquare },
         { id: 'audit-logs', label: 'Security Logs', icon: Shield },
         { id: 'performance', label: 'Optimization', icon: Zap },
+        { id: 'password', label: 'Change Password', icon: Lock },
     ];
 
     const renderContent = () => {
@@ -76,6 +79,8 @@ const AdminDashboard = () => {
                 return <SecurityAuditLogManagement />;
             case 'performance':
                 return <OptimizationMetrics />;
+            case 'password':
+                return <ChangePassword />;
             default:
                 return <Dashboard />;
         }

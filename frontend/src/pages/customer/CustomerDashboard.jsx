@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { ShoppingBag, ShoppingCart, Package, LogOut, Menu, X, Home, MapPin } from 'lucide-react';
+import { ShoppingBag, ShoppingCart, Package, LogOut, Menu, X, Home, MapPin, Lock } from 'lucide-react';
 import ProductBrowse from '../../components/customer/ProductBrowse';
 import Cart from '../../components/customer/Cart';
 import OrderHistory from '../../components/customer/OrderHistory';
 import CustomerDashboardHome from '../../components/customer/CustomerDashboardHome';
 import AddressManagement from '../../components/customer/AddressManagement';
+import ChangePassword from '../../components/customer/ChangePassword';
 
 const CustomerDashboard = () => {
     const { user, logout } = useAuth();
@@ -32,6 +33,7 @@ const CustomerDashboard = () => {
         { id: 'cart', label: 'My Cart', icon: ShoppingCart },
         { id: 'orders', label: 'Order History', icon: Package },
         { id: 'addresses', label: 'My Addresses', icon: MapPin },
+        { id: 'password', label: 'Change Password', icon: Lock },
     ];
 
     const renderContent = () => {
@@ -46,6 +48,8 @@ const CustomerDashboard = () => {
                 return <OrderHistory />;
             case 'addresses':
                 return <AddressManagement />;
+            case 'password':
+                return <ChangePassword />;
             default:
                 return <CustomerDashboardHome />;
         }

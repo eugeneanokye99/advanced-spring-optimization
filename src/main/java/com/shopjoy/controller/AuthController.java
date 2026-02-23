@@ -233,6 +233,7 @@ public class AuthController {
                     content = @Content(mediaType = "application/json")
             )
     })
+    
     @PreAuthorize("hasRole('ADMIN') or #userId == principal.userId")
     @PutMapping("/{userId}/change-password")
     public ResponseEntity<ApiResponse<Void>> changePassword(

@@ -14,4 +14,4 @@ export const getUserByEmail = (email) => api.get(`/users/email/${email}`);
 
 export const authenticateUser = (credentials) => api.post('/auth/login', credentials);
 
-export const changePassword = (id, passwordData) => api.put(`/users/${id}/password`, passwordData);
+export const changePassword = (id, passwordData) => api.put(`/auth/${id}/change-password`, passwordData);
