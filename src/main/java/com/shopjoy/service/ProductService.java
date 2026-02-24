@@ -8,6 +8,7 @@ import com.shopjoy.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -85,7 +86,7 @@ public interface ProductService {
      * @param maxPrice the max price
      * @return the products by price range
      */
-    List<ProductResponse> getProductsByPriceRange(double minPrice, double maxPrice);
+    List<ProductResponse> getProductsByPriceRange(BigDecimal minPrice, BigDecimal maxPrice);
 
     /**
      * Update product product response.

@@ -98,7 +98,11 @@ public class OrderServiceImpl implements OrderService {
             true
         );
 
-        return getOrderById(createdOrder.getId());
+        // Refresh the order to get all relationships loaded
+        Order refreshedOrder = orderRepository.findById(createdOrder.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Order", "id", createdOrder.getId()));
+
+        return orderMapper.toOrderResponse(refreshedOrder);
     }
 
     @Override
@@ -249,7 +253,7 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
         OrderStatus currentStatus = order.getStatus();
 
-        validateStatusTransition(currentStatus, newStatus);
+        validateStatusTransition(orderId, currentStatus, newStatus);
 
         order.setStatus(newStatus);
         order.setUpdatedAt(LocalDateTime.now());
@@ -454,12 +458,12 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.deleteById(orderId);
     }
 
-    private void validateStatusTransition(OrderStatus currentStatus, OrderStatus newStatus) {
+    private void validateStatusTransition(Integer orderId, OrderStatus currentStatus, OrderStatus newStatus) {
         if (currentStatus == OrderStatus.CANCELLED || currentStatus == OrderStatus.DELIVERED) {
             throw new InvalidOrderStateException(
-                    0,
+                    orderId,
                     currentStatus.toString(),
-                    "Cannot change status of cancelled or delivered orders");
+                    "change status of cancelled or delivered orders");
         }
 
         switch (newStatus) {
@@ -468,29 +472,29 @@ public class OrderServiceImpl implements OrderService {
             case PROCESSING:
                 if (currentStatus != OrderStatus.PENDING) {
                     throw new InvalidOrderStateException(
-                            0, currentStatus.toString(),
-                            "Can only process PENDING orders");
+                            orderId, currentStatus.toString(),
+                            "move to PROCESSING from non-PENDING status");
                 }
                 break;
             case SHIPPED:
                 if (currentStatus != OrderStatus.PROCESSING) {
                     throw new InvalidOrderStateException(
-                            0, currentStatus.toString(),
-                            "Can only ship PROCESSING orders");
+                            orderId, currentStatus.toString(),
+                            "move to SHIPPED from non-PROCESSING status");
                 }
                 break;
             case DELIVERED:
                 if (currentStatus != OrderStatus.SHIPPED) {
                     throw new InvalidOrderStateException(
-                            0, currentStatus.toString(),
-                            "Can only deliver SHIPPED orders");
+                            orderId, currentStatus.toString(),
+                            "move to DELIVERED from non-SHIPPED status");
                 }
                 break;
             case CANCELLED:
                 if (currentStatus != OrderStatus.PENDING && currentStatus != OrderStatus.PROCESSING) {
                     throw new InvalidOrderStateException(
-                            0, currentStatus.toString(),
-                            "Can only cancel PENDING or PROCESSING orders");
+                            orderId, currentStatus.toString(),
+                            "cancel orders that are not PENDING or PROCESSING");
                 }
                 break;
         }

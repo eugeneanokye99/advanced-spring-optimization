@@ -5,7 +5,6 @@ import com.shopjoy.dto.request.UpdateAddressRequest;
 import com.shopjoy.dto.response.AddressResponse;
 import com.shopjoy.entity.Address;
 import org.mapstruct.*;
-import org.springframework.stereotype.Component;
 
 /**
  * MapStruct mapper for Address entity and DTOs providing type-safe bean mapping.
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Component;
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
-@Component
 public interface AddressMapperStruct {
 
     /**

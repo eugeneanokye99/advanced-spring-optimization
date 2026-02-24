@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -41,7 +42,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
     @Query("select p from Product p where upper(p.productName) like upper(concat('%', ?1, '%'))")
     List<Product> findByProductName(String keyword);
     
-    List<Product> findByPriceBetween(double minPrice, double maxPrice);
+    List<Product> findByPriceBetween(BigDecimal price, BigDecimal price2);
     
     long countByCategoryId(Integer categoryId);
     

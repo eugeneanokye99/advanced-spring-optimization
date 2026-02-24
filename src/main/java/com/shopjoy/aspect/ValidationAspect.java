@@ -2,7 +2,6 @@ package com.shopjoy.aspect;
 
 import com.shopjoy.entity.Order;
 import com.shopjoy.entity.Product;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.slf4j.Logger;
@@ -16,7 +15,7 @@ public class ValidationAspect {
     private static final Logger logger = LoggerFactory.getLogger(ValidationAspect.class);
     
     @Before("execution(* com.shopjoy.service.ProductService.create*(..)) && args(product,..)")
-    public void validateProductBeforeCreation(JoinPoint joinPoint, Product product) {
+    public void validateProductBeforeCreation(Product product) {
         logger.debug("Validating product before creation: {}", product);
 
         if (product.getProductName() == null || product.getProductName().trim().isEmpty()) {
@@ -30,8 +29,8 @@ public class ValidationAspect {
         logger.debug("Product validation passed");
     }
     
-    @Before("execution(* com.shopjoy.service.ProductService.update*(..)) && args(productId, product,..)")
-    public void validateProductBeforeUpdate(JoinPoint joinPoint, Integer productId, Product product) {
+    @Before(value = "execution(* com.shopjoy.service.ProductService.update*(..)) && args(productId, product,..)", argNames = "productId,product")
+    public void validateProductBeforeUpdate(Integer productId, Product product) {
         logger.debug("Validating product before update: {}", product);
         
         if (productId == null || productId <= 0) {
@@ -46,7 +45,7 @@ public class ValidationAspect {
     }
     
     @Before("execution(* com.shopjoy.service.OrderService.create*(..)) && args(order,..)")
-    public void validateOrderBeforeCreation(JoinPoint joinPoint, Order order) {
+    public void validateOrderBeforeCreation(Order order) {
         logger.debug("Validating order before creation: {}", order);
         
         if (order.getUser() == null || order.getUser().getId() <= 0) {
@@ -56,8 +55,8 @@ public class ValidationAspect {
         logger.debug("Order validation passed");
     }
     
-    @Before("execution(* com.shopjoy.service.InventoryService.updateStock*(..)) && args(productId, quantity,..)")
-    public void validateStockUpdate(JoinPoint joinPoint, Integer productId, Integer quantity) {
+    @Before(value = "execution(* com.shopjoy.service.InventoryService.updateStock*(..)) && args(productId, quantity,..)", argNames = "productId,quantity")
+    public void validateStockUpdate(Integer productId, Integer quantity) {
         logger.debug("Validating stock update for product {} with quantity {}", productId, quantity);
         
         if (productId == null || productId <= 0) {
@@ -71,8 +70,8 @@ public class ValidationAspect {
         logger.debug("Stock update validation passed");
     }
     
-    @Before("execution(* com.shopjoy.service.InventoryService.reserveStock*(..)) && args(productId, quantity,..)")
-    public void validateStockReservation(JoinPoint joinPoint, Integer productId, Integer quantity) {
+    @Before(value = "execution(* com.shopjoy.service.InventoryService.reserveStock*(..)) && args(productId, quantity,..)", argNames = "productId,quantity")
+    public void validateStockReservation(Integer productId, Integer quantity) {
         logger.debug("Validating stock reservation for product {} with quantity {}", productId, quantity);
         
         if (productId == null || productId <= 0) {
@@ -86,15 +85,15 @@ public class ValidationAspect {
         logger.debug("Stock reservation validation passed");
     }
     
-    @Before("execution(* com.shopjoy.service.ReviewService.create*(..)) && args(review,..)")
-    public void validateReviewBeforeCreation(JoinPoint joinPoint, Object review) {
+    @Before("execution(* com.shopjoy.service.ReviewService.create*(..))")
+    public void validateReviewBeforeCreation() {
         logger.debug("Validating review before creation");
         
         logger.debug("Review validation passed");
     }
     
-    @Before("execution(* com.shopjoy.service.UserService.create*(..)) && args(user,..)")
-    public void validateUserBeforeCreation(JoinPoint joinPoint, Object user) {
+    @Before("execution(* com.shopjoy.service.UserService.create*(..))")
+    public void validateUserBeforeCreation() {
         logger.debug("Validating user before creation");
         
         logger.debug("User validation passed");

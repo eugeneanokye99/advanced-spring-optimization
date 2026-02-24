@@ -44,14 +44,7 @@ public interface UserService {
      */
     Optional<UserResponse> getUserByEmail(String email);
     
-    /**
-     * Retrieves a user by their username.
-     * 
-     * @param username the username
-     * @return Optional containing the user response DTO if found
-     */
-    Optional<UserResponse> getUserByUsername(String username);
-    
+
     /**
      * Retrieves all users in the system.
      * 

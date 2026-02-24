@@ -146,11 +146,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponse> getProductsByPriceRange(double minPrice, double maxPrice) {
-        if (minPrice < 0) {
+    public List<ProductResponse> getProductsByPriceRange(BigDecimal minPrice, BigDecimal maxPrice) {
+        if (minPrice.compareTo(BigDecimal.ZERO) < 0) {
             throw new ValidationException("Minimum price cannot be negative");
         }
-        if (maxPrice < minPrice) {
+        if (maxPrice.compareTo(minPrice) < 0) {
             throw new ValidationException("Maximum price must be greater than or equal to minimum price");
         }
         return productRepository.findByPriceBetween(minPrice, maxPrice).stream()

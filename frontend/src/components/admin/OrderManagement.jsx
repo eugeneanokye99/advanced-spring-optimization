@@ -41,18 +41,32 @@ const OrderManagement = () => {
     const handleStatusChange = async (orderId, newStatus) => {
         try {
             await updateOrderStatusMutation({
-                variables: { 
-                    id: orderId.toString(), 
+                variables: {
+                    id: orderId.toString(),
                     status: newStatus 
+                },
+                // Optimistically update the cache
+                optimisticResponse: {
+                    updateOrderStatus: {
+                        __typename: 'Order',
+                        id: orderId.toString(),
+                        status: newStatus,
+                        orderDate: new Date().toISOString(),
+                        totalAmount: 0
+                    }
                 }
             });
-            toast.success(`Order ${newStatus.toLowerCase()} successfully`);
-            // Refetch data to show updated status and avoid state mismatches
-            refetch();
+
+            toast.success(`Order status updated to ${newStatus}`);
+
+            // Refetch to ensure we have the latest data with all fields
+            await refetch();
         } catch (error) {
             console.error('Error updating order status:', error);
             const errorMessage = error?.graphQLErrors?.[0]?.message || error.message || 'Failed to update order status';
             showErrorAlert(error, errorMessage);
+            // Refetch to restore correct state if error occurred
+            await refetch();
         }
     };
 

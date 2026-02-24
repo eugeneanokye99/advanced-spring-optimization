@@ -5,7 +5,6 @@ import com.shopjoy.dto.response.OrderItemResponse;
 import com.shopjoy.dto.response.OrderResponse;
 import com.shopjoy.entity.Order;
 import org.mapstruct.*;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -19,7 +18,6 @@ import java.util.List;
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
-@Component
 public interface OrderMapperStruct {
 
     /**

@@ -82,16 +82,4 @@ public class TokenBlacklistServiceImpl implements TokenBlacklistService {
                     blacklistedTokens.size());
         }
     }
-
-    @Override
-    public int getBlacklistSize() {
-        return blacklistedTokens.size();
-    }
-
-    @Override
-    public void clearBlacklist() {
-        int size = blacklistedTokens.size();
-        blacklistedTokens.clear();
-        log.warn("Blacklist cleared. Removed {} tokens", size);
-    }
 }

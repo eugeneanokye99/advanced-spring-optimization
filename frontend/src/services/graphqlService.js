@@ -49,8 +49,8 @@ export const useUserOrders = (userId, filter = null, page = 0, size = 20, sortBy
 // Custom hooks for mutations
 export const useUpdateOrderStatus = () => {
   return useMutation(UPDATE_ORDER_STATUS, {
-    refetchQueries: [{ query: GET_ALL_ORDERS }],
-    awaitRefetchQueries: true
+    // Don't use refetchQueries here since it doesn't preserve filter/pagination params
+    // The component will handle refetch with proper variables
   });
 };
 

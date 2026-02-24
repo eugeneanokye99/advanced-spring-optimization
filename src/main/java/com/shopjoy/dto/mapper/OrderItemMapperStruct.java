@@ -4,7 +4,6 @@ import com.shopjoy.dto.response.OrderItemResponse;
 import com.shopjoy.dto.response.ProductResponse;
 import com.shopjoy.entity.OrderItem;
 import org.mapstruct.*;
-import org.springframework.stereotype.Component;
 
 /**
  * MapStruct mapper for OrderItem entity and DTOs.
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Component;
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
-@Component
 public interface OrderItemMapperStruct {
 
     /**

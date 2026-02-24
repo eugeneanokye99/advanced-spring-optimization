@@ -6,7 +6,6 @@ import com.shopjoy.dto.response.UserResponse;
 import com.shopjoy.entity.User;
 import com.shopjoy.entity.UserType;
 import org.mapstruct.*;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -19,7 +18,6 @@ import java.util.List;
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
-@Component
 public interface UserMapperStruct {
 
     /**

@@ -5,7 +5,6 @@ import com.shopjoy.dto.request.UpdateCategoryRequest;
 import com.shopjoy.dto.response.CategoryResponse;
 import com.shopjoy.entity.Category;
 import org.mapstruct.*;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -18,7 +17,6 @@ import java.util.List;
     nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
     unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
-@Component
 public interface CategoryMapperStruct {
 
     /**

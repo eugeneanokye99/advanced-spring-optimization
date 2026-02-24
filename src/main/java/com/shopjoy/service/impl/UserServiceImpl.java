@@ -72,12 +72,6 @@ public class UserServiceImpl implements UserService {
                 .map(userMapper::toUserResponse);
     }
 
-    @Override
-    @Cacheable(value = "userProfileUsername", key = "#username", unless = "#result == null")
-    public Optional<UserResponse> getUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-                .map(userMapper::toUserResponse);
-    }
 
     @Override
     public List<UserResponse> getAllUsers() {

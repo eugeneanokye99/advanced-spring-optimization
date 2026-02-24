@@ -27,6 +27,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -171,7 +172,9 @@ public class ProductController {
         public ResponseEntity<ApiResponse<List<ProductResponse>>> getProductsByPriceRange(
                         @Parameter(description = "Minimum price", required = true, example = "100.00") @RequestParam @Min(value = 0, message = "Minimum price cannot be negative") Double minPrice,
                         @Parameter(description = "Maximum price", required = true, example = "1000.00") @RequestParam @Min(value = 0, message = "Maximum price cannot be negative") Double maxPrice) {
-                List<ProductResponse> response = productService.getProductsByPriceRange(minPrice, maxPrice);
+                List<ProductResponse> response = productService.getProductsByPriceRange(
+                        BigDecimal.valueOf(minPrice),
+                        BigDecimal.valueOf(maxPrice));
                 return ResponseEntity
                                 .ok(ApiResponse.success(response, "Products by price range retrieved successfully"));
         }
