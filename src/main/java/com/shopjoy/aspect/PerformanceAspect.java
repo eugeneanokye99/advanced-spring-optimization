@@ -16,104 +16,107 @@ import org.springframework.stereotype.Component;
 public class PerformanceAspect {
     
     private static final Logger logger = LoggerFactory.getLogger(PerformanceAspect.class);
-    private static final long SLOW_METHOD_THRESHOLD = 1000;
-    private static final long SLOW_DB_THRESHOLD = 500;
-    private static final long SLOW_API_THRESHOLD = 2000;
-    
+    private static final long SLOW_METHOD_THRESHOLD_MS = 1000;
+    private static final long SLOW_DB_THRESHOLD_MS = 500;
+    private static final long SLOW_API_THRESHOLD_MS = 2000;
+
     @Autowired
     private PerformanceMetricsCollector metricsCollector;
     
-    @Around("com.shopjoy.aspect.CommonPointcuts.serviceMethods()")
+    @Around("com.shopjoy.aspect.CommonPointcuts.nonProductReadServiceMethods()")
     public Object monitorServicePerformance(ProceedingJoinPoint joinPoint) throws Throwable {
         String className = AspectUtils.extractClassName(joinPoint);
         String methodName = AspectUtils.extractMethodName(joinPoint);
         String methodKey = className + "." + methodName;
-        long startTime = System.currentTimeMillis();
-        
+        long startTime = System.nanoTime();
+
         try {
             Object result = joinPoint.proceed();
-            long executionTime = System.currentTimeMillis() - startTime;
-            
-            metricsCollector.recordMetric("service", methodKey, executionTime);
-            
+            long executionTimeMs = (System.nanoTime() - startTime) / 1_000_000;
+
+            metricsCollector.recordMetric("service", methodKey, executionTimeMs);
+
+            boolean hasPagination = false;
             for (Object arg : joinPoint.getArgs()) {
                 if (arg instanceof Pageable p && p.getSort().isSorted()) {
-                    metricsCollector.recordMetric("sorting", methodKey + "[" + p.getSort().toString() + "]", executionTime);
+                    metricsCollector.recordMetric("sorting", methodKey + "[" + p.getSort() + "]", executionTimeMs);
+                    hasPagination = true;
                 } else if (arg instanceof Sort s && s.isSorted()) {
-                    metricsCollector.recordMetric("sorting", methodKey + "[" + s.toString() + "]", executionTime);
+                    metricsCollector.recordMetric("sorting", methodKey + "[" + s + "]", executionTimeMs);
+                    hasPagination = true;
                 }
             }
 
-            if (executionTime > SLOW_METHOD_THRESHOLD) {
-                logger.warn("SLOW SERVICE METHOD: {}.{} took {}", 
-                    className, methodName, AspectUtils.formatExecutionTime(executionTime));
-            } else {
-                logger.debug("Service method {}.{} executed in {}", 
-                    className, methodName, AspectUtils.formatExecutionTime(executionTime));
+            if (executionTimeMs > SLOW_METHOD_THRESHOLD_MS) {
+                logger.warn("SLOW SERVICE METHOD: {}.{} took {}ms",
+                    className, methodName, executionTimeMs);
+            } else if (logger.isDebugEnabled() && !hasPagination) {
+                logger.debug("Service method {}.{} executed in {}ms",
+                    className, methodName, executionTimeMs);
             }
             
             return result;
         } catch (Throwable t) {
-            long executionTime = System.currentTimeMillis() - startTime;
-            metricsCollector.recordMetric("service", methodKey, executionTime);
+            long executionTimeMs = (System.nanoTime() - startTime) / 1_000_000;
+            metricsCollector.recordMetric("service", methodKey, executionTimeMs);
             throw t;
         }
     }
     
-    @Around("com.shopjoy.aspect.CommonPointcuts.repositoryMethods()")
+    @Around("com.shopjoy.aspect.CommonPointcuts.repositoryMethods() && com.shopjoy.aspect.CommonPointcuts.dataModificationMethods()")
     public Object monitorDatabasePerformance(ProceedingJoinPoint joinPoint) throws Throwable {
         String className = AspectUtils.extractClassName(joinPoint);
         String methodName = AspectUtils.extractMethodName(joinPoint);
         String methodKey = className + "." + methodName;
-        long startTime = System.currentTimeMillis();
-        
+        long startTime = System.nanoTime();
+
         try {
             Object result = joinPoint.proceed();
-            long executionTime = System.currentTimeMillis() - startTime;
-            
-            metricsCollector.recordMetric("database", methodKey, executionTime);
-            
-            if (executionTime > SLOW_DB_THRESHOLD) {
-                logger.warn("SLOW DATABASE QUERY: {}.{} took {}", 
-                    className, methodName, AspectUtils.formatExecutionTime(executionTime));
-            } else {
-                logger.debug("Database query {}.{} executed in {}", 
-                    className, methodName, AspectUtils.formatExecutionTime(executionTime));
+            long executionTimeMs = (System.nanoTime() - startTime) / 1_000_000;
+
+            metricsCollector.recordMetric("database", methodKey, executionTimeMs);
+
+            if (executionTimeMs > SLOW_DB_THRESHOLD_MS) {
+                logger.warn("SLOW DATABASE QUERY: {}.{} took {}ms",
+                    className, methodName, executionTimeMs);
+            } else if (logger.isDebugEnabled()) {
+                logger.debug("Database query {}.{} executed in {}ms",
+                    className, methodName, executionTimeMs);
             }
             
             return result;
         } catch (Throwable t) {
-            long executionTime = System.currentTimeMillis() - startTime;
-            metricsCollector.recordMetric("database", methodKey, executionTime);
+            long executionTimeMs = (System.nanoTime() - startTime) / 1_000_000;
+            metricsCollector.recordMetric("database", methodKey, executionTimeMs);
             throw t;
         }
     }
     
-    @Around("com.shopjoy.aspect.CommonPointcuts.controllerMethods()")
+    @Around("com.shopjoy.aspect.CommonPointcuts.nonProductReadControllerMethods()")
     public Object monitorApiPerformance(ProceedingJoinPoint joinPoint) throws Throwable {
         String className = AspectUtils.extractClassName(joinPoint);
         String methodName = AspectUtils.extractMethodName(joinPoint);
         String methodKey = className + "." + methodName;
-        long startTime = System.currentTimeMillis();
-        
+        long startTime = System.nanoTime();
+
         try {
             Object result = joinPoint.proceed();
-            long executionTime = System.currentTimeMillis() - startTime;
-            
-            metricsCollector.recordMetric("api", methodKey, executionTime);
-            
-            if (executionTime > SLOW_API_THRESHOLD) {
-                logger.warn("SLOW API ENDPOINT: {}.{} took {}", 
-                    className, methodName, AspectUtils.formatExecutionTime(executionTime));
-            } else {
-                logger.info("API endpoint {}.{} responded in {}", 
-                    className, methodName, AspectUtils.formatExecutionTime(executionTime));
+            long executionTimeMs = (System.nanoTime() - startTime) / 1_000_000;
+
+            metricsCollector.recordMetric("api", methodKey, executionTimeMs);
+
+            if (executionTimeMs > SLOW_API_THRESHOLD_MS) {
+                logger.warn("SLOW API ENDPOINT: {}.{} took {}ms",
+                    className, methodName, executionTimeMs);
+            } else if (logger.isInfoEnabled()) {
+                logger.info("API endpoint {}.{} responded in {}ms",
+                    className, methodName, executionTimeMs);
             }
             
             return result;
         } catch (Throwable t) {
-            long executionTime = System.currentTimeMillis() - startTime;
-            metricsCollector.recordMetric("api", methodKey, executionTime);
+            long executionTimeMs = (System.nanoTime() - startTime) / 1_000_000;
+            metricsCollector.recordMetric("api", methodKey, executionTimeMs);
             throw t;
         }
     }
@@ -123,26 +126,26 @@ public class PerformanceAspect {
         String className = AspectUtils.extractClassName(joinPoint);
         String methodName = AspectUtils.extractMethodName(joinPoint);
         String methodKey = className + "." + methodName;
-        long startTime = System.currentTimeMillis();
-        
+        long startTime = System.nanoTime();
+
         try {
             Object result = joinPoint.proceed();
-            long executionTime = System.currentTimeMillis() - startTime;
-            
-            metricsCollector.recordMetric("graphql", methodKey, executionTime);
-            
-            if (executionTime > SLOW_API_THRESHOLD) {
-                logger.warn("SLOW GRAPHQL RESOLVER: {}.{} took {}", 
-                    className, methodName, AspectUtils.formatExecutionTime(executionTime));
-            } else {
-                logger.debug("GraphQL resolver {}.{} executed in {}", 
-                    className, methodName, AspectUtils.formatExecutionTime(executionTime));
+            long executionTimeMs = (System.nanoTime() - startTime) / 1_000_000;
+
+            metricsCollector.recordMetric("graphql", methodKey, executionTimeMs);
+
+            if (executionTimeMs > SLOW_API_THRESHOLD_MS) {
+                logger.warn("SLOW GRAPHQL RESOLVER: {}.{} took {}ms",
+                    className, methodName, executionTimeMs);
+            } else if (logger.isDebugEnabled()) {
+                logger.debug("GraphQL resolver {}.{} executed in {}ms",
+                    className, methodName, executionTimeMs);
             }
             
             return result;
         } catch (Throwable t) {
-            long executionTime = System.currentTimeMillis() - startTime;
-            metricsCollector.recordMetric("graphql", methodKey, executionTime);
+            long executionTimeMs = (System.nanoTime() - startTime) / 1_000_000;
+            metricsCollector.recordMetric("graphql", methodKey, executionTimeMs);
             throw t;
         }
     }

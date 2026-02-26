@@ -62,7 +62,6 @@ public class ReviewController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Review retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ReviewResponse.class))),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Review not found", content = @Content(mediaType = "application/json"))
         })
-        @PreAuthorize("permitAll()")
         @GetMapping("/{id}")
         public ResponseEntity<ApiResponse<ReviewResponse>> getReviewById(
                         @Parameter(description = "Review unique identifier", required = true, example = "1") @PathVariable Integer id) {
@@ -81,7 +80,6 @@ public class ReviewController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Product reviews retrieved successfully", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Product not found", content = @Content(mediaType = "application/json"))
         })
-        @PreAuthorize("permitAll()")
         @GetMapping("/product/{productId}")
         public ResponseEntity<ApiResponse<List<ReviewResponse>>> getReviewsByProduct(
                         @Parameter(description = "Product unique identifier", required = true, example = "1") @PathVariable Integer productId) {
@@ -100,7 +98,6 @@ public class ReviewController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "User reviews retrieved successfully", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "User not found", content = @Content(mediaType = "application/json"))
         })
-        @PreAuthorize("permitAll()")
         @GetMapping("/user/{userId}")
         public ResponseEntity<ApiResponse<List<ReviewResponse>>> getReviewsByUser(
                         @Parameter(description = "User unique identifier", required = true, example = "1") @PathVariable Integer userId) {
@@ -120,7 +117,6 @@ public class ReviewController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Reviews by rating retrieved successfully", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Product not found", content = @Content(mediaType = "application/json"))
         })
-        @PreAuthorize("permitAll()")
         @GetMapping("/product/{productId}/rating/{rating}")
         public ResponseEntity<ApiResponse<List<ReviewResponse>>> getReviewsByRating(
                         @Parameter(description = "Product unique identifier", required = true, example = "1") @PathVariable Integer productId,
@@ -140,7 +136,6 @@ public class ReviewController {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Average rating calculated successfully", content = @Content(mediaType = "application/json")),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Product not found", content = @Content(mediaType = "application/json"))
         })
-        @PreAuthorize("permitAll()")
         @GetMapping("/product/{productId}/average-rating")
         public ResponseEntity<ApiResponse<Double>> getAverageRating(
                         @Parameter(description = "Product unique identifier", required = true, example = "1") @PathVariable Integer productId) {
@@ -217,7 +212,6 @@ public class ReviewController {
         @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "All reviews retrieved successfully", content = @Content(mediaType = "application/json"))
         })
-        @PreAuthorize("permitAll()")
         @GetMapping
         public ResponseEntity<ApiResponse<List<ReviewResponse>>> getAllReviews() {
                 List<ReviewResponse> response = reviewService.getAllReviews();

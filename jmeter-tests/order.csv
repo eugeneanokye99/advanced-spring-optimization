@@ -1,0 +1,101 @@
+userId,shippingAddress,paymentMethod,notes,productId1,quantity1,productId2,quantity2,productId3,quantity3
+1,123 Independence Avenue Accra Ghana,CREDIT_CARD,,15,2,23,1,7,3
+3,45 Kwame Nkrumah Road Kumasi Ghana,MOBILE_MONEY,,42,1,8,2,19,1
+5,78 Castle Road Cape Coast Ghana,CREDIT_CARD,Express delivery requested,31,2,56,3,12,1
+7,12 Liberation Road Takoradi Ghana,MOBILE_MONEY,,67,2,3,1,28,2
+9,56 Airport Road Accra Ghana,CASH_ON_DELIVERY,,41,1,73,4,9,1
+11,34 Osu Oxford Street Accra Ghana,CREDIT_CARD,Customer requested cancellation,14,1,52,3,36,2
+13,89 Adum Main Street Kumasi Ghana,MOBILE_MONEY,,61,2,5,1,77,1
+15,23 University Road Legon Ghana,CREDIT_CARD,,22,5,48,2,11,1
+17,67 Spintex Road Accra Ghana,MOBILE_MONEY,,38,2,64,1,2,3
+19,45 Tema Station Road Tema Ghana,CREDIT_CARD,,70,2,18,1,44,1
+21,12 Achimota Mile 7 Accra Ghana,MOBILE_MONEY,,29,4,81,3,13,2
+23,78 Madina Market Road Accra Ghana,CASH_ON_DELIVERY,,6,1,50,2,25,5
+25,34 Ashaiman Main Road Ashaiman Ghana,CREDIT_CARD,,74,2,33,3,16,1
+27,56 Teshie Nungua Road Accra Ghana,MOBILE_MONEY,Gift wrapping requested,58,2,39,4,21,1
+29,89 Dansoman High Street Accra Ghana,CREDIT_CARD,,65,3,10,1,76,5
+31,23 Kaneshie Market Road Accra Ghana,MOBILE_MONEY,,4,2,47,3,20,1
+33,67 Lapaz Main Road Accra Ghana,CREDIT_CARD,Payment issue,82,4,27,2,54,3
+35,45 Kasoa Central Kasoa Ghana,MOBILE_MONEY,,8,1,68,2,35,5
+37,12 Winneba Junction Winneba Ghana,CREDIT_CARD,,12,1,79,3,26,2
+39,78 Sunyani Main Street Sunyani Ghana,MOBILE_MONEY,,60,6,17,1,71,3
+41,34 Tamale Station Road Tamale Ghana,CASH_ON_DELIVERY,,43,2,30,4,85,2
+43,56 Bolgatanga Market Bolgatanga Ghana,CREDIT_CARD,,9,1,55,3,14,1
+45,89 Ho Main Road Ho Ghana,MOBILE_MONEY,,72,5,24,2,63,3
+47,23 Koforidua Jackson Park Koforidua Ghana,CREDIT_CARD,,7,1,49,2,34,4
+49,67 Wa Central Market Wa Ghana,MOBILE_MONEY,,19,1,78,6,11,1
+2,45 Ridge Residential Accra Ghana,CREDIT_CARD,Urgent delivery,57,2,40,3,23,1
+4,12 East Legon Hills Accra Ghana,MOBILE_MONEY,,69,4,15,2,80,3
+6,78 Cantonments Road Accra Ghana,CREDIT_CARD,,5,1,51,2,37,5
+8,34 Airport Residential Accra Ghana,CASH_ON_DELIVERY,,13,1,75,4,28,2
+10,56 Labone Crescent Accra Ghana,CREDIT_CARD,Duplicate order,62,6,18,1,84,3
+12,89 Roman Ridge Accra Ghana,MOBILE_MONEY,,46,2,31,4,10,1
+14,23 Dzorwulu Housing Accra Ghana,CREDIT_CARD,,66,3,22,5,48,2
+16,67 North Kaneshie Accra Ghana,MOBILE_MONEY,,8,1,68,2,35,5
+18,45 Dansoman Roundabout Accra Ghana,CREDIT_CARD,,12,1,79,3,26,2
+20,12 Mallam Junction Accra Ghana,MOBILE_MONEY,,60,6,17,1,71,3
+22,78 Weija Barrier Accra Ghana,CREDIT_CARD,,43,2,30,4,85,2
+24,34 Gbawe Santa Maria Accra Ghana,MOBILE_MONEY,,9,1,55,3,14,1
+26,56 McCarthy Hill Accra Ghana,CASH_ON_DELIVERY,,72,5,24,2,63,3
+28,89 Pokuase ACP Accra Ghana,CREDIT_CARD,,7,1,49,2,34,4
+30,23 Amasaman Station Accra Ghana,MOBILE_MONEY,,19,1,78,6,11,1
+32,67 Nsawam Road Nsawam Ghana,CREDIT_CARD,,57,2,40,3,23,1
+34,45 Suhum Junction Suhum Ghana,MOBILE_MONEY,,69,4,15,2,80,3
+36,12 Kibi Main Street Kibi Ghana,CREDIT_CARD,Address incorrect,5,1,51,2,37,5
+38,78 Mpraeso Town Mpraeso Ghana,MOBILE_MONEY,,13,1,75,4,28,2
+40,34 Nkawkaw Station Nkawkaw Ghana,CREDIT_CARD,,62,6,18,1,84,3
+42,56 Begoro Market Begoro Ghana,MOBILE_MONEY,,46,2,31,4,10,1
+44,89 Somanya Junction Somanya Ghana,CASH_ON_DELIVERY,,66,3,22,5,48,2
+46,23 Kpong Barrier Kpong Ghana,CREDIT_CARD,,8,1,68,2,35,5
+48,67 Akosombo Township Akosombo Ghana,MOBILE_MONEY,,12,1,79,3,26,2
+50,45 Atimpoku Bridge Atimpoku Ghana,CREDIT_CARD,,60,6,17,1,71,3
+1,123 Independence Avenue Accra Ghana,MOBILE_MONEY,Repeat customer,43,2,30,4,85,2
+3,45 Kwame Nkrumah Road Kumasi Ghana,CREDIT_CARD,,9,1,55,3,14,1
+5,78 Castle Road Cape Coast Ghana,MOBILE_MONEY,,72,5,24,2,63,3
+7,12 Liberation Road Takoradi Ghana,CREDIT_CARD,,7,1,49,2,34,4
+9,56 Airport Road Accra Ghana,MOBILE_MONEY,,19,1,78,6,11,1
+11,34 Osu Oxford Street Accra Ghana,CREDIT_CARD,Changed mind,57,2,40,3,23,1
+13,89 Adum Main Street Kumasi Ghana,MOBILE_MONEY,,69,4,15,2,80,3
+15,23 University Road Legon Ghana,CREDIT_CARD,,5,1,51,2,37,5
+17,67 Spintex Road Accra Ghana,MOBILE_MONEY,,13,1,75,4,28,2
+19,45 Tema Station Road Tema Ghana,CREDIT_CARD,,62,6,18,1,84,3
+21,12 Achimota Mile 7 Accra Ghana,MOBILE_MONEY,,46,2,31,4,10,1
+23,78 Madina Market Road Accra Ghana,CREDIT_CARD,,66,3,22,5,48,2
+25,34 Ashaiman Main Road Ashaiman Ghana,MOBILE_MONEY,,8,1,68,2,35,5
+27,56 Teshie Nungua Road Accra Ghana,CASH_ON_DELIVERY,,12,1,79,3,26,2
+29,89 Dansoman High Street Accra Ghana,CREDIT_CARD,,60,6,17,1,71,3
+31,23 Kaneshie Market Road Accra Ghana,MOBILE_MONEY,,43,2,30,4,85,2
+33,67 Lapaz Main Road Accra Ghana,CREDIT_CARD,,9,1,55,3,14,1
+35,45 Kasoa Central Kasoa Ghana,MOBILE_MONEY,,72,5,24,2,63,3
+37,12 Winneba Junction Winneba Ghana,CREDIT_CARD,Out of stock item,7,1,49,2,34,4
+39,78 Sunyani Main Street Sunyani Ghana,MOBILE_MONEY,,19,1,78,6,11,1
+41,34 Tamale Station Road Tamale Ghana,CREDIT_CARD,,57,2,40,3,23,1
+43,56 Bolgatanga Market Bolgatanga Ghana,MOBILE_MONEY,,69,4,15,2,80,3
+45,89 Ho Main Road Ho Ghana,CREDIT_CARD,,5,1,51,2,37,5
+47,23 Koforidua Jackson Park Koforidua Ghana,MOBILE_MONEY,,13,1,75,4,28,2
+49,67 Wa Central Market Wa Ghana,CREDIT_CARD,,62,6,18,1,84,3
+2,45 Ridge Residential Accra Ghana,MOBILE_MONEY,,46,2,31,4,10,1
+4,12 East Legon Hills Accra Ghana,CREDIT_CARD,,66,3,22,5,48,2
+6,78 Cantonments Road Accra Ghana,MOBILE_MONEY,,8,1,68,2,35,5
+8,34 Airport Residential Accra Ghana,CREDIT_CARD,,12,1,79,3,26,2
+10,56 Labone Crescent Accra Ghana,MOBILE_MONEY,,60,6,17,1,71,3
+12,89 Roman Ridge Accra Ghana,CASH_ON_DELIVERY,,43,2,30,4,85,2
+14,23 Dzorwulu Housing Accra Ghana,CREDIT_CARD,Pricing error,9,1,55,3,14,1
+16,67 North Kaneshie Accra Ghana,MOBILE_MONEY,,72,5,24,2,63,3
+18,45 Dansoman Roundabout Accra Ghana,CREDIT_CARD,,7,1,49,2,34,4
+20,12 Mallam Junction Accra Ghana,MOBILE_MONEY,,19,1,78,6,11,1
+22,78 Weija Barrier Accra Ghana,CREDIT_CARD,,57,2,40,3,23,1
+24,34 Gbawe Santa Maria Accra Ghana,MOBILE_MONEY,,69,4,15,2,80,3
+26,56 McCarthy Hill Accra Ghana,CREDIT_CARD,,5,1,51,2,37,5
+28,89 Pokuase ACP Accra Ghana,MOBILE_MONEY,,13,1,75,4,28,2
+30,23 Amasaman Station Accra Ghana,CREDIT_CARD,,62,6,18,1,84,3
+32,67 Nsawam Road Nsawam Ghana,MOBILE_MONEY,,46,2,31,4,10,1
+34,45 Suhum Junction Suhum Ghana,CREDIT_CARD,,66,3,22,5,48,2
+36,12 Kibi Main Street Kibi Ghana,MOBILE_MONEY,,8,1,68,2,35,5
+38,78 Mpraeso Town Mpraeso Ghana,CASH_ON_DELIVERY,,12,1,79,3,26,2
+40,34 Nkawkaw Station Nkawkaw Ghana,CREDIT_CARD,Customer unavailable,60,6,17,1,71,3
+42,56 Begoro Market Begoro Ghana,MOBILE_MONEY,,43,2,30,4,85,2
+44,89 Somanya Junction Somanya Ghana,CREDIT_CARD,,9,1,55,3,14,1
+46,23 Kpong Barrier Kpong Ghana,MOBILE_MONEY,,72,5,24,2,63,3
+48,67 Akosombo Township Akosombo Ghana,CREDIT_CARD,,7,1,49,2,34,4
+50,45 Atimpoku Bridge Atimpoku Ghana,MOBILE_MONEY,,19,1,78,6,11,1

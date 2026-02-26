@@ -12,12 +12,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Cache Configuration using Caffeine.
- * 
  * Caching Strategy:
  * - SHORT TTL (2 min): Frequently changing data (inventory, cart, stock levels)
  * - MEDIUM TTL (10 min): Moderately changing data (orders, reviews)
  * - LONG TTL (30 min): Relatively stable data (products, categories, users, addresses)
- * 
  * Cache eviction is handled via @CacheEvict annotations on write operations.
  */
 @Configuration
@@ -32,9 +30,11 @@ public class CacheConfig {
     @Primary
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(
-            "products", "product", "activeProducts", "productsByCategory", "productsCount",
-            "categories", "category", "topLevelCategories", "subcategories",
-            "users", "userProfile", "userProfileEmail", "userProfileUsername", "usersByIds"
+            "products", "product", "activeProducts", "productsByCategory", "productsCount", "filteredProducts",
+            "productSearch", "productsByPriceRange",
+            "categories", "category",
+            "users", "userProfile", "userProfileEmail", "userProfileUsername", "usersByIds",
+            "userDetails"
         );
         cacheManager.setCaffeine(Caffeine.newBuilder()
             .expireAfterWrite(30, TimeUnit.MINUTES)

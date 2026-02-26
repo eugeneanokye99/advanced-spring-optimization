@@ -15,9 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Implementation of SecurityAuditService for managing security audit logs.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,7 +22,7 @@ public class SecurityAuditServiceImpl implements SecurityAuditService {
 
     private final SecurityAuditLogRepository auditLogRepository;
 
-    @Async
+    @Async("taskExecutor")
     @Transactional
     @Override
     public void logEvent(String username, SecurityEventType eventType, String ipAddress, String userAgent, String details, Boolean success) {
@@ -46,25 +43,12 @@ public class SecurityAuditServiceImpl implements SecurityAuditService {
         }
     }
 
-    @Async
+    @Async("taskExecutor")
     @Transactional
     @Override
     public void logEvent(String username, SecurityEventType eventType, String details, Boolean success) {
-        try {
-            SecurityAuditLog auditLog = SecurityAuditLog.builder()
-                    .username(username)
-                    .eventType(eventType)
-                    .details(details)
-                    .success(success)
-                    .build();
-
-            auditLogRepository.save(auditLog);
-            log.debug("Logged security event: {} for user: {}", eventType, username);
-        } catch (Exception e) {
-            log.error("Failed to log security event: {} for user: {}", eventType, username, e);
-        }
+        logEvent(username, eventType, null, null, details, success);
     }
-
 
 
     @Transactional(readOnly = true)

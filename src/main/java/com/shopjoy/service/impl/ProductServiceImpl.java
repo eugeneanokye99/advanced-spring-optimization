@@ -47,7 +47,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    @CacheEvict(value = {"products", "activeProducts", "productsByCategory"}, allEntries = true, cacheManager = "cacheManager")
+    @CacheEvict(value = {"products", "activeProducts", "productsByCategory", "filteredProducts", "productSearch", "productsByPriceRange"}, allEntries = true, cacheManager = "cacheManager")
     public ProductResponse createProduct(CreateProductRequest request) {
         Product product = productMapper.toProduct(request);
         if (request.getCategoryId() != null) {
@@ -136,6 +136,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "productSearch", key = "#keyword.toLowerCase()", unless = "#result == null || #result.isEmpty()")
     public List<ProductResponse> searchProductsByName(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             throw new ValidationException("Search keyword cannot be empty");
@@ -146,6 +147,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "productsByPriceRange",
+               key = "#minPrice.toString() + ':' + #maxPrice.toString()",
+               unless = "#result == null || #result.isEmpty()")
     public List<ProductResponse> getProductsByPriceRange(BigDecimal minPrice, BigDecimal maxPrice) {
         if (minPrice.compareTo(BigDecimal.ZERO) < 0) {
             throw new ValidationException("Minimum price cannot be negative");
@@ -162,7 +166,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Caching(
         put = { @CachePut(value = "product", key = "#productId", cacheManager = "cacheManager") },
-        evict = { @CacheEvict(value = {"products", "activeProducts", "productsByCategory"}, allEntries = true, cacheManager = "cacheManager") }
+        evict = { @CacheEvict(value = {"products", "activeProducts", "productsByCategory", "filteredProducts", "productSearch", "productsByPriceRange"}, allEntries = true, cacheManager = "cacheManager") }
     )
     public ProductResponse updateProduct(Integer productId, UpdateProductRequest request) {
         Product existingProduct = productRepository.findById(productId)
@@ -186,7 +190,7 @@ public class ProductServiceImpl implements ProductService {
     @Auditable(action = "UPDATE_PRICE", description = "Updating product price")
     @Caching(
         put = { @CachePut(value = "product", key = "#productId", cacheManager = "cacheManager") },
-        evict = { @CacheEvict(value = {"products", "activeProducts", "productsByCategory"}, allEntries = true, cacheManager = "cacheManager") }
+        evict = { @CacheEvict(value = {"products", "activeProducts", "productsByCategory", "filteredProducts", "productSearch", "productsByPriceRange"}, allEntries = true, cacheManager = "cacheManager") }
     )
     public ProductResponse updateProductPrice(Integer productId, double newPrice) {
         if (newPrice < 0) {
@@ -207,7 +211,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Caching(
         put = { @CachePut(value = "product", key = "#productId", cacheManager = "cacheManager") },
-        evict = { @CacheEvict(value = {"products", "activeProducts", "productsByCategory"}, allEntries = true, cacheManager = "cacheManager") }
+        evict = { @CacheEvict(value = {"products", "activeProducts", "productsByCategory", "filteredProducts", "productSearch", "productsByPriceRange"}, allEntries = true, cacheManager = "cacheManager") }
     )
     public ProductResponse activateProduct(Integer productId) {
         Product product = productRepository.findById(productId)
@@ -222,7 +226,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Caching(
         put = { @CachePut(value = "product", key = "#productId", cacheManager = "cacheManager") },
-        evict = { @CacheEvict(value = {"products", "activeProducts", "productsByCategory"}, allEntries = true, cacheManager = "cacheManager") }
+        evict = { @CacheEvict(value = {"products", "activeProducts", "productsByCategory", "filteredProducts", "productSearch", "productsByPriceRange"}, allEntries = true, cacheManager = "cacheManager") }
     )
     public ProductResponse deactivateProduct(Integer productId) {
         Product product = productRepository.findById(productId)
@@ -237,7 +241,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Caching(evict = {
         @CacheEvict(value = "product", key = "#productId", cacheManager = "cacheManager"),
-        @CacheEvict(value = {"products", "activeProducts", "productsByCategory"}, allEntries = true, cacheManager = "cacheManager")
+        @CacheEvict(value = {"products", "activeProducts", "productsByCategory", "filteredProducts", "productSearch", "productsByPriceRange"}, allEntries = true, cacheManager = "cacheManager")
     })
     public void deleteProduct(Integer productId) {
         if (!productRepository.existsById(productId)) {
@@ -287,6 +291,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "filteredProducts",
+               key = "T(String).format('%s:%s:%s:%s:%s:%s:%s:%s:%s', " +
+                     "#filter?.searchTerm ?: 'null', " +
+                     "#filter?.categoryId ?: 'null', " +
+                     "#filter?.minPrice ?: 'null', " +
+                     "#filter?.maxPrice ?: 'null', " +
+                     "#filter?.brand ?: 'null', " +
+                     "#filter?.active ?: 'null', " +
+                     "#pageable.pageNumber, " +
+                     "#pageable.pageSize, " +
+                     "#sortBy + ':' + #sortDirection)",
+               unless = "#result == null || #result.isEmpty()")
     public Page<ProductResponse> getProductsWithFilters(ProductFilter filter, Pageable pageable, String sortBy,
             String sortDirection) {
         if (filter == null) {

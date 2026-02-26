@@ -4,13 +4,16 @@ import com.shopjoy.entity.SecurityEventType;
 import com.shopjoy.entity.User;
 import com.shopjoy.entity.UserType;
 import com.shopjoy.repository.UserRepository;
+import com.shopjoy.service.RefreshTokenService;
 import com.shopjoy.service.SecurityAuditService;
 import com.shopjoy.util.JwtUtil;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -33,6 +36,10 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final SecurityAuditService securityAuditService;
+    private final RefreshTokenService refreshTokenService;
+
+    @Value("${app.frontend.url:http://localhost:5173}")
+    private String frontendUrl;
 
 
     /**
@@ -90,6 +97,8 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             String ipAddress = SecurityAuditService.extractClientIp(request);
             String userAgent = SecurityAuditService.extractUserAgent(request);
             
+            String refreshToken = refreshTokenService.createRefreshToken(user, ipAddress, userAgent).getToken();
+
             securityAuditService.logEvent(
                 user.getUsername(),
                 SecurityEventType.LOGIN_SUCCESS,
@@ -99,11 +108,24 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 true
             );
             
-            String frontendUrl = "http://localhost:5173";
-            String redirectUrl = String.format("%s/oauth2/callback?token=%s&provider=%s", 
-                    frontendUrl, jwtToken, provider);
-            
-            log.info("Redirecting to frontend: {}", redirectUrl);
+            Cookie jwtCookie = new Cookie("jwt_token", jwtToken);
+            jwtCookie.setHttpOnly(true);
+            jwtCookie.setSecure(false);
+            jwtCookie.setPath("/");
+            jwtCookie.setMaxAge(86400);
+            response.addCookie(jwtCookie);
+
+            Cookie refreshCookie = new Cookie("refresh_token", refreshToken);
+            refreshCookie.setHttpOnly(true);
+            refreshCookie.setSecure(false);
+            refreshCookie.setPath("/");
+            refreshCookie.setMaxAge(604800);
+            response.addCookie(refreshCookie);
+
+            String redirectUrl = String.format("%s/oauth2/callback?provider=%s&success=true",
+                    frontendUrl, provider);
+
+            log.info("OAuth2 login successful, redirecting to frontend with secure cookie");
             response.sendRedirect(redirectUrl);
             
         } catch (Exception e) {
@@ -194,7 +216,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
      * Redirects to frontend with error.
      */
     private void redirectToFrontendWithError(HttpServletResponse response, String error) throws IOException {
-        String frontendUrl = "http://localhost:5173";
         String redirectUrl = String.format("%s/login?error=%s", frontendUrl, error);
         response.sendRedirect(redirectUrl);
     }

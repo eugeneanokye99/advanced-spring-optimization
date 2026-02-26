@@ -21,11 +21,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
-/**
- * JWT authentication filter that validates JWT tokens on each request.
- * Extends OncePerRequestFilter to ensure the filter is executed once per request.
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -38,6 +36,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
+
+    private static final List<String> PUBLIC_PATHS = Arrays.asList(
+        "/api/v1/auth/",
+        "/oauth2/",
+        "/login/oauth2/",
+        "/demo/"
+    );
+
+    @Override
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
+        String path = request.getRequestURI();
+
+
+        return PUBLIC_PATHS.stream().anyMatch(path::startsWith);
+    }
 
     @Override
     protected void doFilterInternal(
@@ -66,12 +79,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    /**
-     * Extracts JWT token from Authorization header.
-     *
-     * @param request the HTTP request
-     * @return the JWT token or null if not present
-     */
     private String extractTokenFromRequest(HttpServletRequest request) {
         String authHeader = request.getHeader(AUTHORIZATION_HEADER);
         
@@ -82,14 +89,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return authHeader.substring(BEARER_PREFIX.length());
     }
 
-    /**
-     * Checks if token is blacklisted and logs the attempt.
-     *
-     * @param token the JWT token
-     * @param ipAddress the client IP address
-     * @param userAgent the client user agent
-     * @return true if blacklisted, false otherwise
-     */
     private boolean isTokenBlacklisted(String token, String ipAddress, String userAgent) {
         if (tokenBlacklistService.isBlacklisted(token)) {
             log.debug("Token is blacklisted (user logged out)");
@@ -106,15 +105,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return false;
     }
 
-    /**
-     * Validates token and authenticates user if valid.
-     * Handles all token validation errors internally.
-     *
-     * @param token the JWT token
-     * @param request the HTTP request
-     * @param ipAddress the client IP address
-     * @param userAgent the client user agent
-     */
     private void authenticateUserFromToken(
             String token,
             HttpServletRequest request,
@@ -128,7 +118,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            // Check token expiry before DB call
             if (jwtUtil.isTokenExpired(token)) {
                 log.warn("JWT token expired for request: {}", request.getRequestURI());
                 securityAuditService.logEvent(
@@ -142,7 +131,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            // Only load user from DB if token is valid
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             if (isUsernameMatching(token, userDetails)) {
@@ -173,24 +161,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     }
 
-    /**
-     * Validates that the username in token matches the user details.
-     *
-     * @param token the JWT token
-     * @param userDetails the user details
-     * @return true if username matches, false otherwise
-     */
     private boolean isUsernameMatching(String token, UserDetails userDetails) {
         String username = jwtUtil.extractUsername(token);
         return username.equals(userDetails.getUsername());
     }
 
-    /**
-     * Sets authentication in SecurityContext.
-     *
-     * @param userDetails the user details
-     * @param request the HTTP request
-     */
     private void setAuthentication(UserDetails userDetails, HttpServletRequest request) {
         UsernamePasswordAuthenticationToken authToken =
                 new UsernamePasswordAuthenticationToken(
@@ -203,13 +178,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authToken);
     }
 
-    /**
-     * Logs token validation failure.
-     *
-     * @param username the username
-     * @param ipAddress the client IP address
-     * @param userAgent the client user agent
-     */
     private void logTokenValidationFailure(String username, String ipAddress, String userAgent) {
         log.warn("Invalid JWT token for user: {}", username);
         securityAuditService.logEvent(

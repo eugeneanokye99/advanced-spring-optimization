@@ -28,6 +28,9 @@ public class JwtUtil {
     @Value("${jwt.expiration}")
     private Long expiration;
 
+    @Value("${jwt.refresh.expiration:604800000}")
+    private Long refreshExpiration;
+
     /**
      * Generates a JWT token for the given user details.
      *
@@ -144,5 +147,9 @@ public class JwtUtil {
      */
     public Long getExpirationTime() {
         return expiration;
+    }
+
+    public Long getRefreshExpirationTime() {
+        return refreshExpiration;
     }
 }

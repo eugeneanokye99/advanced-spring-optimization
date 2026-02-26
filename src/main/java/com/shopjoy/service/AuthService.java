@@ -59,11 +59,11 @@ public interface AuthService {
      */
     boolean isEmailTaken(String email);
 
-    /**
-     * Checks if a username is already taken.
-     *
-     * @param username the username to check
-     * @return true if username exists, false otherwise
-     */
     boolean isUsernameTaken(String username);
+
+    LoginResponse refreshToken(String refreshToken);
+
+    void revokeRefreshToken(String refreshToken);
+
+    void revokeAllUserRefreshTokens(Integer userId);
 }

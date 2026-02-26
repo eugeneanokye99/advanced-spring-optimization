@@ -300,4 +300,44 @@ public class AuthController {
                 taken ? "Username is already taken" : "Username is available"
         ));
     }
+
+    @Operation(
+            summary = "Refresh access token",
+            description = "Generates a new access token using a valid refresh token"
+    )
+    @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "Token refreshed successfully",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = LoginResponse.class)
+                    )
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "401",
+                    description = "Invalid or expired refresh token",
+                    content = @Content(mediaType = "application/json")
+            )
+    })
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<LoginResponse>> refreshToken(
+            @Parameter(description = "Refresh token", required = true)
+            @RequestBody Map<String, String> request) {
+        String refreshToken = request.get("refreshToken");
+        LoginResponse response = authService.refreshToken(refreshToken);
+        return ResponseEntity.ok(ApiResponse.success(response, "Token refreshed successfully"));
+    }
+
+    @Operation(
+            summary = "Revoke refresh token",
+            description = "Revokes a specific refresh token"
+    )
+    @PostMapping("/revoke")
+    public ResponseEntity<ApiResponse<Void>> revokeRefreshToken(
+            @RequestBody Map<String, String> request) {
+        String refreshToken = request.get("refreshToken");
+        authService.revokeRefreshToken(refreshToken);
+        return ResponseEntity.ok(ApiResponse.success(null, "Refresh token revoked successfully"));
+    }
 }
