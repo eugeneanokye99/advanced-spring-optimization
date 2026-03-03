@@ -16,11 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * The type Order controller.
- * Note: Most order operations (queries, status updates) use GraphQL.
- * This controller only handles order creation and payment processing.
- */
+import java.util.concurrent.CompletableFuture;
+
 @Tag(name = "Order Management", description = "APIs for order creation and payment processing")
 @RestController
 @AllArgsConstructor
@@ -29,13 +26,7 @@ public class OrderController {
 
         private final OrderService orderService;
 
-        /**
-         * Create order response entity.
-         *
-         * @param request the request
-         * @return the response entity
-         */
-        @Operation(summary = "Create a new order", description = "Creates a new order with order items, shipping address, and payment information")
+        @Operation(summary = "Create a new order (async)", description = "Creates a new order asynchronously with order items, shipping address, and payment information")
         @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Order created successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderResponse.class))),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid order data or insufficient stock", content = @Content(mediaType = "application/json")),
@@ -43,10 +34,10 @@ public class OrderController {
         })
         @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
         @PostMapping
-        public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@Valid @RequestBody CreateOrderRequest request) {
-                OrderResponse response = orderService.createOrder(request);
-                return ResponseEntity.status(HttpStatus.CREATED)
-                                .body(ApiResponse.success(response, "Order created successfully"));
+        public CompletableFuture<ResponseEntity<ApiResponse<OrderResponse>>> createOrder(@Valid @RequestBody CreateOrderRequest request) {
+                return orderService.createOrder(request)
+                        .thenApply(response -> ResponseEntity.status(HttpStatus.CREATED)
+                                .body(ApiResponse.success(response, "Order created successfully")));
         }
 
         /**
@@ -56,7 +47,7 @@ public class OrderController {
          * @param transactionId the transaction id
          * @return the response entity
          */
-        @Operation(summary = "Process order payment", description = "Updates order payment status and transitions to PROCESSING")
+        @Operation(summary = "Process order payment (async)", description = "Processes payment asynchronously and transitions order to PROCESSING")
         @io.swagger.v3.oas.annotations.responses.ApiResponses(value = {
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Payment processed successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OrderResponse.class))),
                         @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Order not found", content = @Content(mediaType = "application/json")),
@@ -64,10 +55,10 @@ public class OrderController {
         })
         @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
         @PatchMapping("/{id}/payment")
-        public ResponseEntity<ApiResponse<OrderResponse>> processPayment(
+        public CompletableFuture<ResponseEntity<ApiResponse<OrderResponse>>> processPayment(
                         @Parameter(description = "Order unique identifier", required = true, example = "1") @PathVariable Integer id,
                         @RequestParam String transactionId) {
-                OrderResponse response = orderService.processPayment(id, transactionId);
-                return ResponseEntity.ok(ApiResponse.success(response, "Payment processed successfully"));
+                return orderService.processPayment(id, transactionId)
+                        .thenApply(response -> ResponseEntity.ok(ApiResponse.success(response, "Payment processed successfully")));
         }
 }

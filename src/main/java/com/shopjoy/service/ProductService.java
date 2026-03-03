@@ -4,7 +4,6 @@ import com.shopjoy.dto.filter.ProductFilter;
 import com.shopjoy.dto.request.CreateProductRequest;
 import com.shopjoy.dto.request.UpdateProductRequest;
 import com.shopjoy.dto.response.ProductResponse;
-import com.shopjoy.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -174,8 +173,6 @@ public interface ProductService {
      */
     Page<ProductResponse> getProductsWithFilters(ProductFilter filter, Pageable pageable, String sortBy,
             String sortDirection);
-
-    Product searchById(Integer id);
 
     List<ProductResponse> getRecentlyAddedProducts(int limit);
 }

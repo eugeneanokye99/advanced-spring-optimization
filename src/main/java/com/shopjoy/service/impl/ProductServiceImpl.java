@@ -136,7 +136,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    @Cacheable(value = "productSearch", key = "#keyword.toLowerCase()", unless = "#result == null || #result.isEmpty()")
+    @Cacheable(value = "productSearch", key = "#keyword.toLowerCase()", unless = "#result == null || #result.isEmpty()", cacheManager = "cacheManager")
     public List<ProductResponse> searchProductsByName(String keyword) {
         if (keyword == null || keyword.trim().isEmpty()) {
             throw new ValidationException("Search keyword cannot be empty");
@@ -149,7 +149,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Cacheable(value = "productsByPriceRange",
                key = "#minPrice.toString() + ':' + #maxPrice.toString()",
-               unless = "#result == null || #result.isEmpty()")
+               unless = "#result == null || #result.isEmpty()",
+               cacheManager = "cacheManager")
     public List<ProductResponse> getProductsByPriceRange(BigDecimal minPrice, BigDecimal maxPrice) {
         if (minPrice.compareTo(BigDecimal.ZERO) < 0) {
             throw new ValidationException("Minimum price cannot be negative");
@@ -302,7 +303,8 @@ public class ProductServiceImpl implements ProductService {
                      "#pageable.pageNumber, " +
                      "#pageable.pageSize, " +
                      "#sortBy + ':' + #sortDirection)",
-               unless = "#result == null || #result.isEmpty()")
+               unless = "#result == null || #result.isEmpty()",
+               cacheManager = "cacheManager")
     public Page<ProductResponse> getProductsWithFilters(ProductFilter filter, Pageable pageable, String sortBy,
             String sortDirection) {
         if (filter == null) {
@@ -328,11 +330,6 @@ public class ProductServiceImpl implements ProductService {
                 .collect(Collectors.toList());
 
         return new PageImpl<>(responseList, pageable, productPage.getTotalElements());
-    }
-
-    @Override
-    public Product searchById(Integer id) {
-        return productRepository.findById(id).orElse(null);
     }
 
     @Override

@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -37,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
 
-    private static final List<String> PUBLIC_PATHS = Arrays.asList(
+    private static final List<String> PUBLIC_PATHS = List.of(
         "/api/v1/auth/",
         "/oauth2/",
         "/login/oauth2/",

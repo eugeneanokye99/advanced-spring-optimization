@@ -42,41 +42,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         return refreshTokenRepository.save(refreshToken);
     }
 
-    @Override
-    public Optional<RefreshToken> findByToken(String token) {
-        return refreshTokenRepository.findByToken(token);
-    }
 
-    @Override
-    public RefreshToken verifyExpiration(RefreshToken token) {
-        if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
-            refreshTokenRepository.delete(token);
-            throw new AuthenticationException("Refresh token has expired");
-        }
-        return token;
-    }
-
-    @Override
-    @Transactional
-    public void deleteByUser(User user) {
-        refreshTokenRepository.deleteByUser(user);
-    }
-
-    @Override
-    @Transactional
-    @Scheduled(fixedRate = 3600000)
-    public void deleteExpiredTokens() {
-        long deletedCount = refreshTokenRepository.deleteExpiredTokens(LocalDateTime.now());
-        if (deletedCount > 0) {
-            log.info("Cleaned up {} expired refresh tokens", deletedCount);
-        }
-    }
-
-    @Override
-    @Transactional
-    public void revokeAllUserTokens(User user) {
-        refreshTokenRepository.revokeAllUserTokens(user);
-        log.info("Revoked all refresh tokens for user: {}", user.getUsername());
-    }
 }
 
