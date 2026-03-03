@@ -139,4 +139,11 @@ public interface InventoryService {
      * @return list of inventory responses
      */
     List<InventoryResponse> getInventoryByProducts(List<Integer> productIds);
+
+    /**
+     * Updates stock for multiple products in a batch using parallel processing.
+     * 
+     * @param inventoryUpdates map of product ID to quantity change (positive to add, negative to remove)
+     */
+    void updateStockBatch(java.util.Map<Integer, Integer> inventoryUpdates);
 }

@@ -3,10 +3,7 @@ package com.shopjoy.service.impl;
 import com.shopjoy.dto.mapper.InventoryMapperStruct;
 import com.shopjoy.dto.response.InventoryResponse;
 import com.shopjoy.entity.Inventory;
-import com.shopjoy.exception.DuplicateResourceException;
-import com.shopjoy.exception.InsufficientStockException;
-import com.shopjoy.exception.ResourceNotFoundException;
-import com.shopjoy.exception.ValidationException;
+import com.shopjoy.exception.*;
 import com.shopjoy.repository.InventoryRepository;
 import com.shopjoy.repository.ProductRepository;
 import com.shopjoy.service.InventoryService;
@@ -285,6 +282,46 @@ public class InventoryServiceImpl implements InventoryService {
         return inventoryRepository.findByProductIdIn(productIds).stream()
                 .map(inventoryMapper::toInventoryResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Caching(evict = {
+        @CacheEvict(value = "inventory", allEntries = true, cacheManager = "shortCacheManager"),
+        @CacheEvict(value = "lowStock", allEntries = true, cacheManager = "shortCacheManager"),
+        @CacheEvict(value = "products", allEntries = true, cacheManager = "cacheManager")
+    })
+    public void updateStockBatch(java.util.Map<Integer, Integer> inventoryUpdates) {
+        if (inventoryUpdates == null || inventoryUpdates.isEmpty()) {
+            return;
+        }
+
+        java.util.Map<Integer, Exception> failures = new java.util.concurrent.ConcurrentHashMap<>();
+
+        // Use parallel stream for processing updates in parallel
+        inventoryUpdates.entrySet().parallelStream().forEach(entry -> {
+            Integer productId = entry.getKey();
+            Integer quantityChange = entry.getValue();
+
+            if (quantityChange == 0) return;
+
+            try {
+                if (quantityChange > 0) {
+                    addStock(productId, quantityChange);
+                } else {
+                    removeStock(productId, Math.abs(quantityChange));
+                }
+            } catch (Exception e) {
+                failures.put(productId, e);
+            }
+        });
+
+        if (!failures.isEmpty()) {
+            throw new BatchOperationException(
+                "Batch inventory update partially failed for " + failures.size() + " items", 
+                failures
+            );
+        }
     }
 
     private void validateInventoryData(Inventory inventory) {

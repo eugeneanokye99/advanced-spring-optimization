@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -44,6 +45,16 @@ public class ProductServiceImpl implements ProductService {
     private final InventoryRepository inventoryRepository;
     private final CategoryRepository categoryRepository;
     private final ProductMapperStruct productMapper;
+
+    private static final Comparator<Product> PRODUCT_COMPARATOR_BY_NAME = 
+            Comparator.comparing(Product::getProductName, String.CASE_INSENSITIVE_ORDER);
+
+    private static final Comparator<Product> PRODUCT_COMPARATOR_BY_PRICE = 
+            Comparator.comparing(Product::getPrice);
+
+    private static final Comparator<Product> DEFAULT_PRODUCT_COMPARATOR = 
+            PRODUCT_COMPARATOR_BY_NAME.thenComparing(PRODUCT_COMPARATOR_BY_PRICE);
+
 
     @Override
     @Transactional
@@ -99,8 +110,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Cacheable(value = "products")
     public List<ProductResponse> getAllProducts() {
-        return productRepository.findAllWithInventory().stream()
-                .map(productMapper::toProductResponse)
+        return productRepository.findAllWithInventory().stream()                .sorted(DEFAULT_PRODUCT_COMPARATOR)                .map(productMapper::toProductResponse)
                 .collect(Collectors.toList());
     }
 

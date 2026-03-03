@@ -3,7 +3,6 @@ package com.shopjoy.service;
 import com.shopjoy.entity.RefreshToken;
 import com.shopjoy.entity.User;
 
-import java.util.Optional;
 
 public interface RefreshTokenService {
 

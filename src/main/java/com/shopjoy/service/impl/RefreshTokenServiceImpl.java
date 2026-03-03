@@ -2,18 +2,15 @@ package com.shopjoy.service.impl;
 
 import com.shopjoy.entity.RefreshToken;
 import com.shopjoy.entity.User;
-import com.shopjoy.exception.AuthenticationException;
 import com.shopjoy.repository.RefreshTokenRepository;
 import com.shopjoy.service.RefreshTokenService;
 import com.shopjoy.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
