@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.security.task.DelegatingSecurityContextAsyncTaskExecutor;
 
 import java.util.concurrent.Executor;
 
@@ -35,14 +36,14 @@ public class AsyncConfig implements AsyncConfigurer {
         executor.setAwaitTerminationSeconds(60);
         executor.initialize();
         log.info("taskExecutor: corePoolSize={}, maxPoolSize={} (IO-bound, cores*2)", coreSize, maxSize);
-        return executor;
+        return new DelegatingSecurityContextAsyncTaskExecutor(executor);
     }
 
     /**
      * IO-bound: order creation, payment, email — formula: cores * 2 core, cores * 4 max
      */
     @Bean(name = "appTaskExecutor")
-    public ThreadPoolTaskExecutor appTaskExecutor() {
+    public Executor appTaskExecutor() {
         int coreSize = CORES * 2;
         int maxSize  = CORES * 4;
 
@@ -58,7 +59,7 @@ public class AsyncConfig implements AsyncConfigurer {
         );
         executor.initialize();
         log.info("appTaskExecutor: corePoolSize={}, maxPoolSize={} (IO-bound, cores*2/cores*4)", coreSize, maxSize);
-        return executor;
+        return new DelegatingSecurityContextAsyncTaskExecutor(executor);
     }
 
     @Override

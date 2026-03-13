@@ -7,10 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,7 +24,6 @@ public class AsyncExecutorTest {
     void testAppTaskExecutorSaturationAndRejection() throws InterruptedException {
         // Queue capacity is 200, Core is cores*2, Max is cores*4
         // We want to submit more than core + max + queue to trigger the rejection handler
-        int corePoolSize = executor.getCorePoolSize();
         int maxPoolSize = executor.getMaxPoolSize();
         int queueCapacity = 200; // From AsyncConfig.java
         
@@ -67,7 +63,6 @@ public class AsyncExecutorTest {
         // Release the tasks
         latch.countDown();
         
-        boolean completed = finishingLatch.await(10, TimeUnit.SECONDS);
         System.out.println("Tasks completed within timeout: " + executedTasks.get());
         
         // If our custom handler is working, it should just log the error and not crash

@@ -89,8 +89,10 @@ public class OrderServiceImpl implements OrderService {
 
             createAndSaveOrderItems(createdOrder, request.getOrderItems(), productsById);
 
-            String username = userService.getUserById(request.getUserId()).getUsername();
-            String userEmail = userService.getUserById(request.getUserId()).getEmail();
+            // Fetch user details once
+            var userResponse = userService.getUserById(request.getUserId());
+            String username  = userResponse.getUsername();
+            String userEmail = userResponse.getEmail();
 
             securityAuditService.logEvent(
                 username,
@@ -107,7 +109,13 @@ public class OrderServiceImpl implements OrderService {
 
             OrderResponse orderResponse = orderMapper.toOrderResponse(refreshedOrder);
 
-            emailService.sendOrderConfirmationEmail(orderResponse, userEmail);
+            // Send email in a fire-and-forget fashion — never let email failure fail the order
+            try {
+                emailService.sendOrderConfirmationEmail(orderResponse, userEmail);
+            } catch (Exception emailEx) {
+                log.warn("Order #{} created successfully but confirmation email failed: {}",
+                        orderResponse.getId(), emailEx.getMessage());
+            }
 
             long executionTimeMs = (System.nanoTime() - startTime) / 1_000_000;
             log.info("Async order creation completed in {}ms. Order ID: {}", executionTimeMs, orderResponse.getId());
@@ -150,7 +158,12 @@ public class OrderServiceImpl implements OrderService {
             OrderResponse orderResponse = orderMapper.toOrderResponse(updatedOrder);
 
             String userEmail = userService.getUserById(order.getUser().getId()).getEmail();
-            emailService.sendPaymentConfirmationEmail(orderResponse, userEmail);
+            try {
+                emailService.sendPaymentConfirmationEmail(orderResponse, userEmail);
+            } catch (Exception emailEx) {
+                log.warn("Payment for order #{} processed but confirmation email failed: {}",
+                        orderId, emailEx.getMessage());
+            }
 
             long executionTimeMs = (System.nanoTime() - startTime) / 1_000_000;
             log.info("Async payment processing completed in {}ms. Order ID: {}", executionTimeMs, orderId);
@@ -190,11 +203,13 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toMap(ProductResponse::getId, java.util.function.Function.identity()));
 
         if (productMap.size() != productIds.size()) {
-            List<Integer> foundIds = new java.util.ArrayList<>(productMap.keySet());
             List<Integer> missingIds = productIds.stream()
-                    .filter(id -> !foundIds.contains(id))
+                    .filter(id -> !productMap.containsKey(id))
                     .collect(Collectors.toList());
-            throw new ResourceNotFoundException("Products", "ids", missingIds);
+            throw new ValidationException(
+                "The following products are no longer available in our store: " + missingIds +
+                ". Please remove them from your cart before placing an order."
+            );
         }
 
         return productMap;
@@ -329,7 +344,11 @@ public class OrderServiceImpl implements OrderService {
         Order cancelledOrder = orderRepository.save(order);
 
         String userEmail = userService.getUserById(order.getUser().getId()).getEmail();
-        emailService.sendOrderCancellationEmail(orderId, userEmail);
+        try {
+            emailService.sendOrderCancellationEmail(orderId, userEmail);
+        } catch (Exception emailEx) {
+            log.warn("Order #{} cancelled but cancellation email failed: {}", orderId, emailEx.getMessage());
+        }
 
         return orderMapper.toOrderResponse(cancelledOrder);
     }

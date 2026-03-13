@@ -12,17 +12,22 @@ const api = axios.create({
 // Request interceptor for adding auth token
 api.interceptors.request.use(
     (config) => {
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        const token = localStorage.getItem('token');
-        
-        if (token) {
-            config.headers['Authorization'] = `Bearer ${token}`;
+        try {
+            const token = localStorage.getItem('token');
+            const userRaw = localStorage.getItem('user');
+            const user = userRaw ? JSON.parse(userRaw) : {};
+
+            if (token) {
+                config.headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            if (user?.id) {
+                config.headers['X-User-Id'] = user.id;
+            }
+        } catch (e) {
+            console.warn('api interceptor: failed to read auth from localStorage', e);
         }
-        
-        if (user.id) {
-            config.headers['X-User-Id'] = user.id;
-        }
-        
+
         return config;
     },
     (error) => Promise.reject(error)
@@ -92,6 +97,23 @@ api.interceptors.response.use(
         return response.data; // Return raw data
     },
     (error) => {
+        // If 401 Unauthorized, only redirect to login if we have no token at all
+        // and we are not already on an auth-related page
+        if (error.response?.status === 401) {
+            const url = error.config?.url || '';
+            const isAuthRequest = url.includes('/auth/login') || url.includes('/auth/register');
+            const isOAuth2Page = window.location.pathname.includes('/oauth2');
+            const isLoginPage = window.location.pathname === '/login';
+            const hasToken = !!localStorage.getItem('token');
+
+            if (!isAuthRequest && !isOAuth2Page && !isLoginPage && !hasToken) {
+                console.warn('No token found and received 401. Redirecting to login.');
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';
+            }
+        }
+
         const detailedError = createDetailedError(error.response);
         return Promise.reject(detailedError);
     }

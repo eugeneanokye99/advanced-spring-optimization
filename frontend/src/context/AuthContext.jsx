@@ -20,39 +20,48 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         // Check if user is logged in on mount
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            const parsedUser = JSON.parse(storedUser);
-            // Handle legacy user object format or clear invalid session
-            if (parsedUser.userId && !parsedUser.id) {
-                console.warn('Migrating legacy user object');
-                parsedUser.id = parsedUser.userId;
-                localStorage.setItem('user', JSON.stringify(parsedUser));
+        try {
+            const storedUser = localStorage.getItem('user');
+            const storedToken = localStorage.getItem('token');
+
+            if (storedUser && storedToken) {
+                const parsedUser = JSON.parse(storedUser);
+                // Handle legacy user object format or clear invalid session
+                if (parsedUser.userId && !parsedUser.id) {
+                    console.warn('Migrating legacy user object');
+                    parsedUser.id = parsedUser.userId;
+                    localStorage.setItem('user', JSON.stringify(parsedUser));
+                }
+
+                if (parsedUser.id) {
+                    setUser(parsedUser);
+                } else {
+                    localStorage.removeItem('user');
+                    localStorage.removeItem('token');
+                }
             }
-            
-            if (parsedUser.id) {
-                setUser(parsedUser);
-            } else {
-                // Invalid user object, clear session
-                localStorage.removeItem('user');
-                setUser(null);
-            }
+        } catch (e) {
+            console.warn('Failed to restore session from localStorage:', e);
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     }, []);
 
     const login = async (username, password) => {
         try {
-            const response = await authenticateUser({ username, password });
-            const loginResponse = response.data || response;
-            
-            if (!loginResponse.token) {
+            // api.js returns ApiResponse: { success, data: { token, refreshToken, ... }, message }
+            const apiResponse = await authenticateUser({ username, password });
+            const loginResponse = apiResponse?.data || apiResponse;
+
+            if (!loginResponse?.token) {
                 throw new Error('No token received from server');
             }
 
             const token = loginResponse.token;
             const decodedToken = jwtDecode(token);
-            
+
             const userData = {
                 id: decodedToken.userId,
                 userId: decodedToken.userId,
@@ -61,22 +70,20 @@ export const AuthProvider = ({ children }) => {
                 role: decodedToken.role
             };
 
-            setUser(userData);
-            localStorage.setItem('user', JSON.stringify(userData));
             localStorage.setItem('token', token);
-            
+            localStorage.setItem('user', JSON.stringify(userData));
+            setUser(userData);
+
             return userData;
         } catch (error) {
             console.error('Authentication error:', error);
-            
+
             const formattedError = new Error();
-            
             if (isAuthenticationError(error)) {
                 formattedError.message = error.message || 'Invalid username or password';
             } else {
                 formattedError.message = formatErrorMessage(error) || 'Login failed';
             }
-            
             throw formattedError;
         }
     };
@@ -106,22 +113,22 @@ export const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         const token = localStorage.getItem('token');
-        
-        if (token) {
-            try {
-                await api.post('/auth/logout', {}, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-            } catch (error) {
-                console.error('Logout error:', error);
-            }
-        }
-        
+
+        // Clear local state first so no further authenticated requests are made
         setUser(null);
         localStorage.removeItem('user');
         localStorage.removeItem('token');
+
+        if (token) {
+            try {
+                await api.post('/auth/logout', {}, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+            } catch (error) {
+                // Ignore — token may already be expired/blacklisted
+                console.warn('Logout request failed (token may already be invalid):', error.message);
+            }
+        }
     };
 
     const value = {

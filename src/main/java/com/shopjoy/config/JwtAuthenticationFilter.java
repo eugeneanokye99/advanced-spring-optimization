@@ -68,7 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (isTokenBlacklisted(jwtToken, ipAddress, userAgent)) {
+        if (isTokenBlacklisted(jwtToken)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -88,17 +88,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return authHeader.substring(BEARER_PREFIX.length());
     }
 
-    private boolean isTokenBlacklisted(String token, String ipAddress, String userAgent) {
+    private boolean isTokenBlacklisted(String token) {
         if (tokenBlacklistService.isBlacklisted(token)) {
-            log.debug("Token is blacklisted (user logged out)");
-            securityAuditService.logEvent(
-                null,
-                SecurityEventType.ACCESS_DENIED,
-                ipAddress,
-                userAgent,
-                "Attempted to use blacklisted token",
-                false
-            );
+            log.debug("Rejected blacklisted token");
             return true;
         }
         return false;

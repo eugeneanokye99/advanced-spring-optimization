@@ -122,10 +122,10 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             refreshCookie.setMaxAge(604800);
             response.addCookie(refreshCookie);
 
-            String redirectUrl = String.format("%s/oauth2/callback?provider=%s&success=true",
-                    frontendUrl, provider);
+            String redirectUrl = String.format("%s/oauth2/callback?token=%s&provider=%s",
+                    frontendUrl, jwtToken, provider);
 
-            log.info("OAuth2 login successful, redirecting to frontend with secure cookie");
+            log.info("OAuth2 login successful, redirecting to frontend with token for user: {}", user.getUsername());
             response.sendRedirect(redirectUrl);
             
         } catch (Exception e) {

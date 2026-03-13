@@ -18,6 +18,8 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Global exception handler for consistent API error responses.
@@ -404,6 +406,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
     
+    /**
+     * Handles CompletionException / ExecutionException — unwraps the real cause
+     * from failed CompletableFuture chains and delegates to the appropriate handler.
+     */
+    @ExceptionHandler({CompletionException.class, ExecutionException.class})
+    public ResponseEntity<ApiResponse<Object>> handleCompletionException(Exception ex) {
+        Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+        logger.warn("Async operation failed: {}", cause.getMessage());
+        String message = cause.getMessage() != null ? cause.getMessage() : "Async operation failed";
+        HttpStatus status = (cause instanceof ResourceNotFoundException) ? HttpStatus.NOT_FOUND
+                : (cause instanceof ValidationException
+                   || cause instanceof InsufficientStockException
+                   || cause instanceof InvalidOperationException) ? HttpStatus.BAD_REQUEST
+                : HttpStatus.INTERNAL_SERVER_ERROR;
+        return ResponseEntity.status(status).body(ApiResponse.error(message));
+    }
+
     /**
      * Handles all other uncaught exceptions.
      * Returns 500 Internal Server Error.

@@ -25,7 +25,8 @@ public class CorsConfig {
             "Content-Type",
             "Accept",
             "X-Requested-With",
-            "X-CSRF-TOKEN"
+            "X-CSRF-TOKEN",
+            "X-User-Id"
         ));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);

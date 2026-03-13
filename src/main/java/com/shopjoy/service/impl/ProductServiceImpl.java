@@ -96,14 +96,15 @@ public class ProductServiceImpl implements ProductService {
         if (productIds == null || productIds.isEmpty()) {
             return Collections.emptyList();
         }
-        
+
         List<Integer> distinctIds = productIds.stream()
                 .distinct()
                 .filter(Objects::nonNull)
                 .toList();
-        
-        return distinctIds.stream()
-                .map(this::getProductById)
+
+        // Single batch query — avoids N+1 and does not throw for missing IDs
+        return productRepository.findAllById(distinctIds).stream()
+                .map(productMapper::toProductResponse)
                 .collect(Collectors.toList());
     }
 

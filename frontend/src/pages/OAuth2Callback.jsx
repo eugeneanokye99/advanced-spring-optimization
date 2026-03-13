@@ -36,14 +36,17 @@ const OAuth2Callback = () => {
                     return;
                 }
 
-                // Extract token and provider from URL
-                const token = searchParams.get('token');
+                // Extract token and provider from URL — decode in case it was URL-encoded
+                const rawToken = searchParams.get('token');
                 const provider = searchParams.get('provider');
 
                 // Validate token presence
-                if (!token) {
+                if (!rawToken) {
                     throw new Error('No authentication token received');
                 }
+
+                // URL-decode the token (handles any %2B / + encoding from redirect)
+                const token = decodeURIComponent(rawToken);
 
                 // Decode JWT to extract user information
                 let decodedToken;
@@ -79,18 +82,17 @@ const OAuth2Callback = () => {
 
                 loginWithOAuth2(user, token);
 
-                // Show success message
+                // Show success message briefly, then redirect
                 setStatus('success');
                 setMessage(`Welcome back, ${username}!`);
 
-                // Redirect to appropriate dashboard based on role
-                setTimeout(() => {
-                    if (role === 'ADMIN') {
-                        navigate('/admin/dashboard');
-                    } else {
-                        navigate('/customer/dashboard');
-                    }
-                }, 1500);
+                // Navigate immediately — don't wait, to prevent background API calls
+                // from firing without auth context and triggering a 401 redirect
+                if (role === 'ADMIN') {
+                    navigate('/admin/dashboard', { replace: true });
+                } else {
+                    navigate('/customer/dashboard', { replace: true });
+                }
 
             } catch (error) {
                 console.error('OAuth2 callback processing error:', error);

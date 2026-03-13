@@ -2,7 +2,6 @@ package com.shopjoy.service;
 
 import com.shopjoy.dto.request.CreateOrderItemRequest;
 import com.shopjoy.dto.request.CreateOrderRequest;
-import com.shopjoy.dto.response.OrderResponse;
 import com.shopjoy.entity.Product;
 import com.shopjoy.repository.InventoryRepository;
 import com.shopjoy.repository.ProductRepository;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
